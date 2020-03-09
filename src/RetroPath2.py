@@ -30,7 +30,7 @@ def limit_virtual_memory():
 ##
 #
 #
-def run_rp2(sinkfile_bytes, sourcefile_bytes, max_steps, rules_bytes=b'None', topx=100, dmin=0, dmax=1000, mwmax_source=1000, mwmax_cof=1000, timeout=30, is_forward=False, logger=None):
+def run(sinkfile_bytes, sourcefile_bytes, max_steps, rules_bytes=b'None', topx=100, dmin=0, dmax=1000, mwmax_source=1000, mwmax_cof=1000, timeout=30, is_forward=False, logger=None):
     if logger==None:
         logging.basicConfig(level=logging.DEBUG)
         logger = logging.getLogger(__name__)

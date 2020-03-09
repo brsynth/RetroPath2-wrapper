@@ -46,17 +46,17 @@ if __name__ == "__main__":
     with open(params.sinkfile, 'rb') as sinkfile_bytes:
         with open(params.sourcefile, 'rb') as sourcefile_bytes:
             with open(params.rulesfile, 'rb') as rulesfile_bytes:
-                result = RP2.run_rp2(sinkfile_bytes.read(),
-                                     sourcefile_bytes.read(),
-                                     params.max_steps,
-                                     rulesfile_bytes.read(),
-                                     params.topx,
-                                     params.dmin,
-                                     params.dmax,
-                                     params.mwmax_source,
-                                     params.mwmax_cof,
-                                     params.timeout,
-                                     params.is_forward,
-                                     logger)
+                result = RP2.run(sinkfile_bytes.read(),
+                                 sourcefile_bytes.read(),
+                                 params.max_steps,
+                                 rulesfile_bytes.read(),
+                                 params.topx,
+                                 params.dmin,
+                                 params.dmax,
+                                 params.mwmax_source,
+                                 params.mwmax_cof,
+                                 params.timeout,
+                                 params.is_forward,
+                                 logger)
     with open(params.scope_csv, 'wb') as s_c:
         s_c.write(result[0])
