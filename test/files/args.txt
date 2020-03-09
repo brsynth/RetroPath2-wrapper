@@ -1,5 +1,5 @@
--sinkfile test_input_sink.dat
--sourcefile test_input_source.dat
+-sinkfile input/test_input_sink.dat
+-sourcefile input/test_input_source.dat
 -max_steps 3
 -rulesfile 'None'
 -topx 100
@@ -8,5 +8,5 @@
 -mwmax_source 1000
 -mwmax_cof 1000
 -timeout 30
--scope_csv test_out_scope.csv
+-scope_csv results/test_out_scope.csv
 -is_forward False
