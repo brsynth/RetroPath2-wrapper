@@ -6,7 +6,7 @@ docker run \
   -v $PWD:/test \
   -w /test \
   --rm brsynth/retropath2 \
-/bin/sh run.sh
+/bin/sh test-standalone.sh
 
 #cp results/test_out_scope.csv .
 

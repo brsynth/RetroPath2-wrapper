@@ -1,6 +1,6 @@
 #!/bin/bash
 
-python3 tool_RetroPath2.py \
+python3 files/tool_RetroPath2.py \
   -sinkfile input/Galaxy177-Sink_Compounds.csv \
   -sourcefile input/Galaxy160-Source.csv \
   -max_steps 3 \
