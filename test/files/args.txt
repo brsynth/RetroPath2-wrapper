@@ -1,7 +1,7 @@
 -sinkfile input/test_input_sink.dat
 -sourcefile input/test_input_source.dat
 -max_steps 3
--rulesfile 'None'
+-rulesfile input/empty_file.csv
 -topx 100
 -dmin 0
 -dmax 1000
