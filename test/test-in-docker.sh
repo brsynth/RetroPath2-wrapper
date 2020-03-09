@@ -2,7 +2,7 @@
 
 docker run \
   -v $PWD/..:/home \
-  -v $PWD/../workflows/9:/home/worflow \
+  -v $PWD/../workflows/9:/home/workflow \
   -v $PWD:/test \
   -w /test \
   --rm brsynth/retropath2 \
