@@ -1,10 +1,10 @@
 #!/bin/bash
 
 python3 tool_RetroPath2.py \
-  -sinkfile Galaxy160-[Source].csv \
-  -sourcefile Galaxy177-[Sink_Compounds].csv \
+  -sinkfile input/Galaxy177-Sink_Compounds.csv \
+  -sourcefile input/Galaxy160-Source.csv \
   -max_steps 3 \
-  -rulesfile rules.csv \
+  -rulesfile input/_exclude_rules.csv \
   -topx 100 \
   -dmin 0 \
   -dmax 1000 \
