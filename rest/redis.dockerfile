@@ -7,25 +7,24 @@ ENV INSTALLATION_DIR /usr/local
 ENV KNIME_DIR $INSTALLATION_DIR/knime
 ENV HOME_DIR /home/knime
 
-# Install everything
+
+
+RUN apt-get update
 # HACK: Install tzdata at the beginning to not trigger an interactive dialog later on
-RUN apt-get update \
-    && apt-get install -y software-properties-common curl tzdata \
-    && apt-get update \
-    && apt-get install -y \
-         openjdk-8-jre libgtk2.0-0 libxtst6 \
-         libwebkitgtk-3.0-0 \
-         python python-dev python-pip \
-         r-base r-recommended wget
+RUN apt-get install -y \
+      tzdata \
+      curl \
+      python3
+RUN ln -sf /usr/bin/python3 /usr/bin/python
 
 # Download KNIME
 RUN curl -L "$DOWNLOAD_URL" | tar vxz -C $INSTALLATION_DIR \
     && mv $INSTALLATION_DIR/knime_* $INSTALLATION_DIR/knime
 
 # Clean up
-RUN apt-get --purge autoremove -y software-properties-common curl \
+RUN apt-get --purge autoremove -y \
+      curl \
  && apt-get clean
-
 
 
 
