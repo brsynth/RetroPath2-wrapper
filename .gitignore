@@ -6,3 +6,4 @@ test/results/
 _exclude_*
 source-in-sink.csv
 results.csv
+.DS_Store
