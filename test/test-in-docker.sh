@@ -2,9 +2,7 @@
 
 docker run \
   -v $PWD/..:/home \
-  -v $PWD/../workflows/9:/home/workflow \
-  -v $PWD:/test \
-  -w /test \
+  -w /home/test \
   --rm brsynth/retropath2 \
 /bin/sh test-standalone.sh
 
