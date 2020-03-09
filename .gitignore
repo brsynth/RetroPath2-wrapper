@@ -2,7 +2,7 @@
 .Dockerfile.swp
 __pycache__/
 test/test_out_scope.csv
-test/results/
+test/results/*
 _exclude_*
 source-in-sink.csv
 results.csv
