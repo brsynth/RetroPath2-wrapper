@@ -1,0 +1,92 @@
+CHANGELOG r20191007
+- Scope viewer update. For details see https://github.com/brsynth/scope-viewer
+- License update, we're now under GPL v3
+
+CHANGELOG r20181009
+- Bug fix: multiple EC number annotation correctly displayed in Scope Viewer
+- Updated installation procedure
+
+CHANGELOG r20180919
+- Bug fix: reset input/output settings not reseted by default
+
+CHANGELOG r20180730
+- Bug fix: SVG generation is now based of Marvin node, due to bug in RDKit node in KNIME v3.6.0
+
+CHANGELOG r20180216
+- Feature update: Scope Viewer generates crosslinks to Selenzyme
+
+CHANGELOG r20171218
+- Citation update: "How to cite" section that points out to the Metabolic Engineering paper.
+
+CHANGELOG r20171026
+- Bug fix: Cannot generate InChIKey in some case. Now using SMILES as starting point for generating the InChIKey.
+
+CHANGELOG r20170927
+- Bug fix: Open Babel nodes lead to errors (only on Mac OS) since the last KNIME update (v3.4.1). Replacing the Open Babel nodes by RDKit nodes.
+
+CHANGELOG v2.12
+- Global result: pre-existing global result file is removed if needed.
+- Parse bug (when using the python snippet): fixing the way invalid compounds are filtered out in the Parse metanode.
+
+CHANGELOG v2.11
+- Scope Viewer: adding interactive links to the MetaNetX database for MNX reactions and known MNX compounds.
+- Scope Viewer: adding links for querying google using compound InChIKey
+- Scope: improving scope generation using reaction filters. See advanced features for more details.
+- Scope: adding a check step after all filtering tasks.
+- Output configuration: user now just need to provide the desired names for output files (the full path for each file is not any more required).
+
+CHANGELOG v2.10
+- Result: adding a "Source in Sink" output file that reports source compounds already in Sink.
+- Scope bug: SQL handler does not complain any more about validation of queries.
+- Dev feature: adding a global workflow variable in order to set the size of the source chunk (dev.source-chunk-size)
+- Dev feature: adding a python Snippet allowing an alternative way for firing rules (drastically reduce the memory consumption). See advanced user features for more details.
+
+CHANGELOG v2.9
+- Result file: the global result file is now written at the end of each iteartion (instead of at the end of the whole workflow).
+- Workflow variable: the scope of some worfklow variables (input.* output.* WFVAR.*) is constrained
+- Dev feature: Adding a python wrapper that can be used for firing rules (instead of the OneComponentReaction Knime node)
+- Rule prefiltering: rule prefiltering (before firing rule) is always made for mono-substrate rule.
+- Source handling: the chunk size of the "Source" outter loop is now set to 1 (instead of 100).
+
+CHANGELOG v2.8
+- Configuration nodes: updating documentation
+- Front workflow page simplification
+- Scope: more information in JSON output.
+- Scope bug: better handling of In Sink information.
+- Scope bug: Marvin SVG renderer does not exist for column SMILES (if ChemAxon not installed). Switching to rdkit SVG renderer.
+- Scope viewer: legend & how-to.
+- Scope viewer: adding a side panel for node visualisation.
+- Scope viewer BUG: fixing compatilibility with CORS security policy in some web browsers (cannot load .svg depictions)
+
+CHANGELOG v2.7
+- Scope, reverse : transformation producing source are removed. Eventual resulting unfireable transformations and unreachable transformation compounds are removed.
+- Scope : fixing bug (exit code 4) when all scopes are empty.
+- Scope : source compounds are now tagged as such in .json files.
+- Bug fix: source, sink and cofactors name can be provided as integer values
+- Bug fix: workflow able to run even when not any sink is provided
+- Bug fix: better handling sink info
+- svg renderer: switching to rdkit
+
+CHANGELOG v2.6
+- Defaults values for input and output are now handled with workflow (global) variables, which allow us to set them through command-line
+- Workflow compatible with Knime v3.3
+
+CHANGELOG v2.5
+- Output scope for each source (in progress)
+- Fixing generation of Transformation IDs (nested loops)
+- Improving accessibility to standardization options (Input config Metanode)
+- Workflow comptaible with Knime v3.2.1 and upper
+
+CHANGELOG v2.4.1
+- Fixing joiner allowing to retrieve original source name (Joiner in PARSE)
+
+CHANGELOG v2.4
+- Filter out transformations involving products that cannot be sanitized (PARSE metanode)
+- Convert score as double (Rules metanode)
+- Add  substrate information in results (BUILD metanode)
+- Fixing path to cofactor file (Source.. metanode)
+
+CHANGELOG v2.3
+- Insertion of the standardization nodes (both input and in PARSE)
+- Corrected a few typo
+- Use node "File input" instead of "string input" for files (except output file path)

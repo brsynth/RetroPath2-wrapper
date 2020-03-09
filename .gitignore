@@ -1,0 +1,6 @@
+*.swp
+.Dockerfile.swp
+__pycache__/
+test/test_out_scope.csv
+test/results/
+_exclude_*

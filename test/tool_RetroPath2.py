@@ -8,10 +8,11 @@ Created on September 21 2019
 """
 import sys
 sys.path.insert(0, '/home/')
+import os
 import argparse
 import logging
 
-import rpTool
+import src.RetroPath2 as RP2
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -34,36 +35,28 @@ if __name__ == "__main__":
     parser.add_argument('-timeout', type=int)
     parser.add_argument('-is_forward', type=str)
     params = parser.parse_args()
-    if is_forward=='False' or is_forward=='false' or is_forward==False:
-        isForward = False
-    elif is_forward=='True' or is_forward=='true' or is_forward==True:
-        isForward = True
+    if params.is_forward=='False' or params.is_forward=='false' or params.is_forward==False:
+        params.is_forward = False
+    elif params.is_forward=='True' or params.is_forward=='true' or params.is_forward==True:
+        params.is_forward = True
     if (params.rulesfile==None) or (params.rulesfile==b'None') or (params.rulesfile=='None') or (params.rulesfile=='') or (params.rulesfile==b''):
-        result = rpTool.run_rp2(sinkfile_bytes.read(),
-                                sourcefile_bytes.read(),
-                                params.maxSteps,
-                                b'None',
-                                params.topx,
-                                params.dmin,
-                                params.dmax,
-                                params.mwmax_source,
-                                params.mwmax_cof,
-                                params.timeout,
-                                isForward,
-                                logger)
-    else:
-        with open(params.rulesfile, 'rb') as rulesfile_bytes:
-            result = rpTool.run_rp2(sinkfile_bytes.read(),
-                                    sourcefile_bytes.read(),
-                                    params.maxSteps,
-                                    rulesfile_bytes.read(),
-                                    params.topx,
-                                    params.dmin,
-                                    params.dmax,
-                                    params.mwmax_source,
-                                    params.mwmax_cof,
-                                    params.timeout,
-                                    isForward,
-                                    logger)
+        params.rulesfile = os.getcwd()+'/empty_file.csv'
+        with open(params.rulesfile, 'wb') as ef:
+            ef.write(b'')
+    with open(params.sinkfile, 'rb') as sinkfile_bytes:
+        with open(params.sourcefile, 'rb') as sourcefile_bytes:
+            with open(params.rulesfile, 'rb') as rulesfile_bytes:
+                result = RP2.run_rp2(sinkfile_bytes.read(),
+                                     sourcefile_bytes.read(),
+                                     params.max_steps,
+                                     rulesfile_bytes.read(),
+                                     params.topx,
+                                     params.dmin,
+                                     params.dmax,
+                                     params.mwmax_source,
+                                     params.mwmax_cof,
+                                     params.timeout,
+                                     params.is_forward,
+                                     logger)
     with open(params.scope_csv, 'wb') as s_c:
         s_c.write(result[0])

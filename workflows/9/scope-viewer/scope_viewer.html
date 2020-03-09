@@ -1,0 +1,59 @@
+<!DOCTYPE>
+
+<!--
+@author: Thomas Duigou (thomas.duigou@inra.fr)
+@last update: 2019/09/26
+@licence: Scope Viewer is licensed under the MIT License.
+To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
+-->
+
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Scope Viewer</title>
+
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+
+    <script src="js/jquery-3.1.1.min.js"></script>
+    <script src="js/cytoscape-2.7.16.min.js"></script>
+    
+    <script src="js/cola-1.4.3.js"></script>
+    <script src="js/cytoscape-cola-1.4.3.js"></script>
+
+    <script src="js/scope.js"></script>
+    <link rel="stylesheet" type="text/css" href="js/scope.css">
+
+</head>
+<body>
+
+    <div id='base'>
+        <div id='input'>
+            <div id='left'>
+                <span class='someText'>Browse to JSON: </span>
+                <span class='someText'>&mdash;</span>
+                <input id='jsonFile' type='file' accept='.json' />
+            </div>
+            <div id='right'>
+                <span class='someText'>Browse to SVGs: </span>
+                <span class='someText'>(use multi-selection) </span>
+                <input id='svgFiles' type='file' accept='.svg' multiple />
+            </div>
+        </div>
+        <div id='title'>&zwnj;</div>
+        <div id='viewer'>
+            <div id='viewer-setting'>
+                <input id='disableAnimation' type='checkbox' value='on'>Disable animation</input>
+            </div>
+            <div id='cy'></div>
+            <div id='info-wrapper' >
+                <div id='info'></div>
+            </div>
+        </div>
+        <div id='foot'>
+            Copyright © 2019 &mdash; <a target="_blank" href="http://www.jfaulon.com">Faulon's group</a>
+        </div>
+    </div>
+
+</body>
+</html>
