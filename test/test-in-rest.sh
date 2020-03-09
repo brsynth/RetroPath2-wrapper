@@ -8,7 +8,7 @@ cd -
 sleep 5
 
 docker run --rm \
-  --link retropath-rest:retropath \
+  --link retropath2-rest:retropath \
   -v $PWD:/home \
   -w /home \
   --net retropath2 \
