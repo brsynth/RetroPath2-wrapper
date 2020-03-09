@@ -13,7 +13,7 @@ RUN apt-get update \
     && apt-get install -y software-properties-common curl tzdata \
     && apt-get update \
     && apt-get install -y \
-         openjdk-8-jdk libgtk2.0-0 libxtst6 \
+         openjdk-8-jre libgtk2.0-0 libxtst6 \
          libwebkitgtk-3.0-0 \
          python python-dev python-pip \
          r-base r-recommended wget
