@@ -1,9 +1,9 @@
 #!/bin/bash
 
 docker run \
-  -v ${PWD}:/test \
-  -v ${PWD}/../src/:/test/src \
-  -v ${PWD}/../workflows/9:/home \
+  -v $PWD/..:/home:ro \
+  -v $PWD/../workflows/9:/home/worflow:ro \
+  -v $PWD:/test \
   -w /test \
   --rm brsynth/retropath2 \
 /bin/sh run.sh
