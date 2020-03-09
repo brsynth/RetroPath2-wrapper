@@ -1,3 +1,2 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:d222337ad6a3a1f1bb974e486d0d60a02dcfc1891fe12b0a8486ec6660785100
-size 97
+Name,InChI
+target,"InChI=1S/C6H6O4/c7-5(8)3-1-2-4-6(9)10/h1-4H,(H,7,8)(H,9,10)/p-2/b3-1-,4-2-"
