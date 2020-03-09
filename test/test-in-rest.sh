@@ -11,7 +11,7 @@ docker run --rm \
   --link retropath-rest:retropath \
   -v $PWD:/home \
   -w /home \
-  --net rp2paths \
+  --net retropath2 \
 python:3 ./files/rest-query.sh
 
 
