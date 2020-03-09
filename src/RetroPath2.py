@@ -48,7 +48,6 @@ def run_rp2(sinkfile_bytes, sourcefile_bytes, max_steps, rules_bytes=b'None', to
         ### run the KNIME RETROPATH2.0 workflow
         try:
             knime_command = KPATH+' -nosplash -nosave -reset --launcher.suppressErrors -application org.knime.product.KNIME_BATCH_APPLICATION -workflowFile='+RP_WORK_PATH+' -workflow.variable=input.dmin,"'+str(dmin)+'",int -workflow.variable=input.dmax,"'+str(dmax)+'",int -workflow.variable=input.max-steps,"'+str(max_steps)+'",int -workflow.variable=input.sourcefile,"'+str(source_path)+'",String -workflow.variable=input.sinkfile,"'+str(sink_path)+'",String -workflow.variable=input.rulesfile,"'+str(rules_path)+'",String -workflow.variable=output.topx,"'+str(topx)+'",int -workflow.variable=output.mwmax-source,"'+str(mwmax_source)+'",int -workflow.variable=output.mwmax-cof,"'+str(mwmax_cof)+'",int -workflow.variable=output.dir,"'+str(tmpOutputFolder)+'/",String -workflow.variable=output.solutionfile,"results.csv",String -workflow.variable=output.sourceinsinkfile,"source-in-sink.csv",String'
-            print(knime_command)
             commandObj = subprocess.Popen(knime_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, preexec_fn=limit_virtual_memory)
             try:
                 commandObj.wait(timeout=timeout*60.0)
@@ -59,7 +58,7 @@ def run_rp2(sinkfile_bytes, sourcefile_bytes, max_steps, rules_bytes=b'None', to
             (result, error) = commandObj.communicate()
             result = result.decode('utf-8')
             error = error.decode('utf-8')
-            ### if java has an memory issue
+            ### if java has a memory issue
             if 'There is insufficient memory for the Java Runtime Environment to continue' in result:
                 logger.error('RetroPath2.0 does not have sufficient memory to continue')
                 return b'', b'memerror', 'Command: '+str(knime_command)+'\n Error: Memory error \n tmpOutputFolder: '+str(glob.glob(tmpOutputFolder+'/*'))
