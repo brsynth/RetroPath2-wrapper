@@ -88,15 +88,15 @@ def run(sinkfile, sourcefile, max_steps, rulesfile, outdir, topx=100, dmin=0, dm
             logger.error(e)
             return b'', b'sourceinsinknotfounderror', 'Command: '+str(knime_command)+'\n Error: '+str(e)+'\n tmpOutputFolder: '+str(glob.glob(tmpOutputFolder+'/*'))
         ### csv scope copy to the .dat location
-        try:
-            csv_scope = glob.glob(tmpOutputFolder+'/*_scope.csv')
-            with open(csv_scope[0], 'rb') as op:
-                scope_csv = op.read()
-            return scope_csv, b'noerror', ''
-        except IndexError as e:
-            logger.error('RetroPath2.0 has not found any results')
-            logger.error(e)
-            return b'', b'noresulterror', 'Command: '+str(knime_command)+'\n Error: '+str(e)+'\n tmpOutputFolder: '+str(glob.glob(tmpOutputFolder+'/*'))
+        # try:
+        #     csv_scope = glob.glob(tmpOutputFolder+'/*_scope.csv')
+        #     with open(csv_scope[0], 'rb') as op:
+        #         scope_csv = op.read()
+        #     return scope_csv, b'noerror', ''
+        # except IndexError as e:
+        #     logger.error('RetroPath2.0 has not found any results')
+        #     logger.error(e)
+        #     return b'', b'noresulterror', 'Command: '+str(knime_command)+'\n Error: '+str(e)+'\n tmpOutputFolder: '+str(glob.glob(tmpOutputFolder+'/*'))
     except OSError as e:
         logger.error('Running the RetroPath2.0 Knime program produced an OSError')
         logger.error(e)
