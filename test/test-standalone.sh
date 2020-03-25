@@ -11,7 +11,7 @@ python3 ../src/RetroPath2.py \
   -mwmax_source 1000 \
   -mwmax_cof 1000 \
   -timeout 30 \
-  -scope_csv out/test_out_scope.csv \
+  -outdir out \
   -is_forward False
 
 #mv test_out_scope.csv out/
