@@ -65,14 +65,14 @@ def run(sinkfile, sourcefile, max_steps, rulesfile, outdir, topx=100, dmin=0, dm
         except subprocess.TimeoutExpired as e:
             logger.error('Timeout from retropath2.0 ('+str(timeout)+' minutes)')
             commandObj.kill()
-            return b'', b'timeout', 'Command: '+str(knime_command)+'\n Error: '+str(e)
+            return 'timeout', 'Command: '+str(knime_command)+'\n Error: '+str(e)
         (result, error) = commandObj.communicate()
         result = result.decode('utf-8')
         error = error.decode('utf-8')
         ### if java has a memory issue
         if 'There is insufficient memory for the Java Runtime Environment to continue' in result:
             logger.error('RetroPath2.0 does not have sufficient memory to continue')
-            return b'', b'memerror', 'Command: '+str(knime_command)+'\n Error: Memory error'
+            return 'memerror', 'Command: '+str(knime_command)+'\n Error: Memory error'
         ### if source is in sink
         try:
             count = 0
@@ -82,11 +82,11 @@ def run(sinkfile, sourcefile, max_steps, rulesfile, outdir, topx=100, dmin=0, dm
                     count += 1
             if count>1:
                 logger.error('Source has been found in the sink')
-                return b'', b'sourceinsinkerror', 'Command: '+str(knime_command)+'\n Error: Source found in sink'
+                return 'sourceinsinkerror', 'Command: '+str(knime_command)+'\n Error: Source found in sink'
         except FileNotFoundError as e:
             logger.error('Cannot find source-in-sink.csv file')
             logger.error(e)
-            return b'', b'sourceinsinknotfounderror', 'Command: '+str(knime_command)+'\n Error: '+str(e)
+            return 'sourceinsinknotfounderror', 'Command: '+str(knime_command)+'\n Error: '+str(e)
         ### csv scope copy to the .dat location
         # try:
         #     csv_scope = glob.glob(tmpOutputFolder+'/*_scope.csv')
@@ -100,12 +100,13 @@ def run(sinkfile, sourcefile, max_steps, rulesfile, outdir, topx=100, dmin=0, dm
     except OSError as e:
         logger.error('Running the RetroPath2.0 Knime program produced an OSError')
         logger.error(e)
-        return b'', b'oserror', 'Command: '+str(knime_command)+'\n Error: '+str(e)
+        return 'oserror', 'Command: '+str(knime_command)+'\n Error: '+str(e)
     except ValueError as e:
         logger.error('Cannot set the RAM usage limit')
         logger.error(e)
-        return b'', b'ramerror', 'Command: '+str(knime_command)+'\n Error: '+str(e)
+        return 'ramerror', 'Command: '+str(knime_command)+'\n Error: '+str(e)
 
+    return 'Job', 'SUCCESS'
 
 
 if __name__ == "__main__":
@@ -145,5 +146,6 @@ if __name__ == "__main__":
             params.is_forward,
             logger
             )
+    print(result)
     # with open(params.scope_csv, 'wb') as s_c:
     #     s_c.write(result[0])
