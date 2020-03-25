@@ -76,7 +76,7 @@ def run(sinkfile, sourcefile, max_steps, rulesfile, outdir, topx=100, dmin=0, dm
         ### if source is in sink
         try:
             count = 0
-            with open('source-in-sink.csv') as f:
+            with open(outdir+'/source-in-sink.csv') as f:
                 reader = csv.reader(f, delimiter=',', quotechar='"')
                 for i in reader:
                     count += 1
