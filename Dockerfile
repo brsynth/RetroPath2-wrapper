@@ -1,5 +1,10 @@
 FROM brsynth/knime
 
+RUN apt-get update \
+ && apt-get install -y \
+      python3
+
+RUN ln -sf /usr/bin/python3 /usr/bin/python
 
 # #stable version
 # #ENV RETROPATH_VERSION 8
