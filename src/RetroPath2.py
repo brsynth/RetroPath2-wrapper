@@ -43,6 +43,7 @@ def run(sinkfile, sourcefile, max_steps, rulesfile, outdir, topx=100, dmin=0, dm
 
     ### run the KNIME RETROPATH2.0 workflow
     try:
+
         knime_command = KPATH \
             + ' -nosplash -nosave -reset --launcher.suppressErrors -application org.knime.product.KNIME_BATCH_APPLICATION ' \
             + ' -workflowFile='+RP_WORK_PATH \
@@ -58,21 +59,25 @@ def run(sinkfile, sourcefile, max_steps, rulesfile, outdir, topx=100, dmin=0, dm
             + ' -workflow.variable=output.dir,"'+str(outdir)+'/",String' \
             + ' -workflow.variable=output.solutionfile,"results.csv",String' \
             + ' -workflow.variable=output.sourceinsinkfile,"source-in-sink.csv",String'
-        print(knime_command)
+
         commandObj = subprocess.Popen(knime_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, preexec_fn=limit_virtual_memory)
+
         try:
             commandObj.wait(timeout=timeout*60.0)
         except subprocess.TimeoutExpired as e:
             logger.error('Timeout from retropath2.0 ('+str(timeout)+' minutes)')
             commandObj.kill()
             return 'timeout', 'Command: '+str(knime_command)+'\n Error: '+str(e)
+
         (result, error) = commandObj.communicate()
         result = result.decode('utf-8')
         error = error.decode('utf-8')
+
         ### if java has a memory issue
         if 'There is insufficient memory for the Java Runtime Environment to continue' in result:
             logger.error('RetroPath2.0 does not have sufficient memory to continue')
             return 'memerror', 'Command: '+str(knime_command)+'\n Error: Memory error'
+
         ### if source is in sink
         try:
             count = 0
@@ -87,16 +92,7 @@ def run(sinkfile, sourcefile, max_steps, rulesfile, outdir, topx=100, dmin=0, dm
             logger.error('Cannot find source-in-sink.csv file')
             logger.error(e)
             return 'sourceinsinknotfounderror', 'Command: '+str(knime_command)+'\n Error: '+str(e)
-        ### csv scope copy to the .dat location
-        # try:
-        #     csv_scope = glob.glob(tmpOutputFolder+'/*_scope.csv')
-        #     with open(csv_scope[0], 'rb') as op:
-        #         scope_csv = op.read()
-        #     return scope_csv, b'noerror', ''
-        # except IndexError as e:
-        #     logger.error('RetroPath2.0 has not found any results')
-        #     logger.error(e)
-        #     return b'', b'noresulterror', 'Command: '+str(knime_command)+'\n Error: '+str(e)+'\n tmpOutputFolder: '+str(glob.glob(tmpOutputFolder+'/*'))
+
     except OSError as e:
         logger.error('Running the RetroPath2.0 Knime program produced an OSError')
         logger.error(e)
