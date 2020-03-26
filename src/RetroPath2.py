@@ -62,8 +62,6 @@ def run(sinkfile, sourcefile, max_steps, rulesfile, outdir, topx=100, dmin=0, dm
             + ' -workflow.variable=output.solutionfile,"results.csv",String' \
             + ' -workflow.variable=output.sourceinsinkfile,"source-in-sink.csv",String'
 
-        print(knime_command)
-
         commandObj = subprocess.Popen(knime_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, preexec_fn=limit_virtual_memory)
 
         try:
