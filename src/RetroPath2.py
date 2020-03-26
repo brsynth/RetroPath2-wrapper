@@ -41,6 +41,8 @@ def run(sinkfile, sourcefile, max_steps, rulesfile, outdir, topx=100, dmin=0, dm
         logging.basicConfig(level=logging.DEBUG)
         logger = logging.getLogger(__name__)
 
+    os.mkdir(outdir)
+
     ### run the KNIME RETROPATH2.0 workflow
     try:
 
