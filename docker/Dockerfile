@@ -19,6 +19,8 @@ org.knime.features.python.feature.group,\
 org.rdkit.knime.feature.feature.group \
 -bundlepool /usr/local/knime/ -d /usr/local/knime/
 
+WORKDIR /tmp
+
 # Copy workflow
 RUN apt-get install -y unzip
 ENV RETROPATH_VERSION 9
@@ -27,13 +29,20 @@ ENV RETROPATH_URL https://myexperiment.org/workflows/4987/download/RetroPath2.0_
 # ENV RETROPATH_SHA256 7d81b42f6eddad2841b67c32eeaf66cb93227d6c2542938251be6b77b49c0716
 # version 9
 ENV RETROPATH_SHA256 79069d042df728a4c159828c8f4630efe1b6bb1d0f254962e5f40298be56a7c4
-WORKDIR /home/workflows
-RUN echo "$RETROPATH_SHA256 /tmp/RetroPath2_0.zip" > /tmp/RetroPath2_0.zip.sha256
-RUN cat /tmp/RetroPath2_0.zip.sha256
+RUN echo "$RETROPATH_SHA256 RetroPath2_0.zip" > RetroPath2_0.zip.sha256
+RUN cat RetroPath2_0.zip.sha256
 RUN echo Downloading $RETROPATH_URL
-RUN curl -v -L -o /tmp/RetroPath2_0.zip $RETROPATH_URL && sha256sum /tmp/RetroPath2_0.zip && sha256sum -c /tmp/RetroPath2_0.zip.sha256
-RUN unzip /tmp/RetroPath2_0.zip RetroPath2.0/* -d . && mv RetroPath2.0 $RETROPATH_VERSION
-RUN rm -f /tmp/RetroPath2_0.zip*
+RUN curl -v -L -o RetroPath2_0.zip $RETROPATH_URL \
+ && sha256sum RetroPath2_0.zip \
+ && sha256sum -c RetroPath2_0.zip.sha256
+RUN unzip RetroPath2_0.zip RetroPath2.0/* -d /home/workflows \
+ && mv /home/workflows/RetroPath2.0 /home/workflows/$RETROPATH_VERSION
+RUN rm -f RetroPath2_0.zip*
+
+# # Copy retrorules
+# ENV RETRORULES_URL https://retrorules.org/dl/preparsed/rr02/rp2/hs
+# RUN wget --quiet $RETRORULES_URL -O rules_rall_rp2.tar.gz \
+#  && tar -C /home/src xzf rules_rall_rp2.tar.gz retrorules_rr02_rp2_hs/retrorules_rr02_rp2_flat_retro.csv
 
 WORKDIR /home/src
 # Copy code
