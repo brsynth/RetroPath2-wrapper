@@ -1,10 +1,16 @@
 #!/bin/bash
 
-docker run \
-  -v $PWD/..:/home \
-  -w /home/test \
-  --rm brsynth/retropath2 \
-/bin/sh test-standalone.sh
+cd ../docker
+docker-compose run --rm -v $PWD/../test:/home/test -w /home/test --entrypoint="" retropath2 \
+  sh -c "./test-standalone.sh out/test-in-docker"
+cd -
+
+
+# docker run \
+#   -v $PWD/..:/home \
+#   -w /home/test \
+#   --rm brsynth/retropath2 \
+# /bin/sh test-standalone.sh
 
 #cp results/test_out_scope.csv .
 
