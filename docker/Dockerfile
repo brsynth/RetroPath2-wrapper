@@ -13,9 +13,9 @@ ENV RETROPATH_URL https://myexperiment.org/workflows/4987/download/RetroPath2.0_
 # version 9
 ENV RETROPATH_SHA256 79069d042df728a4c159828c8f4630efe1b6bb1d0f254962e5f40298be56a7c4
 RUN echo "$RETROPATH_SHA256  RetroPath2_0.zip" > RetroPath2_0.zip.sha256
-RUN cat RetroPath2_0.zip.sha256
-RUN echo Downloading $RETROPATH_URL
-RUN curl -v -L -o RetroPath2_0.zip $RETROPATH_URL \
+# RUN cat RetroPath2_0.zip.sha256
+# RUN echo Downloading $RETROPATH_URL
+RUN curl -L -o RetroPath2_0.zip $RETROPATH_URL \
  && sha256sum RetroPath2_0.zip \
  && sha256sum -c RetroPath2_0.zip.sha256
 ARG WORKFLOWS_INSTALL
