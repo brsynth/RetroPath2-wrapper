@@ -158,8 +158,7 @@ def entrypoint(params=sys.argv[1:]):
             )
 
     return result
-    # with open(params.scope_csv, 'wb') as s_c:
-    #     s_c.write(result[0])
+
 
 if __name__ == '__main__':
     entrypoint()
