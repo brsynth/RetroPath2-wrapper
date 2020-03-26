@@ -1,0 +1,16 @@
+version: '2.4'
+
+services:
+
+  retropath2:
+    image: brsynth/retropath2
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    env_file: .env
+    container_name: retropath2
+    restart: always
+
+networks:
+  default:
+    name: retropath2

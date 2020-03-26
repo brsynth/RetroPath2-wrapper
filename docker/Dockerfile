@@ -4,6 +4,7 @@ RUN apt-get update \
  && apt-get install -y \
       python3
 
+# For KNIME
 RUN ln -sf /usr/bin/python3 /usr/bin/python
 
 # #stable version
@@ -44,3 +45,13 @@ jp.co.infocom.cheminfo.marvin.feature.feature.group,\
 org.knime.features.python.feature.group,\
 org.rdkit.knime.feature.feature.group \
 -bundlepool /usr/local/knime/ -d /usr/local/knime/
+
+# Copy code
+COPY src /home/src
+
+# Copy workflow
+COPY workflows /home/workflows
+
+WORKDIR /home/src
+
+ENTRYPOINT python3 RetroPath2.py
