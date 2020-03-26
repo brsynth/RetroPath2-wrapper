@@ -109,7 +109,9 @@ def run(sinkfile, sourcefile, max_steps, rulesfile, outdir, topx=100, dmin=0, dm
     return 'Job', 'SUCCESS'
 
 
-if __name__ == "__main__":
+
+
+def build_parser():
     #### WARNING: as it stands one can only have a single source molecule
     parser = argparse.ArgumentParser('Python wrapper for the KNIME workflow to run RetroPath2.0')
     parser.add_argument('-sinkfile', type=str)
@@ -124,28 +126,44 @@ if __name__ == "__main__":
     parser.add_argument('-outdir', type=str)
     parser.add_argument('-timeout', type=int)
     parser.add_argument('-is_forward', type=str)
-    params = parser.parse_args()
-    if params.is_forward=='False' or params.is_forward=='false' or params.is_forward==False:
-        params.is_forward = False
-    elif params.is_forward=='True' or params.is_forward=='true' or params.is_forward==True:
-        params.is_forward = True
-    if (params.rulesfile==None) or (params.rulesfile==b'None') or (params.rulesfile=='None') or (params.rulesfile=='') or (params.rulesfile==b''):
-        params.rulesfile = os.getcwd()+'/in/empty_file.csv'
+
+    return parser
+
+
+def entrypoint(params=sys.argv[1:]):
+    parser = build_parser()
+
+    args = parser.parse_args(params)
+
+    if args.selected_parser is None:
+        parser.print_help()
+        exit(1)
+
+    if args.is_forward=='False' or args.is_forward=='false' or args.is_forward==False:
+        args.is_forward = False
+    elif args.is_forward=='True' or args.is_forward=='true' or args.is_forward==True:
+        args.is_forward = True
+    if (args.rulesfile==None) or (args.rulesfile==b'None') or (args.rulesfile=='None') or (args.rulesfile=='') or (args.rulesfile==b''):
+        args.rulesfile = os.getcwd()+'/in/empty_file.csv'
     result = run(
-            params.sinkfile,
-            params.sourcefile,
-            params.max_steps,
-            params.rulesfile,
-            params.outdir,
-            params.topx,
-            params.dmin,
-            params.dmax,
-            params.mwmax_source,
-            params.mwmax_cof,
-            params.timeout,
-            params.is_forward,
+            args.sinkfile,
+            args.sourcefile,
+            args.max_steps,
+            args.rulesfile,
+            args.outdir,
+            args.topx,
+            args.dmin,
+            args.dmax,
+            args.mwmax_source,
+            args.mwmax_cof,
+            args.timeout,
+            args.is_forward,
             logger
             )
-    print(result)
+
+    return result
     # with open(params.scope_csv, 'wb') as s_c:
     #     s_c.write(result[0])
+
+if __name__ == '__main__':
+    entrypoint()
