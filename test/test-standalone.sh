@@ -6,8 +6,6 @@ if [[ "$outdir" == "" ]]; then
   outdir="out/test-standalone"
 fi
 
-mkdir -p $outdir
-
 python3 ../src/RetroPath2.py \
   -sinkfile in/Galaxy177-Sink_Compounds.csv \
   -sourcefile in/Galaxy160-Source.csv \
