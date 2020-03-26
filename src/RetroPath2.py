@@ -135,10 +135,6 @@ def entrypoint(params=sys.argv[1:]):
 
     args = parser.parse_args(params)
 
-    if args.selected_parser is None:
-        parser.print_help()
-        exit(1)
-
     if args.is_forward=='False' or args.is_forward=='false' or args.is_forward==False:
         args.is_forward = False
     elif args.is_forward=='True' or args.is_forward=='true' or args.is_forward==True:
