@@ -20,7 +20,7 @@ RUN curl -v -L -o RetroPath2_0.zip $RETROPATH_URL \
  && sha256sum -c RetroPath2_0.zip.sha256
 ARG WORKFLOWS_INSTALL
 RUN mkdir -p $WORKFLOWS_INSTALL \
- && unzip RetroPath2_0.zip RetroPath2.0/* -d $WORKFLOWS_INSTALL \
+ && unzip -qq RetroPath2_0.zip RetroPath2.0/* -d $WORKFLOWS_INSTALL \
  && mv $WORKFLOWS_INSTALL/RetroPath2.0 $WORKFLOWS_INSTALL/$RETROPATH_VERSION
 
 # # Copy retrorules
