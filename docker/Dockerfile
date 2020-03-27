@@ -56,4 +56,4 @@ WORKDIR /home/src
 # Copy code
 COPY src .
 
-ENTRYPOINT python3 RetroPath2.py
+#ENTRYPOINT python3 RetroPath2.py
