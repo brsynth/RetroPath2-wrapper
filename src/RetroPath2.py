@@ -54,7 +54,8 @@ def run(
         logging.basicConfig(level=logging.DEBUG)
         logger = logging.getLogger(__name__)
 
-    os.mkdir(outdir)
+    if not os.path.exists(outdir):
+        os.mkdir(outdir)
 
     ### run the KNIME RETROPATH2.0 workflow
     try:
