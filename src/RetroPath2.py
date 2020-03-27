@@ -36,7 +36,20 @@ def limit_virtual_memory():
 ##
 #
 #
-def run(sinkfile, sourcefile, max_steps, rulesfile, outdir, topx=100, dmin=0, dmax=1000, mwmax_source=1000, mwmax_cof=1000, timeout=30, is_forward=False, logger=None):
+def run(
+        sinkfile,
+        sourcefile,
+        max_steps,
+        rulesfile,
+        topx=100,
+        dmin=0,
+        dmax=1000,
+        mwmax_source=1000,
+        mwmax_cof=1000,
+        timeout=30,
+        outdir,
+        is_forward=False,
+        logger=None):
     if logger==None:
         logging.basicConfig(level=logging.DEBUG)
         logger = logging.getLogger(__name__)
