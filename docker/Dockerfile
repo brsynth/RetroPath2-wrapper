@@ -31,9 +31,9 @@ FROM brsynth/knime
 
 RUN apt-get update \
  && apt-get install -y \
-      python3 python3-pip
+      python3
 
-RUN ln -sf /usr/bin/pip3 /usr/bin/pip
+
 # For KNIME
 RUN ln -sf /usr/bin/python3 /usr/bin/python
 
