@@ -9,7 +9,7 @@ Created on January 16 2020
 
 
 import sys
-sys.path.insert(0, '/home/')
+#sys.path.insert(0, '/home/')
 import os
 import argparse
 import subprocess
