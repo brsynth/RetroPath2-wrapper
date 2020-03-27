@@ -37,7 +37,7 @@ RUN apt-get update \
 # For KNIME
 RUN ln -sf /usr/bin/python3 /usr/bin/python
 
-#install the additional packages required for running retropath KNIME workflow
+# Install the additional packages required for running retropath KNIME workflow
 RUN /usr/local/knime/knime -application org.eclipse.equinox.p2.director -nosplash -consolelog \
 -r http://update.knime.org/community-contributions/trunk,\
 http://update.knime.com/analytics-platform/3.6,\
