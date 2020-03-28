@@ -31,11 +31,12 @@ FROM brsynth/knime
 
 RUN apt-get update \
  && apt-get install -y \
-      python3 python3-pip
+      python3.8 python3-pip
 
 
 # For KNIME
-RUN ln -sf /usr/bin/python3 /usr/bin/python
+RUN ln -sf /usr/bin/python3.8 /usr/bin/python \
+ && ln -sf /usr/bin/python3.8 /usr/bin/python3
 
 # Install the additional packages required for running retropath KNIME workflow
 RUN /usr/local/knime/knime -application org.eclipse.equinox.p2.director -nosplash -consolelog \
