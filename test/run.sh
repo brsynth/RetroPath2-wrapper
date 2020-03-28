@@ -3,7 +3,7 @@
 outdir=$1
 
 if [[ "$outdir" == "" ]]; then
-  outdir="out/test-standalone"
+  outdir="out/test"
 fi
 
 python3 ../src/RetroPath2.py \
