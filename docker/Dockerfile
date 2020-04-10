@@ -27,16 +27,16 @@ RUN mkdir -p $WORKFLOWS_INSTALL \
 #  && tar -C /home/src xzf rules_rall_rp2.tar.gz retrorules_rr02_rp2_hs/retrorules_rr02_rp2_flat_retro.csv
 
 
-FROM brsynth/knime
+FROM brsynth/knime:rdkit
 
-RUN apt-get update \
- && apt-get install -y \
-      python3.8 python3-pip
-
-
-# For KNIME
-RUN ln -sf /usr/bin/python3.8 /usr/bin/python \
- && ln -sf /usr/bin/python3.8 /usr/bin/python3
+# RUN apt-get update \
+#  && apt-get install -y \
+#       python3.8 python3-pip
+#
+#
+# # For KNIME
+# RUN ln -sf /usr/bin/python3.8 /usr/bin/python \
+#  && ln -sf /usr/bin/python3.8 /usr/bin/python3
 
 # Install the additional packages required for running retropath KNIME workflow
 RUN /usr/local/knime/knime -application org.eclipse.equinox.p2.director -nosplash -consolelog \
