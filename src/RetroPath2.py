@@ -18,6 +18,7 @@ import csv
 import glob
 import resource
 import tempfile
+from shutil import copy as shutil_cp
 
 # logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -56,6 +57,9 @@ def run(
 
     if not os.path.exists(outdir):
         os.mkdir(outdir)
+    shutil_cp(sinkfile, outdir+"/sink.csv")
+    shutil_cp(sourcefile, outdir+"/source.csv")
+    shutil_cp(rulesfile, outdir+"/rules.csv")
 
     ### run the KNIME RETROPATH2.0 workflow
     try:
@@ -66,9 +70,9 @@ def run(
             + ' -workflow.variable=input.dmin,"'+str(dmin)+'",int' \
             + ' -workflow.variable=input.dmax,"'+str(dmax)+'",int' \
             + ' -workflow.variable=input.max-steps,"'+str(max_steps)+'",int' \
-            + ' -workflow.variable=input.sourcefile,"'+str(sourcefile)+'",String' \
-            + ' -workflow.variable=input.sinkfile,"'+str(sinkfile)+'",String' \
-            + ' -workflow.variable=input.rulesfile,"'+str(rulesfile)+'",String' \
+            + ' -workflow.variable=input.sourcefile,"'+str(outdir+"/source.csv")+'",String' \
+            + ' -workflow.variable=input.sinkfile,"'+str(outdir+"/sink.csv")+'",String' \
+            + ' -workflow.variable=input.rulesfile,"'+str(outdir+"/rules.csv")+'",String' \
             + ' -workflow.variable=output.topx,"'+str(topx)+'",int' \
             + ' -workflow.variable=output.mwmax-source,"'+str(mwmax_source)+'",int' \
             + ' -workflow.variable=output.mwmax-cof,"'+str(mwmax_cof)+'",int' \
