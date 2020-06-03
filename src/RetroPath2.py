@@ -73,9 +73,9 @@ def run(
             + ' -workflow.variable=input.sourcefile,"'+str(outdir+"/source.csv")+'",String' \
             + ' -workflow.variable=input.sinkfile,"'+str(outdir+"/sink.csv")+'",String' \
             + ' -workflow.variable=input.rulesfile,"'+str(outdir+"/rules.csv")+'",String' \
-            + ' -workflow.variable=output.topx,"'+str(topx)+'",int' \
-            + ' -workflow.variable=output.mwmax-source,"'+str(mwmax_source)+'",int' \
-            + ' -workflow.variable=output.mwmax-cof,"'+str(mwmax_cof)+'",int' \
+            + ' -workflow.variable=input.topx,"'+str(topx)+'",int' \
+            + ' -workflow.variable=input.mwmax-source,"'+str(mwmax_source)+'",int' \
+            + ' -workflow.variable=input.mwmax-cof,"'+str(mwmax_cof)+'",int' \
             + ' -workflow.variable=output.dir,"'+str(outdir)+'/",String' \
             + ' -workflow.variable=output.solutionfile,"results.csv",String' \
             + ' -workflow.variable=output.sourceinsinkfile,"source-in-sink.csv",String'
