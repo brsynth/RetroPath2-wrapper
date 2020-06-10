@@ -92,7 +92,7 @@ def run(sinkfile,
             preexec_fn=limit_virtual_memory
             )
         try:
-            outs, errs = p.communicate(timeout=timeout)
+            outs, errs = p.communicate(timeout=timeout*60)
         except TimeoutExpired:
             p.kill()
             logger.warning('*** WARNING')
