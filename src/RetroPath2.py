@@ -65,41 +65,43 @@ def run(sinkfile,
     ### run the KNIME RETROPATH2.0 workflow
     try:
 
+        results_filename = 'results.csv'
+        src_in_sk_filename = 'source-in-sink.csv'
+
         knime_command = KPATH \
             + ' -nosplash -nosave -reset --launcher.suppressErrors -application org.knime.product.KNIME_BATCH_APPLICATION ' \
             + ' -workflowFile='+RP_WORK_PATH \
             + ' -workflow.variable=input.dmin,"'+str(dmin)+'",int' \
             + ' -workflow.variable=input.dmax,"'+str(dmax)+'",int' \
             + ' -workflow.variable=input.max-steps,"'+str(max_steps)+'",int' \
-            + ' -workflow.variable=input.sourcefile,"'+str(outdir+"/source.csv")+'",String' \
-            + ' -workflow.variable=input.sinkfile,"'+str(outdir+"/sink.csv")+'",String' \
-            + ' -workflow.variable=input.rulesfile,"'+str(outdir+"/rules.csv")+'",String' \
+            + ' -workflow.variable=input.sourcefile,"'+outdir+"/source.csv"+'",String' \
+            + ' -workflow.variable=input.sinkfile,"'+outdir+"/sink.csv"+'",String' \
+            + ' -workflow.variable=input.rulesfile,"'+outdir+"/rules.csv"+'",String' \
             + ' -workflow.variable=input.topx,"'+str(topx)+'",int' \
             + ' -workflow.variable=input.mwmax-source,"'+str(mwmax_source)+'",int' \
             + ' -workflow.variable=input.mwmax-cof,"'+str(mwmax_cof)+'",int' \
-            + ' -workflow.variable=output.dir,"'+str(outdir)+'/",String' \
-            + ' -workflow.variable=output.solutionfile,"results.csv",String' \
-            + ' -workflow.variable=output.sourceinsinkfile,"source-in-sink.csv",String'
+            + ' -workflow.variable=output.dir,"'+outdir+'/",String' \
+            + ' -workflow.variable=output.solutionfile,"'+results_filename+'",String' \
+            + ' -workflow.variable=output.sourceinsinkfile,"'+src_in_sk_filename+'",String'
 
         try:
-            output = check_output(knime_command, stderr=STDOUT, timeout=timeout, shell=True)
+            output = check_output(knime_command, stderr=STDOUT, timeout=timeout*60, shell=True)
         except TimeoutExpired:
             logger.warning('*** WARNING')
             logger.warning('      |- Timeout from RetroPath2.0 ('+str(timeout)+' minutes)')
-            logger.warning('      |- Results collected until now are available in '+str(outdir)+'/results.csv')
+            logger.warning('      |- Results collected until now are available in '+str(outdir)+'/'+results_filename)
 
         ### if source is in sink
         try:
             count = 0
-            with open(outdir+'/source-in-sink.csv') as f:
-                reader = csv.reader(f, delimiter=',', quotechar='"')
-                for i in reader:
+            with open(outdir+'/'+src_in_sk_filename) as f:
+                for i in csv.reader(f, delimiter=',', quotechar='"'):
                     count += 1
                     if count>1:
                         logger.error('Source has been found in the sink')
-                        return 'sourceinsinkerror', 'Command: '+str(knime_command)+'\n Error: Source found in sink'
+                        return 'sourceinsinkerror', 'Command: '+str(knime_command)+'\n Error: Source found in Sink'
         except FileNotFoundError as e:
-            logger.error('Cannot find source-in-sink.csv file')
+            logger.error('Cannot find'+src_in_sk_filename+' file')
             logger.error(e)
             return 'sourceinsinknotfounderror', 'Command: '+str(knime_command)+'\n Error: '+str(e)
 
