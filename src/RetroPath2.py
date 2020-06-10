@@ -88,7 +88,7 @@ def run(sinkfile,
             output = check_output(knime_command, stderr=STDOUT, timeout=timeout*60, shell=True)
         except TimeoutExpired:
             print('*** WARNING')
-            print('      |- Timeout from RetroPath2.0 ('+str(timeout)+' minutes)')
+            print('      |- Time limit ('+str(timeout)+' minutes) reached')
             print('      |- Results collected until now are available in '+str(outdir)+'/'+results_filename)
 
         ### if source is in sink
