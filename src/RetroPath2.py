@@ -89,7 +89,7 @@ def run(sinkfile,
         except TimeoutExpired:
             logger.warning('*** WARNING')
             logger.warning('      |- Time limit ('+str(timeout)+' minutes) reached')
-            logger.warning('      |- Results collected until now are available'
+            logger.warning('      |- Results collected until now are available')
 
         ### if source is in sink
         try:
