@@ -80,18 +80,23 @@ def run(
             + ' -workflow.variable=output.solutionfile,"results.csv",String' \
             + ' -workflow.variable=output.sourceinsinkfile,"source-in-sink.csv",String'
 
-        commandObj = subprocess.Popen(knime_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, preexec_fn=limit_virtual_memory)
+        commandObj = subprocess.Popen(knime_command,
+                                      stdout=subprocess.PIPE,
+                                      stderr=subprocess.PIPE,
+                                      shell=True,
+                                      encoding = 'utf8',
+                                      preexec_fn=limit_virtual_memory)
 
         try:
             commandObj.wait(timeout=timeout*60.0)
         except subprocess.TimeoutExpired as e:
             logger.error('Timeout from retropath2.0 ('+str(timeout)+' minutes)')
             commandObj.kill()
-            return 'timeout', 'Command: '+str(knime_command)+'\n Error: '+str(e)
+            # return 'timeout', 'Command: '+str(knime_command)+'\n Error: '+str(e)
 
         (result, error) = commandObj.communicate()
-        result = result.decode('utf-8')
-        error = error.decode('utf-8')
+        # result = result.decode('utf-8')
+        # error = error.decode('utf-8')
 
         ### if java has a memory issue
         if 'There is insufficient memory for the Java Runtime Environment to continue' in result:
