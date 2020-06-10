@@ -19,6 +19,7 @@ import glob
 import resource
 import tempfile
 from shutil import copy as shutil_cp
+from subprocess import STDOUT, check_output, TimeoutExpired
 
 # logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -37,8 +38,7 @@ def limit_virtual_memory():
 ##
 #
 #
-def run(
-        sinkfile,
+def run(sinkfile,
         sourcefile,
         max_steps,
         rulesfile,
@@ -51,6 +51,7 @@ def run(
         timeout=30,
         is_forward=False,
         logger=None):
+
     if logger==None:
         logging.basicConfig(level=logging.DEBUG)
         logger = logging.getLogger(__name__)
@@ -80,28 +81,12 @@ def run(
             + ' -workflow.variable=output.solutionfile,"results.csv",String' \
             + ' -workflow.variable=output.sourceinsinkfile,"source-in-sink.csv",String'
 
-        commandObj = subprocess.Popen(knime_command,
-                                      stdout=subprocess.PIPE,
-                                      stderr=subprocess.PIPE,
-                                      shell=True,
-                                      encoding = 'utf8',
-                                      preexec_fn=limit_virtual_memory)
-
         try:
-            commandObj.wait(timeout=timeout*60.0)
-        except subprocess.TimeoutExpired as e:
-            logger.error('Timeout from retropath2.0 ('+str(timeout)+' minutes)')
-            commandObj.kill()
-            # return 'timeout', 'Command: '+str(knime_command)+'\n Error: '+str(e)
-
-        (result, error) = commandObj.communicate()
-        # result = result.decode('utf-8')
-        # error = error.decode('utf-8')
-
-        ### if java has a memory issue
-        if 'There is insufficient memory for the Java Runtime Environment to continue' in result:
-            logger.error('RetroPath2.0 does not have sufficient memory to continue')
-            return 'memerror', 'Command: '+str(knime_command)+'\n Error: Memory error'
+            output = check_output(knime_command, stderr=STDOUT, timeout=timeout, shell=True)
+        except TimeoutExpired:
+            logger.warning('*** WARNING')
+            logger.warning('      |- Timeout from RetroPath2.0 ('+str(timeout)+' minutes)')
+            logger.warning('      |- Results collected until now are available in '+str(outdir)+'/results.csv')
 
         ### if source is in sink
         try:
@@ -110,9 +95,9 @@ def run(
                 reader = csv.reader(f, delimiter=',', quotechar='"')
                 for i in reader:
                     count += 1
-            if count>1:
-                logger.error('Source has been found in the sink')
-                return 'sourceinsinkerror', 'Command: '+str(knime_command)+'\n Error: Source found in sink'
+                    if count>1:
+                        logger.error('Source has been found in the sink')
+                        return 'sourceinsinkerror', 'Command: '+str(knime_command)+'\n Error: Source found in sink'
         except FileNotFoundError as e:
             logger.error('Cannot find source-in-sink.csv file')
             logger.error(e)
@@ -162,21 +147,19 @@ def entrypoint(params=sys.argv[1:]):
         args.is_forward = True
     if (args.rulesfile==None) or (args.rulesfile==b'None') or (args.rulesfile=='None') or (args.rulesfile=='') or (args.rulesfile==b''):
         args.rulesfile = os.getcwd()+'/in/empty_file.csv'
-    result = run(
-            args.sinkfile,
-            args.sourcefile,
-            args.max_steps,
-            args.rulesfile,
-            args.outdir,
-            args.topx,
-            args.dmin,
-            args.dmax,
-            args.mwmax_source,
-            args.mwmax_cof,
-            args.timeout,
-            args.is_forward,
-            logger
-            )
+    result = run(args.sinkfile,
+                args.sourcefile,
+                args.max_steps,
+                args.rulesfile,
+                args.outdir,
+                args.topx,
+                args.dmin,
+                args.dmax,
+                args.mwmax_source,
+                args.mwmax_cof,
+                args.timeout,
+                args.is_forward,
+                logger)
 
     return result
 
