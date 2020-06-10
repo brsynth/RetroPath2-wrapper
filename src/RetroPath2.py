@@ -84,12 +84,12 @@ def run(sinkfile,
             + ' -workflow.variable=output.solutionfile,"'+results_filename+'",String' \
             + ' -workflow.variable=output.sourceinsinkfile,"'+src_in_sk_filename+'",String'
 
-         try:
+        try:
             output = check_output(knime_command, stderr=STDOUT, timeout=timeout*60, shell=True)
         except TimeoutExpired:
-            logger.info('*** WARNING')
-            logger.info('      |- Timeout from RetroPath2.0 ('+str(timeout)+' minutes)')
-            logger.info('      |- Results collected until now are available in '+str(outdir)+'/'+results_filename)
+            print('*** WARNING')
+            print('      |- Timeout from RetroPath2.0 ('+str(timeout)+' minutes)')
+            print('      |- Results collected until now are available in '+str(outdir)+'/'+results_filename)
 
         ### if source is in sink
         try:
