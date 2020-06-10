@@ -87,9 +87,9 @@ def run(sinkfile,
         try:
             output = check_output(knime_command, stderr=STDOUT, timeout=timeout*60, shell=True)
         except TimeoutExpired:
-            print('*** WARNING')
-            print('      |- Time limit ('+str(timeout)+' minutes) reached')
-            print('      |- Results collected until now are available in '+str(outdir)+'/'+results_filename)
+            logger.warning('*** WARNING')
+            logger.warning('      |- Time limit ('+str(timeout)+' minutes) reached')
+            logger.warning('      |- Results collected until now are available'
 
         ### if source is in sink
         try:
