@@ -19,7 +19,7 @@ import glob
 import resource
 import tempfile
 from shutil import copy as shutil_cp
-from subprocess import STDOUT, check_output, TimeoutExpired
+from subprocess import STDOUT, check_output, TimeoutExpired, Popen
 
 # logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -84,12 +84,30 @@ def run(sinkfile,
             + ' -workflow.variable=output.solutionfile,"'+results_filename+'",String' \
             + ' -workflow.variable=output.sourceinsinkfile,"'+src_in_sk_filename+'",String'
 
+
+        p = Popen(
+            knime_command.split(),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            preexec_fn=limit_virtual_memory
+            )
         try:
-            output = check_output(knime_command, stderr=STDOUT, timeout=timeout*60, shell=True)
+            outs, errs = p.communicate(timeout=timeout)
         except TimeoutExpired:
+            p.kill()
             logger.warning('*** WARNING')
             logger.warning('      |- Timeout from RetroPath2.0 ('+str(timeout)+' minutes)')
             logger.warning('      |- Results collected until now are available in '+str(outdir)+'/'+results_filename)
+
+        # else:
+        #
+        #
+        # try:
+        #     output = check_output(knime_command, stderr=STDOUT, timeout=timeout*60, shell=True)
+        # except TimeoutExpired:
+        #     logger.warning('*** WARNING')
+        #     logger.warning('      |- Timeout from RetroPath2.0 ('+str(timeout)+' minutes)')
+        #     logger.warning('      |- Results collected until now are available in '+str(outdir)+'/'+results_filename)
 
         ### if source is in sink
         try:
