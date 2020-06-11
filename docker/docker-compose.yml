@@ -8,8 +8,3 @@ services:
       context: ..
       dockerfile: docker/Dockerfile
     container_name: retropath2-wrapper
-    restart: always
-
-# networks:
-#   default:
-#     name: retropath2
