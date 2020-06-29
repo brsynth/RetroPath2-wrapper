@@ -1,0 +1,28 @@
+version: '3.8'
+
+
+services:
+
+  build:
+    image: singularity
+    build:
+      context: .
+      dockerfile: build.dockerfile
+      args:
+        HOME: ${HOMEDIR}
+    volumes:
+      - $PWD/..:${HOMEDIR}
+    command: singularity build ${HOMEDIR}/${PACKAGE}.simg docker://brsynth/${PACKAGE}
+
+  run:
+    image: singularity-run
+    privileged: true
+    build:
+      context: ../../..
+      dockerfile: run-in-env/singularity/docker/run.dockerfile
+      args:
+        HOME: ${HOMEDIR}
+    command: singularity exec ${HOMEDIR}/${PACKAGE}.simg python ${HOMEDIR}/${PACKAGE}/main.py
+    volumes:
+      - $PWD/../${PACKAGE}.simg:${HOMEDIR}/${PACKAGE}.simg:ro
+      - ../../../custom/src:${HOMEDIR}/${PACKAGE}:ro

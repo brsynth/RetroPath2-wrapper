@@ -1,107 +1,105 @@
-# Retropath2.0 wrapper
+# RetroRules
+
+Retrieve the reaction rules from [RetroRules](https://retrorules.org/)
+
+## Input
+
+* **rule_type**: (string) Valid options: retro, forward, all. Return the rules that are in reverse, forward or both direction
+* **out_folder**: (string) Specify the path where output files will be written
+* **diameters**: (integer list): Valid options: 2, 4, 6, 8, 10, 12, 14, 16. The diameter of the rules to return
+
+## Ouput
+
+* **output**: (string): Path of the output file. Either a compressed TAR (containing a CSV) or CSV list of reaction rules that are in a RetroPath2.0 friendly format
 
 
-Implementation of the KNIME retropath2.0 workflow. Takes for input the minimal (dmin) and maximal (dmax) diameter for the reaction rules and the maximal path length (maxSteps). The tool  expects the following files: `rules.csv`, `sink.csv` and `source.csv` and produces results in an output folder.
-
-## Standalone
-
-### Prerequisites
-
-* Python 3
-
-### Quick start
-The main code is `src/RetroPath2.py` and can be run as the following:
+## Install
+### From pip
+```sh
+[sudo] python -m pip install retrorules
 ```
-python src/RetroPath2.py \
-  -sinkfile <sink_file> \
-  -sourcefile <source_file> \
-  -max_steps 3 \
-  -rulesfile <rules_file> \
-  -topx 100 \
-  -dmin 0 \
-  -dmax 1000 \
-  -mwmax_source 1000 \
-  -mwmax_cof 1000 \
-  -timeout 30 \
-  -outdir <outdir_folder> \
-  -is_forward False
+### From Conda
+```sh
+[sudo] conda install -c synbiocad retrorules
 ```
 
 
-## Docker
-
-RetroPath2 can be run into a docker container.
-
-### Prerequisites
-
-* Docker - [Install](https://docs.docker.com/install/)
-
-### Installation
-Before running the container, the image has to be built with:
-```
-cd docker
-docker-compose build
+## Use
+### Run from CLI
+```sh
+cd custom/src
+python main.py \
+  --rule_type {all,retro,forward} \
+  --output <folder> \
+  [--diameters {2,4,6,8,10,12,14,16}]
 ```
 
-### Run
-Then, the tool is runnable by:
+### Run in Docker
+Local Docker images are built automatically if they do not exist yet. To (re-)build an image, please run the following:
+```sh
+cd <section_folder>/docker
+PACKAGE=<YOUR_PACKAGE_NAME> docker-compose build
 ```
-cd docker
-./RetroPath2.sh
-  -sinkfile <sink_file> \
-  -sourcefile <source_file> \
-  -max_steps 3 \
-  -rulesfile <rules_file> \
-  -topx 100 \
-  -dmin 0 \
-  -dmax 1000 \
-  -mwmax_source 1000 \
-  -mwmax_cof 1000 \
-  -timeout 30 \
-  -outdir <outdir_folder> \
-  -is_forward False
+where `section_folder` can be `run`, `test` or `publish`.
+
+Then, to instantiate the image into a container:
+```sh
+cd run
+./run-in-docker.sh
+```
+where `output_folder` has to be an absolute path.
+
+### Function call from Python code
+```python
+from retrorules import rules
+
+outfile = rules(rule_type, out_folder, diameters)
 ```
 
-To call the tool with fresh code:
-```
-docker-compose run --rm -v <absolutepath_to_src>:/home/src retropath2
-```
+If parameters from CLI have to be parsed, the function `build_parser` is available:
+```python
+from retrorules import build_parser
 
-To call the tool from any location:
-```
-cd docker
-docker-compose run --rm \
-    -v <path/to/source.csv>:/home/source.csv:ro \
-    -v <path/to/sink.csv>:/home/sink.csv:ro \
-    -v <path/to/rules.csv>:/home/rules.csv:ro \
-    -v <path/to/output_folder>:/home/outdir \
-    -w /home \
-    retropath2 python src/RetroPath2.py \
-        -sinkfile <sink_file> \
-        -sourcefile <source_file> \
-        -max_steps 3 \
-        -rulesfile <rules_file> \
-        -topx 100 \
-        -dmin 0 \
-        -dmax 1000 \
-        -mwmax_source 1000 \
-        -mwmax_cof 1000 \
-        -timeout 30 \
-        -outdir <outdir_folder> \
-        -is_forward False
+parser = buildparser()
+params = parser.parse_args()
 ```
 
 ## Test
-All modes can be tested with:
-```
+```sh
 cd test
-./run[-in-docker].sh
+./test-in-docker.sh
 ```
 
 
+## Publish
+NOTE: to publish, credentials stored in secret files are needed.
+
+### PyPi
+To publish the package in PyPi:
+```sh
+cd publish/pypi
+./publish-from-docker.sh
+```
+
+### Conda
+To publish the package in Anaconda:
+```sh
+cd publish/pypi
+./publish-from-docker.sh [PACKAGE_VERSION]
+```
 
 
-### How to cite RetroPath2.0?
+## Authors
+
+* **Thomas Duigou**
+* Melchior du Lac
+* Joan Hérisson
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+
+### How to cite RetroRules?
 Please cite:
 
-Delépine B, Duigou T, Carbonell P, Faulon JL. RetroPath2.0: A retrosynthesis workflow for metabolic engineers. Metabolic Engineering, 45: 158-170, 2018. DOI: https://doi.org/10.1016/j.ymben.2017.12.002
+Duigou, Thomas, et al. "RetroRules: a database of reaction rules for engineering biology." Nucleic acids research 47.D1 (2019): D1229-D1235.

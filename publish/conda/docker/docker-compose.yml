@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+
+
+  publish:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PKG: ${PACKAGE}
+    secrets:
+       - username
+       - password
+    command: sh -c "conda skeleton pypi ${PACKAGE} --version ${VERSION}
+                 && conda build ${PACKAGE}
+                 && anaconda login --username `cat /run/secrets/username` --password `cat /run/secrets/password`
+                 && anaconda upload -u synbiocad /opt/conda/conda-bld/linux-64/${PACKAGE}*"
+
+secrets:
+  username:
+    file: ./secrets/username
+  password:
+    file: ./secrets/password
