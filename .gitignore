@@ -1,13 +1,9 @@
+# Specific
+_exclude_*
+
+# Generic
 __pycache__
 .DS_Store
 .pypirc
+pytest
 .pytest_cache
-rules
-out
-secrets
-src/build
-src/dist
-src/__init__.py
-*.egg-info
-*.simg
-custom/src/requirements*
