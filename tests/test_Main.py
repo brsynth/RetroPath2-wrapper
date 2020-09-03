@@ -4,7 +4,9 @@ Created on Jul 15 2020
 @author: Joan Hérisson
 """
 
-from unittest import TestCase
+from unittest  import TestCase
+from os import path as os_path
+from brs_utils import extract_gz
 
 from retropath2_wrapper import run, build_args_parser
 # from tempfile import TemporaryDirectory
@@ -16,7 +18,7 @@ class Test_Main(TestCase):
         -sinkfile data/Galaxy177-Sink_Compounds.csv \
         -sourcefile data/Galaxy160-Source.csv \
         -max_steps 3 \
-        -rulesfile data/_exclude_rules.csv \
+        -rulesfile data/rules.csv \
         -topx 100 \
         -dmin 0 \
         -dmax 1000 \
@@ -28,6 +30,9 @@ class Test_Main(TestCase):
     args  = build_args_parser().parse_args(cmd)
 
     def test_run(self):
+
+        if not os_path.exists(self.args.rulesfile):
+            extract_gz('data/rules.tar.gz', 'data')
 
         result = run(self.args.sinkfile,
                      self.args.sourcefile,
