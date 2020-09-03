@@ -1,7 +1,7 @@
 from setuptools import setup
 
 
-_readme = 'README'
+_readme = 'README.md'
 
 _extras_path = 'extras'
 
