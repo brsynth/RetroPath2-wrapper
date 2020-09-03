@@ -8,17 +8,12 @@ Created on January 16 2020
 """
 
 
-import sys
-#sys.path.insert(0, '/home/')
 from os import mkdir as os_mkdir
 from os import path as os_path
 from argparse import ArgumentParser as argparse_ArgumentParser
-import subprocess
 import logging
-import csv
-import glob
+from csv import reader as csv_reader
 import resource
-import tempfile
 from shutil import copy as shutil_cp
 from subprocess import STDOUT, check_output, TimeoutExpired
 from brs_utils import download_and_extract_gz
@@ -117,7 +112,7 @@ def run(sinkfile,
         try:
             count = 0
             with open(outdir+'/'+src_in_sk_filename) as f:
-                for i in csv.reader(f, delimiter=',', quotechar='"'):
+                for i in csv_reader(f, delimiter=',', quotechar='"'):
                     count += 1
                     if count>1:
                         logger.error('Source has been found in the sink')
