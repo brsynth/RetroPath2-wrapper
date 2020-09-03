@@ -15,7 +15,7 @@ import logging
 from csv import reader as csv_reader
 import resource
 from shutil import copy as shutil_cp
-from subprocess import STDOUT, check_output, TimeoutExpired
+from subprocess import call, STDOUT, TimeoutExpired# nosec
 from brs_utils import download_and_extract_gz
 
 # logging.basicConfig(level=logging.DEBUG)
@@ -83,7 +83,7 @@ def run(sinkfile,
                     + 'org.knime.features.python.feature.group,' \
                     + 'org.rdkit.knime.feature.feature.group' \
                 + ' -bundlepool '+KPATH+' -d '+KPATH
-            check_output(knime_add_pkgs, stderr=STDOUT, timeout=timeout*60, shell=True)
+            call(knime_add_pkgs.split(), stderr=STDOUT, shell=False)# nosec
 
         knime_command = KEXEC \
             + ' -nosplash -nosave -reset --launcher.suppressErrors -application org.knime.product.KNIME_BATCH_APPLICATION ' \
@@ -102,7 +102,7 @@ def run(sinkfile,
             + ' -workflow.variable=output.sourceinsinkfile,"'+src_in_sk_filename+'",String'
 
         try:
-            output = check_output(knime_command, stderr=STDOUT, timeout=timeout*60, shell=True)
+            output = call(knime_command.split(), stderr=STDOUT, timeout=timeout*60, shell=False)# nosec
         except TimeoutExpired:
             logger.warning('*** WARNING')
             logger.warning('      |- Time limit ('+str(timeout)+' minutes) reached')
