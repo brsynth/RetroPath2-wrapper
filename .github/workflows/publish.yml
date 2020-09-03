@@ -48,17 +48,17 @@ jobs:
     - name: Get module from PyPi
       run: |
         conda skeleton pypi retropath2-wrapper
-    - name: Customize recipe
-      run: |
-        sed -i.bck '/\ \ run\:/a \ \ \ \ - rdkit' retropath2-wrapper/meta.yaml
+    # - name: Customize recipe
+    #   run: |
+    #     sed -i.bck '/\ \ run\:/a \ \ \ \ - rdkit' retropath2-wrapper/meta.yaml
     - name: Add channels
       run: |
         conda config \
-          # --add channels brsynth \
+          --add channels brsynth
           # --add channels sbmlteam \
           # --add channels anaconda \
           # --add channels conda-forge \
-          --add channels rdkit
+          # --add channels rdkit
     - name: Build for Python ${{ matrix.python-version }}
       run: |
         conda-build --python ${{ matrix.python-version }} retropath2-wrapper
