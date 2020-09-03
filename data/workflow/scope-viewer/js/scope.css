@@ -1,0 +1,332 @@
+
+body {
+    margin: 0px;
+    font-family: sans-serif;
+}
+
+.someText {
+    display: block
+}
+
+#base {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#foot {
+    text-align: center;
+    font-family: serif;
+    color: #575757;
+}
+
+#foot a, #foot a:visited{
+    color: #575757;
+}
+
+/* Input **************************************************************/
+#input {
+    box-shadow: 0 0 5px 0px black;
+    padding: 10px;
+    text-align: center;
+    margin: 0;
+    max-height: 8%;
+}
+
+#input > div {
+    display: inline-block;
+    width: 45%;
+    line-height: 110%;
+}
+
+#input > div > input {
+    padding-top: 10px;
+}
+
+/* Title **************************************************************/
+#title {
+    text-align: center;
+    font-size: 2em;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    font-family: sans-serif;
+}
+
+/* Viewer *************************************************************/
+#viewer {
+    height: 80%;
+    box-shadow: 0 0 5px 0px black;
+}
+
+#viewer-setting {
+    position: absolute;
+    z-index: 11;
+    background-color: #E8E9E8;
+    padding: 1%;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 10px;
+}
+
+#cy {
+    float: left;
+    position: relative;
+    border-radius: 5px;
+    height: 100%;
+    width: 73%;
+    margin-left: 8px;
+    z-index: 10;
+}
+
+/* Info ***************************************************************/
+#info-wrapper {
+    float: right;
+    border-radius: 5px;
+    width: 25%;
+    height: 100%;
+    position: relative;
+}
+
+#trapez {
+    width : 118%;
+    height : 100%;
+    position: relative;
+    z-index: 0;
+    transform: translate(-15%, 0px); /* replaces relative positioning (left and top => X and Y) */
+    // border: 2px dashed Black;
+}
+
+#trapez > svg > polygon {
+    stroke-width: 5px;
+    stroke-linejoin: "round";
+    fill: url(#gradient);
+}
+
+#info {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    overflow-x: hidden;
+    overflow-y: auto;
+    right: 0;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    background-color: #E8E9E8;
+    background: -moz-linear-gradient(left, #FFFFFF, #E8E9E8); /* FF3.6-15 */
+    background: -webkit-linear-gradient(left, #FFFFFF,#E8E9E8); /* Chrome10-25,Safari5.1-6 */
+    background: -o-linear-gradient(left, #FFFFFF, #E8E9E8); /* For Opera 11.1 to 12.0 */
+    background: linear-gradient(to right, #FFFFFF,#E8E9E8); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+}
+
+/* Based on http://www.mademyday.de/css-height-equals-width-with-pure-css.html */
+#info > div.img-box {
+    /* v1 */
+    box-shadow: 0 0 10px 0px black;
+    position: relative;
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 5%;
+
+    /* v2
+    position: relative;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    background-color: White;
+    border-left: 4px solid #4CAF50;
+    */
+}
+
+#info > div.img-box::before {
+    /* v1 */
+    content: "";
+    display: block;
+    padding-top: 100%;
+
+    /* v2
+    content: "";
+    display: block;
+    padding-top: 50%;
+    */
+}
+
+#info > div.img-box > div.img {
+    /* v1 */
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-size: cover;
+
+    /* v2
+    position: absolute;
+    top: 0;
+    left: 25%;
+    bottom: 0;
+    right: 25%;
+    background-size: contain;
+    */
+}
+
+#info div.raw-text {
+    line-height: 1.4;
+    width: auto;
+    background-color: #fff;
+    padding: 8px 12px;
+    margin-right: -1%;
+    border-left: 4px solid #4CAF50;
+    font-family: Consolas,"courier new", "monospace";
+    font-size: 1em;
+}
+
+#info .raw-text {
+    // overflow-x: scroll;
+    // white-space: nowrap;
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+#info .raw-text a,
+#info .raw-text a:visited
+{
+    color: #575757;
+}
+
+#info div.info-title {
+    font-weight: bold;
+    font-size: 2em;
+    font-family: sans-serif;
+    font-variant: small-caps;
+    text-align: right;
+    padding-top: 5%;
+    padding-right: 5%;
+}
+
+#info div.info-name {
+    font-family: sans-serif;
+    text-align: right;
+    padding-right: 5%;
+}
+
+#info div.info-name a,
+#info div.info-name a:visited
+{
+    color: #575757;
+}
+
+#info div.spacer {
+    width: 80%;
+    margin: 5%;
+}
+
+#info div.info-subtitle {
+    font-family: sans-serif;
+    padding-left: 2%;
+    padding-top: 5%;
+}
+
+#info > div.three-cols {
+    display: flex;
+    padding-top: 5%;
+    align-items: flex-end;
+}
+
+#info > div.three-cols > div {
+    flex-basis: 100%;
+}
+
+#info > div.three-cols div.info-subtitle {
+    padding-top: 0%;
+}
+
+#info > div.two-cols {
+    display: flex;
+    padding-top: 5%;
+    align-items: flex-end;
+}
+
+#info > div.two-cols > div {
+    flex-basis: 100%;
+}
+
+#info > div.two-cols div.info-subtitle {
+    padding-top: 0%;
+}
+
+#info > div.smiles .link,
+#info > div.inchi .link,
+#info > div.inchikey .link {
+    text-align: right;
+    font-family: sans-serif;
+    font-size: 0.9em;
+}
+
+#info > div.smiles a,
+#info > div.inchi a,
+#info > div.inchikey a,
+#info > div.smiles a:visited,
+#info > div.inchi a:visited,
+#info > div.inchikey a:visited {
+    color: #575757;
+}
+
+/* Help ***************************************************************/
+#info > .help-content {
+    padding: 2px 12px;
+    font-family: serif;
+}
+
+#info > .help-tip {
+    text-align: center;
+    font-family: serif;
+    font-style: italic;
+    padding-top: 1em;
+}
+
+#info > .help-content > p {
+    display: block;
+    margin: 0;
+    padding-top: 0.1em;
+    padding-bottom: 0.1em;
+}
+
+#info > .help-content .symbol-compound {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+#info > .help-content .symbol-transformation {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+#info > .help-content .symbol-source-color {
+    color: #B22222;
+}
+
+#info > .help-content .symbol-inter-color {
+    color: #235789;
+}
+
+#info > .help-content .symbol-sink-color {
+    color: #68956D;
+}
+
+#info > .help-content > div.load-data {
+    display: flex;
+    padding-top: 0.3em;
+    padding-bottom: 0.3em;
+}
+
+#info > .help-content .symbol-tick {
+    padding-right: 5%;
+}
