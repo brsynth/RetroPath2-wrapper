@@ -2,6 +2,7 @@
 
 
 from logging import error as logging_error
+from os import getcwd as os_getcwd
 
 from retropath2_wrapper import run, build_args_parser
 
@@ -13,7 +14,7 @@ def _cli():
     args.is_forward = args.is_forward.lower() in ['true', 't']
 
     if (args.rulesfile==None) or (args.rulesfile==b'None') or (args.rulesfile=='None') or (args.rulesfile=='') or (args.rulesfile==b''):
-        args.rulesfile = os.getcwd()+'/in/empty_file.csv'
+        args.rulesfile = os_getcwd()+'/in/empty_file.csv'
     result = run(args.sinkfile,
                  args.sourcefile,
                  args.max_steps,
