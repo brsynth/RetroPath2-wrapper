@@ -1,0 +1,79 @@
+
+<svg contentScriptType="text/ecmascript" zoomAndPan="magnify"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     xmlns:svg="http://www.w3.org/2000/svg" baseProfile="full"
+     contentStyleType="text/css" version="1.1" width="300px"
+     preserveAspectRatio="xMidYMid meet" xmlns:rdkit="http://www.rdkit.org/xml"
+     height="300px" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" width="300" y="0" height="300"
+          style="opacity:1.0;fill:#FFFFFF;stroke:none">
+    </rect>
+    <path style="fill:none;fill-rule:evenodd;stroke:#FF0000;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+          d="M 265.969,208.268 255.58,190.275"/>
+    <path style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+          d="M 255.58,190.275 245.192,172.281"/>
+    <path style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+          d="M 249.648,174.854 260.037,156.861"/>
+    <path style="fill:none;fill-rule:evenodd;stroke:#FF0000;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+          d="M 260.037,156.861 270.425,138.868"/>
+    <path style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+          d="M 240.736,169.709 251.124,151.715"/>
+    <path style="fill:none;fill-rule:evenodd;stroke:#FF0000;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+          d="M 251.124,151.715 261.513,133.722"/>
+    <path style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+          d="M 245.192,172.281 193.735,172.281"/>
+    <path style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+          d="M 193.735,172.281 183.594,189.846"/>
+    <path style="fill:none;fill-rule:evenodd;stroke:#0000FF;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+          d="M 183.594,189.846 173.453,207.411"/>
+    <path style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+          d="M 193.735,172.281 168.007,127.719"/>
+    <path style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+          d="M 168.007,127.719 116.55,127.719"/>
+    <path style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+          d="M 116.55,127.719 90.8216,172.281"/>
+    <path style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-dasharray:6,6"
+          d="M 103.778,129.257 85.7683,160.451"/>
+    <path style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+          d="M 116.55,127.719 90.8216,83.1556"/>
+    <path style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-dasharray:6,6"
+          d="M 103.778,126.18 85.7683,94.9858"/>
+    <path style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+          d="M 90.8216,172.281 39.3648,172.281"/>
+    <path style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-dasharray:6,6"
+          d="M 83.1031,161.99 47.0833,161.99"/>
+    <path style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+          d="M 39.3648,172.281 13.6364,127.719"/>
+    <path style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-dasharray:6,6"
+          d="M 44.4181,160.451 26.4082,129.257"/>
+    <path style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+          d="M 13.6364,127.719 39.3648,83.1556"/>
+    <path style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-dasharray:6,6"
+          d="M 26.4082,126.18 44.4181,94.9858"/>
+    <path style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+          d="M 39.3648,83.1556 90.8216,83.1556"/>
+    <path style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-dasharray:6,6"
+          d="M 47.0833,93.447 83.1031,93.447"/>
+    <text x="255.477" y="225.42"
+          style="font-size:17px;font-style:normal;font-weight:normal;fill-opacity:1;stroke:none;font-family:sans-serif;text-anchor:start;fill:#FF0000">
+        <tspan>
+            OH
+        </tspan>
+    </text>
+    <text x="262.911" y="136.295"
+          style="font-size:17px;font-style:normal;font-weight:normal;fill-opacity:1;stroke:none;font-family:sans-serif;text-anchor:start;fill:#FF0000">
+        <tspan>
+            O
+        </tspan>
+    </text>
+    <text x="150.278" y="226.278"
+          style="font-size:17px;font-style:normal;font-weight:normal;fill-opacity:1;stroke:none;font-family:sans-serif;text-anchor:start;fill:#0000FF">
+        <tspan>
+            NH
+        </tspan>
+        <tspan style="baseline-shift:sub;font-size:12.75px;">
+            2
+        </tspan>
+        <tspan/>
+    </text>
+</svg>

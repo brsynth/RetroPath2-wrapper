@@ -1,0 +1,3 @@
+include RELEASE
+recursive-include extras *
+recursive-include data *
