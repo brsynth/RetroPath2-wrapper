@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 KVER         = '3.6.2'
 KURL         = 'http://download.knime.org/analytics-platform/linux/knime_'+KVER+'.linux.gtk.x86_64.tar.gz'
-KINSTALL     = '/usr/local'
+KINSTALL     = './'
 KPATH        = KINSTALL+'/knime_'+KVER
 KEXEC        = KPATH+'/knime'
 RP_WORK_PATH = os_path.dirname(os_path.abspath( __file__ ))+'/workflow/RetroPath2.0.knwf'
@@ -51,6 +51,7 @@ def run(sinkfile,
         mwmax_cof=1000,
         timeout=30,
         is_forward=False,
+        kexec=None,
         logger=None):
 
     if logger==None:
@@ -69,7 +70,10 @@ def run(sinkfile,
         results_filename   = 'results.csv'
         src_in_sk_filename = 'source-in-sink.csv'
 
-        if not os_path.exists(KEXEC):
+        if not kexec:
+            kexec = KEXEC
+        if not os_path.exists(kexec):
+            kexec = KEXEC
             download_and_extract_gz(KURL, KINSTALL)
             knime_add_pkgs = KEXEC \
                 + ' -application org.eclipse.equinox.p2.director' \
@@ -85,7 +89,7 @@ def run(sinkfile,
                 + ' -bundlepool '+KPATH+' -d '+KPATH
             call(knime_add_pkgs.split(), stderr=STDOUT, shell=False)# nosec
 
-        knime_command = KEXEC \
+        knime_command = kexec \
             + ' -nosplash -nosave -reset --launcher.suppressErrors -application org.knime.product.KNIME_BATCH_APPLICATION ' \
             + ' -workflowFile='+RP_WORK_PATH \
             + ' -workflow.variable=input.dmin,"'+str(dmin)+'",int' \
