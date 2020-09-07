@@ -1,5 +1,9 @@
-1.0.1 - Sep 03, 2020
+1.0.2 - Sep 7, 2020
+    - add the possibility to pass the path to already installed Knime. If Knime not found, then the 3.6.2 version will be downloaded.
+    - split tests
+
+1.0.1 - Sep 3, 2020
     - fix RELEASE filename in MANIFEST.in
 
-1.0.0 - Sep 03, 2020
+1.0.0 - Sep 3, 2020
     - first version

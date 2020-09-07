@@ -1,103 +1,71 @@
 # Retropath2.0 wrapper
 
+[![Anaconda-Server Badge](https://anaconda.org/brsynth/retropath2-wrapper/badges/latest_release_date.svg)](https://anaconda.org/brsynth/retropath2-wrapper) [![Anaconda-Server Badge](https://anaconda.org/brsynth/retropath2-wrapper/badges/version.svg)](https://anaconda.org/brsynth/retropath2-wrapper)
 
 Implementation of the KNIME retropath2.0 workflow. Takes for input the minimal (dmin) and maximal (dmax) diameter for the reaction rules and the maximal path length (maxSteps). The tool  expects the following files: `rules.csv`, `sink.csv` and `source.csv` and produces results in an output folder.
 
-## Standalone
+## Input
 
-### Prerequisites
+Required:
+* **sink_file**: (string) Path to the collection of chemical species to finish metabolic route exploration
+* **source_file**: (string) Path to the target compound desired to be synthesised
+* **rules_file**: (string) Path to the reaction rules
+
+Optional:
+* **--outdir**: (string, default='out') Path to the folder where result files are written
+* **--knime_exec**: (integer, default=9999) Path to Knime exec file
+* **--max_steps** : (integer, default='3') Maximal number of steps
+* **--topx** : (integer, default: 100) For each iteration, number of rules
+* **--dmin** : (integer, default: 0)
+* **--dmax** : (integer, default: 1000)
+* **--mwmax_source** : (integer, default: 1000)
+* **--mwmax_cof** : (integer, default: 1000)
+* **--timeout** : (integer, default: 30) Timeout in minutes
+* **--is_forward** : (bool, default: False) Forward or reverse synthesis
+
+
+## Prerequisites
 
 * Python 3
 * KNIME (code was tested on 3.6.2 version)
 
-### Quick start
-The main code is `src/RetroPath2.py` and can be run as the following:
+## Install
+### From pip
+retropath2-wrapper requires [Knime](https://www.knime.com/) which is not available through pip. The 3.6.2 version will be downloaded if not already installed.
+```sh
+[sudo] python -m pip install retropath2-wrapper
 ```
-python src/RetroPath2.py <sink_file> <source_file> <rules_file> \
-  --outdir <outdir_folder> \
-  --knime_exec <knime_exec_path> \
-  --max_steps <max_steps> \
-  --topx <topx> \
-  --dmin <dmin> \
-  --dmax <dmax> \
-  --mwmax_source <mwmax_source> \
-  --mwmax_cof <mwmax_cof> \
-  --timeout <timeout> \
-  --is_forward <True|False>
+### From Conda
+```sh
+[sudo] conda install -c brsynth retropath2-wrapper
 ```
 
+## Run
 
-## Docker
+### retropath2-wrapper process
+**From Python code**
+```python
+from retropath2_wrapper import run, build_args_parser
 
-RetroPath2 can be run into a docker container.
+parser = build_args_parser()
+args  = parser.parse_args()
 
-### Prerequisites
-
-* Docker - [Install](https://docs.docker.com/install/)
-
-### Installation
-Before running the container, the image has to be built with:
+run(args.sinkfile,
+    args.sourcefile,
+    args.rulesfile)
 ```
-cd docker
-docker-compose build
-```
-
-### Run
-Then, the tool is runnable by:
-```
-cd docker
-./RetroPath2.sh
-  -sinkfile <sink_file> \
-  -sourcefile <source_file> \
-  -max_steps 3 \
-  -rulesfile <rules_file> \
-  -topx 100 \
-  -dmin 0 \
-  -dmax 1000 \
-  -mwmax_source 1000 \
-  -mwmax_cof 1000 \
-  -timeout 30 \
-  -outdir <outdir_folder> \
-  -is_forward False
+**From CLI**
+```sh
+python -m retropath2_wrapper sinkfile.csv sourcefile.csv rulesfile.csv
 ```
 
-To call the tool with fresh code:
-```
-docker-compose run --rm -v <absolutepath_to_src>:/home/src retropath2
-```
-
-To call the tool from any location:
-```
-cd docker
-docker-compose run --rm \
-    -v <path/to/source.csv>:/home/source.csv:ro \
-    -v <path/to/sink.csv>:/home/sink.csv:ro \
-    -v <path/to/rules.csv>:/home/rules.csv:ro \
-    -v <path/to/output_folder>:/home/outdir \
-    -w /home \
-    retropath2 python src/RetroPath2.py \
-        -sinkfile <sink_file> \
-        -sourcefile <source_file> \
-        -max_steps 3 \
-        -rulesfile <rules_file> \
-        -topx 100 \
-        -dmin 0 \
-        -dmax 1000 \
-        -mwmax_source 1000 \
-        -mwmax_cof 1000 \
-        -timeout 30 \
-        -outdir <outdir_folder> \
-        -is_forward False
-```
 
 ## Test
 All modes can be tested with:
 ```
-cd test
-./run[-in-docker].sh
+cd tests
+./test-in-docker.sh
 ```
-
-
 
 
 ### How to cite RetroPath2.0?
