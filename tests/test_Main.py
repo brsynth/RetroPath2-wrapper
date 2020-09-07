@@ -35,19 +35,19 @@ class Test_Main(TestCase):
         if not os_path.exists(self.args.rulesfile):
             extract_gz('data/rules.tar.gz', 'data')
 
-        result = run(self.args.sinkfile,
-                     self.args.sourcefile,
-                     self.args.max_steps,
-                     self.args.rulesfile,
-                     self.args.outdir,
-                     self.args.topx,
-                     self.args.dmin,
-                     self.args.dmax,
-                     self.args.mwmax_source,
-                     self.args.mwmax_cof,
-                     self.args.timeout,
-                     self.args.is_forward)
-        self.assertEqual(True, True)
+        results_filename = run(self.args.sinkfile,
+                               self.args.sourcefile,
+                               self.args.max_steps,
+                               self.args.rulesfile,
+                               self.args.outdir,
+                               self.args.topx,
+                               self.args.dmin,
+                               self.args.dmax,
+                               self.args.mwmax_source,
+                               self.args.mwmax_cof,
+                               self.args.timeout,
+                               self.args.is_forward)
+        self.assertTrue(os_path.exists(self.args.outdir+'/'+results_filename))
 
 
     def test_with_knime_installed_with_right_path(self):
@@ -79,20 +79,20 @@ class Test_Main(TestCase):
             + ' -bundlepool '+KPATH+' -d '+KPATH
         call(knime_add_pkgs.split(), stderr=STDOUT, shell=False)# nosec
 
-        result = run(self.args.sinkfile,
-                     self.args.sourcefile,
-                     self.args.max_steps,
-                     self.args.rulesfile,
-                     self.args.outdir,
-                     self.args.topx,
-                     self.args.dmin,
-                     self.args.dmax,
-                     self.args.mwmax_source,
-                     self.args.mwmax_cof,
-                     self.args.timeout,
-                     self.args.is_forward,
-                     KEXEC)
-        self.assertEqual(True, True)
+        results_filename =  = run(self.args.sinkfile,
+                                  self.args.sourcefile,
+                                  self.args.max_steps,
+                                  self.args.rulesfile,
+                                  self.args.outdir,
+                                  self.args.topx,
+                                  self.args.dmin,
+                                  self.args.dmax,
+                                  self.args.mwmax_source,
+                                  self.args.mwmax_cof,
+                                  self.args.timeout,
+                                  self.args.is_forward,
+                                  KEXEC)
+        self.assertTrue(os_path.exists(self.args.outdir+'/'+results_filename))
 
 
     def test_wrong_knime_path(self):
@@ -102,18 +102,18 @@ class Test_Main(TestCase):
 
         if not os_path.exists(self.args.rulesfile):
             extract_gz('data/rules.tar.gz', 'data')
-
-        result = run(self.args.sinkfile,
-                     self.args.sourcefile,
-                     self.args.max_steps,
-                     self.args.rulesfile,
-                     self.args.outdir,
-                     self.args.topx,
-                     self.args.dmin,
-                     self.args.dmax,
-                     self.args.mwmax_source,
-                     self.args.mwmax_cof,
-                     self.args.timeout,
-                     self.args.is_forward,
-                     '/tmp/knime/knime')
-        self.assertEqual(True, True)
+    
+        results_filename = run(self.args.sinkfile,
+                              self.args.sourcefile,
+                              self.args.max_steps,
+                              self.args.rulesfile,
+                              self.args.outdir,
+                              self.args.topx,
+                              self.args.dmin,
+                              self.args.dmax,
+                              self.args.mwmax_source,
+                              self.args.mwmax_cof,
+                              self.args.timeout,
+                              self.args.is_forward,
+                              '/tmp/knime/knime')
+        self.assertTrue(os_path.exists(self.args.outdir+'/'+results_filename))
