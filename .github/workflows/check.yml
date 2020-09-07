@@ -48,4 +48,4 @@ jobs:
 
     - name: Test for security flaws with bandit
       run: |
-        bandit -r .
+        bandit -r retropath2_wrapper
