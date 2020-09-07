@@ -75,6 +75,7 @@ def run(sinkfile,
         if not os_path.exists(kexec):
             kexec = KEXEC
             download_and_extract_gz(KURL, KINSTALL)
+            # Add packages to Knime
             knime_add_pkgs = KEXEC \
                 + ' -application org.eclipse.equinox.p2.director' \
                 + ' -nosplash -consolelog' \
@@ -135,7 +136,7 @@ def run(sinkfile,
         logger.error(e)
         return 'ramerror', 'Command: '+str(knime_command)+'\n Error: '+str(e)
 
-    return 'Job', 'SUCCESS'
+    return results_filename
 
 
 
