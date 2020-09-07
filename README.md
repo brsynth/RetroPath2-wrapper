@@ -8,23 +8,22 @@ Implementation of the KNIME retropath2.0 workflow. Takes for input the minimal (
 ### Prerequisites
 
 * Python 3
+* KNIME (code was tested on 3.6.2 version)
 
 ### Quick start
 The main code is `src/RetroPath2.py` and can be run as the following:
 ```
-python src/RetroPath2.py \
-  -sinkfile <sink_file> \
-  -sourcefile <source_file> \
-  -max_steps 3 \
-  -rulesfile <rules_file> \
-  -topx 100 \
-  -dmin 0 \
-  -dmax 1000 \
-  -mwmax_source 1000 \
-  -mwmax_cof 1000 \
-  -timeout 30 \
-  -outdir <outdir_folder> \
-  -is_forward False
+python src/RetroPath2.py <sink_file> <source_file> <rules_file> \
+  --outdir <outdir_folder> \
+  --knime_exec <knime_exec_path> \
+  --max_steps <max_steps> \
+  --topx <topx> \
+  --dmin <dmin> \
+  --dmax <dmax> \
+  --mwmax_source <mwmax_source> \
+  --mwmax_cof <mwmax_cof> \
+  --timeout <timeout> \
+  --is_forward <True|False>
 ```
 
 
