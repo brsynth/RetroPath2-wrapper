@@ -41,9 +41,10 @@ def limit_virtual_memory():
 #
 def run(sinkfile,
         sourcefile,
-        max_steps,
         rulesfile,
-        outdir,
+        outdir='out',
+        kexec='',
+        max_steps=3,
         topx=100,
         dmin=0,
         dmax=1000,
@@ -51,7 +52,6 @@ def run(sinkfile,
         mwmax_cof=1000,
         timeout=30,
         is_forward=False,
-        kexec=None,
         logger=None):
 
     if logger==None:
@@ -70,8 +70,6 @@ def run(sinkfile,
         results_filename   = 'results.csv'
         src_in_sk_filename = 'source-in-sink.csv'
 
-        if not kexec:
-            kexec = KEXEC
         if not os_path.exists(kexec):
             kexec = KEXEC
             download_and_extract_gz(KURL, KINSTALL)
@@ -139,7 +137,6 @@ def run(sinkfile,
     return results_filename
 
 
-
 def build_args_parser():
     parser = argparse_ArgumentParser('Python wrapper to parse RP2 to generate rpSBML collection of unique and complete (cofactors) pathways')
     parser = _add_arguments(parser)
@@ -147,17 +144,19 @@ def build_args_parser():
     return parser
 
 def _add_arguments(parser):
-    parser.add_argument('-sinkfile', type=str)
-    parser.add_argument('-sourcefile', type=str)
-    parser.add_argument('-max_steps', type=int)
-    parser.add_argument('-rulesfile', type=str)
-    parser.add_argument('-topx', type=int)
-    parser.add_argument('-dmin', type=int)
-    parser.add_argument('-dmax', type=int)
-    parser.add_argument('-mwmax_source', type=int)
-    parser.add_argument('-mwmax_cof', type=int)
-    parser.add_argument('-outdir', type=str)
-    parser.add_argument('-timeout', type=int)
-    parser.add_argument('-is_forward', type=str)
+    parser.add_argument('sinkfile', type=str)
+    parser.add_argument('sourcefile', type=str)
+    parser.add_argument('rulesfile', type=str)
+    parser.add_argument('--outdir', type=str, default='out')
+    parser.add_argument('--knime_exec', type=str, default='',
+                                        help='path to Knime executable file (Knime will be downloaded if not already installed or path is wrong).')
+    parser.add_argument('--max_steps', type=int, default=3)
+    parser.add_argument('--topx', type=int, default=100)
+    parser.add_argument('--dmin', type=int, default=0)
+    parser.add_argument('--dmax', type=int, default=1000)
+    parser.add_argument('--mwmax_source', type=int, default=1000)
+    parser.add_argument('--mwmax_cof', type=int, default=1000)
+    parser.add_argument('--timeout', type=int, default=30)
+    parser.add_argument('--is_forward', type=str, default=False)
 
     return parser
