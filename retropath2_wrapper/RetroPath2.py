@@ -54,7 +54,7 @@ def run(sinkfile,
         is_forward=False,
         logger=None):
 
-    if logger==None:
+    if not logger:
         logging.basicConfig(level=logging.DEBUG)
         logger = logging.getLogger(__name__)
 
@@ -105,7 +105,7 @@ def run(sinkfile,
             + ' -workflow.variable=output.sourceinsinkfile,"'+src_in_sk_filename+'",String'
 
         try:
-            output = call(knime_command.split(), stderr=STDOUT, timeout=timeout*60, shell=False)# nosec
+            call(knime_command.split(), stderr=STDOUT, timeout=timeout*60, shell=False)# nosec
         except TimeoutExpired:
             logger.warning('*** WARNING')
             logger.warning('      |- Time limit ('+str(timeout)+' minutes) reached')
