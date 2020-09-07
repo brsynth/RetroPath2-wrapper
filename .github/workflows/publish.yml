@@ -61,7 +61,7 @@ jobs:
           # --add channels rdkit
     - name: Build for Python ${{ matrix.python-version }}
       run: |
-        conda-build --python ${{ matrix.python-version }} retropath2-wrapper
+        conda-build --python ${{ matrix.python-version }} retropath2_wrapper
     - name: Upload package
       env:
         CONDA_USERNAME: ${{ secrets.CONDA_USERNAME }}

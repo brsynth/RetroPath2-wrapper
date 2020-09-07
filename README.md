@@ -1,6 +1,6 @@
 # Retropath2.0 wrapper
 
-[![Anaconda-Server Badge](https://anaconda.org/brsynth/retropath2-wrapper/badges/latest_release_date.svg)](https://anaconda.org/brsynth/retropath2-wrapper) [![Anaconda-Server Badge](https://anaconda.org/brsynth/retropath2-wrapper/badges/version.svg)](https://anaconda.org/brsynth/retropath2-wrapper)
+[![Anaconda-Server Badge](https://anaconda.org/brsynth/retropath2_wrapper/badges/latest_release_date.svg)](https://anaconda.org/brsynth/retropath2_wrapper) [![Anaconda-Server Badge](https://anaconda.org/brsynth/retropath2_wrapper/badges/version.svg)](https://anaconda.org/brsynth/retropath2_wrapper)
 
 Implementation of the KNIME retropath2.0 workflow. Takes for input the minimal (dmin) and maximal (dmax) diameter for the reaction rules and the maximal path length (maxSteps). The tool  expects the following files: `rules.csv`, `sink.csv` and `source.csv` and produces results in an output folder.
 
@@ -31,18 +31,18 @@ Optional:
 
 ## Install
 ### From pip
-retropath2-wrapper requires [Knime](https://www.knime.com/) which is not available through pip. The 3.6.2 version will be downloaded if not already installed.
+retropath2_wrapper requires [Knime](https://www.knime.com/) which is not available through pip. The 3.6.2 version will be downloaded if not already installed.
 ```sh
-[sudo] python -m pip install retropath2-wrapper
+[sudo] python -m pip install retropath2_wrapper
 ```
 ### From Conda
 ```sh
-[sudo] conda install -c brsynth retropath2-wrapper
+[sudo] conda install -c brsynth retropath2_wrapper
 ```
 
 ## Run
 
-### retropath2-wrapper process
+### retropath2_wrapper process
 **From Python code**
 ```python
 from retropath2_wrapper import run, build_args_parser
