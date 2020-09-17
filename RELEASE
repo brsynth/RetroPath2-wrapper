@@ -1,3 +1,6 @@
+1.0.3 - Sep 17, 2020
+    - build for Python 3.8
+
 1.0.2 - Sep 7, 2020
     - add the possibility to pass the path to already installed Knime. If Knime not found, then the 3.6.2 version will be downloaded.
     - split tests
