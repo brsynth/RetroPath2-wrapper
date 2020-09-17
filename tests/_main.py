@@ -48,7 +48,7 @@ class Main(TestCase):
         pass
 
     def _check_hashes(self):
-        for file, hash in self.hashes:
+        for file, hash in self.files:
             self.assertTrue(Main._check_file_hash(file, hash))
 
     @staticmethod
@@ -65,7 +65,7 @@ class Main(TestCase):
         return func(Path(file).read_bytes()).hexdigest() == hash
 
     def _check_files(self):
-        for file, hash in self.hashes:
+        for file, hash in self.files:
             print()
             print(file)
             self.assertTrue(os_path.exists(file))

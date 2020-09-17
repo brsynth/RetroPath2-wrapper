@@ -25,7 +25,7 @@ class Module(Main):
     args.rulesfile  = data_path+'/rules.csv'
     args.outdir     = tempdir.name
 
-    hashes = [
+    files = [
     (tempdir.name+'/'+'results.csv', 'a8a5522a3db9e53f2a44c95c81ba78562e30e0450467050730b0b4cb3a551101')
     ]
 
