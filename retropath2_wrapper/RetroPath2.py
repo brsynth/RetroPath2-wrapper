@@ -60,9 +60,9 @@ def run(sinkfile,
 
     if not os_path.exists(outdir):
         os_mkdir(outdir)
-    shutil_cp(sinkfile, outdir+"/sink.csv")
+    shutil_cp(sinkfile,   outdir+"/sink.csv")
     shutil_cp(sourcefile, outdir+"/source.csv")
-    shutil_cp(rulesfile, outdir+"/rules.csv")
+    shutil_cp(rulesfile,  outdir+"/rules.csv")
 
     ### run the KNIME RETROPATH2.0 workflow
     try:
