@@ -138,7 +138,7 @@ def run(sinkfile,
 
 
 def build_args_parser():
-    parser = argparse_ArgumentParser('Python wrapper to parse RP2 to generate rpSBML collection of unique and complete (cofactors) pathways')
+    parser = argparse_ArgumentParser(prog='RetroPath2', descr='Python wrapper to parse RP2 to generate rpSBML collection of unique and complete (cofactors) pathways')
     parser = _add_arguments(parser)
 
     return parser
