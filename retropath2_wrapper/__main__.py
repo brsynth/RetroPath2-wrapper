@@ -16,9 +16,10 @@ def _cli():
         args.rulesfile = os_getcwd()+'/in/empty_file.csv'
     result = run(args.sinkfile,
                  args.sourcefile,
-                 args.max_steps,
                  args.rulesfile,
                  args.outdir,
+                 args.knime_exec,
+                 args.max_steps,
                  args.topx,
                  args.dmin,
                  args.dmax,
