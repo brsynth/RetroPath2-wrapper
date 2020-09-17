@@ -10,7 +10,7 @@ def _cli():
     parser = build_args_parser()
     args  = parser.parse_args()
 
-    args.is_forward = args.is_forward.lower() in ['true', 't']
+    args.is_forward = str(args.is_forward).lower() in ['true', 't']
 
     if not args.rulesfile or (args.rulesfile==b'None') or (args.rulesfile=='None') or (args.rulesfile=='') or (args.rulesfile==b''):
         args.rulesfile = os_getcwd()+'/in/empty_file.csv'
