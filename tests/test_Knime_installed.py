@@ -4,12 +4,9 @@ Created on Jul 15 2020
 @author: Joan Hérisson
 """
 
-from module import Module
-from os     import path as os_path
-
-# from retropath2_wrapper import run, build_args_parser
-# from tempfile import TemporaryDirectory
-
+from module    import Module
+from os        import path as os_path
+from brs_utils import extract_tar_gz
 
 class Test_Main(Module):
     __test__ = True
@@ -19,7 +16,7 @@ class Test_Main(Module):
         from brs_utils import download_and_extract_tar_gz, extract_gz
 
         if not os_path.exists(self.args.rulesfile):
-            extract_gz('data/rules.tar.gz', 'data')
+            extract_tar_gz('data/rules.tar.gz', 'data')
 
         download_and_extract_tar_gz(self.KURL, '/tmp')
         knime_add_pkgs = self.KEXEC \
