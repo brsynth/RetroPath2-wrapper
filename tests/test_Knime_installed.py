@@ -16,12 +16,12 @@ class Test_Main(Module):
 
     def _preexec(self):
         from subprocess import call, STDOUT, TimeoutExpired# nosec
-        from brs_utils import download_and_extract_gz, extract_gz
+        from brs_utils import download_and_extract_tar_gz, extract_gz
 
         if not os_path.exists(self.args.rulesfile):
             extract_gz('data/rules.tar.gz', 'data')
 
-        download_and_extract_gz(self.KURL, '/tmp')
+        download_and_extract_tar_gz(self.KURL, '/tmp')
         knime_add_pkgs = self.KEXEC \
             + ' -application org.eclipse.equinox.p2.director' \
             + ' -nosplash -consolelog' \

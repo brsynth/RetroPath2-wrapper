@@ -16,7 +16,7 @@ from csv import reader as csv_reader
 import resource
 from shutil import copy as shutil_cp
 from subprocess import call, STDOUT, TimeoutExpired# nosec
-from brs_utils import download_and_extract_gz
+from brs_utils import download_and_extract_tar_gz
 
 # logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -72,7 +72,7 @@ def run(sinkfile,
 
         if not os_path.exists(kexec):
             kexec = KEXEC
-            download_and_extract_gz(KURL, KINSTALL)
+            download_and_extract_tar_gz(KURL, KINSTALL)
             # Add packages to Knime
             knime_add_pkgs = KEXEC \
                 + ' -application org.eclipse.equinox.p2.director' \
