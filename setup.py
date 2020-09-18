@@ -51,7 +51,7 @@ setup(
     url=_url,
     packages=[_package],
     package_dir={_package: 'src'},
-    package_data={_package: ['workflow/RetroPath2.0-v9.knwf']},
+    package_data={_package: ['workflow/*']},
     include_package_data=True,
     install_requires=required,
     test_suite='pytest',

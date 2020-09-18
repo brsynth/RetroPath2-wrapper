@@ -1,3 +1,6 @@
+1.0.7 - Sep 18, 2020
+    - include all files in 'src/workflow'
+
 1.0.6 - Sep 18, 2020
     - rename module folder into 'src'
 
