@@ -1,3 +1,9 @@
+1.0.5 - Sep 18, 2020
+    - minor issues fixing
+    - fix args order
+    - change path to Knime
+    - move 'workflow' folder into module folder (remove 'data' folder)
+
 1.0.4 - Sep 17, 2020
     - publish build_args_parser function
 
