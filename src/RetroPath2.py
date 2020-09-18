@@ -8,15 +8,17 @@ Created on January 16 2020
 """
 
 
-from os import mkdir as os_mkdir
-from os import path as os_path
-from argparse import ArgumentParser as argparse_ArgumentParser
+from os         import mkdir          as os_mkdir
+from os         import path           as os_path
+from argparse   import ArgumentParser as argparse_ArgumentParser
 import logging
-from csv import reader as csv_reader
+from csv        import reader         as csv_reader
 import resource
-from shutil import copy as shutil_cp
+from shutil     import copy           as shutil_cp
 from subprocess import call, STDOUT, TimeoutExpired# nosec
-from brs_utils import download_and_extract_tar_gz
+from brs_utils  import download_and_extract_tar_gz
+from tarfile    import is_tarfile
+from tarfile    import open           as tar_open
 
 # logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -62,7 +64,14 @@ def run(sinkfile,
         os_mkdir(outdir)
     shutil_cp(sinkfile,   outdir+"/sink.csv")
     shutil_cp(sourcefile, outdir+"/source.csv")
-    shutil_cp(rulesfile,  outdir+"/rules.csv")
+    untar_rulesfile = rulesfile
+    if is_tarfile(rulesfile):
+        tar = tar_open(rulesfile, "r:gz")
+        for tarinfo in tar:
+            untar_rulesfile = tarinfo.name
+            tar.extract(untar_rulesfile)
+        tar.close()
+    shutil_cp(untar_rulesfile,  outdir+"/rules.csv")
 
     if not kexec:
         kexec = KEXEC
