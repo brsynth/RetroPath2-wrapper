@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 KVER         = '3.6.2'
 KURL         = 'http://download.knime.org/analytics-platform/linux/knime_'+KVER+'.linux.gtk.x86_64.tar.gz'
-KINSTALL     = './'
+KINSTALL     = os_path.dirname(os_path.abspath( __file__ ))
 KPATH        = KINSTALL+'/knime_'+KVER
 KEXEC        = KPATH+'/knime'
 RP_WORK_PATH = os_path.dirname(os_path.abspath( __file__ ))+'/workflow/RetroPath2.0.knwf'
@@ -64,6 +64,9 @@ def run(sinkfile,
     shutil_cp(sourcefile, outdir+"/source.csv")
     shutil_cp(rulesfile,  outdir+"/rules.csv")
 
+    if not kexec:
+        kexec = KEXEC
+
     ### run the KNIME RETROPATH2.0 workflow
     try:
 
@@ -71,10 +74,9 @@ def run(sinkfile,
         src_in_sk_filename = 'source-in-sink.csv'
 
         if not os_path.exists(kexec):
-            kexec = KEXEC
             download_and_extract_tar_gz(KURL, KINSTALL)
             # Add packages to Knime
-            knime_add_pkgs = KEXEC \
+            knime_add_pkgs = kexec \
                 + ' -application org.eclipse.equinox.p2.director' \
                 + ' -nosplash -consolelog' \
                 + ' -r http://update.knime.org/community-contributions/trunk,' \

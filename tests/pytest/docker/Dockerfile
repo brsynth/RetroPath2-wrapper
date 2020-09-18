@@ -14,4 +14,3 @@ WORKDIR ${HOME}/tests
 
 ADD tests .
 ADD ${PKG} ${PKG}
-ADD data ${PKG}
