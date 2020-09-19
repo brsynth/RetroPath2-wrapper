@@ -10,10 +10,10 @@ docker-compose \
     build
 
 # Pass the engine to be processed by check, if empty all modes will be processed
-if [[ $# -eq 1 ]]; then
+if [[ $# -gt 0 ]]; then
   mod=$1
 else
-  mod='flake bandit'
+  mod=$@
 fi
 
 
@@ -23,4 +23,12 @@ docker-compose \
     -f check/docker/docker-compose.yml \
     --env-file check/docker/.env \
   run --rm \
-  $mod
+  flake$mod
+
+PACKAGE=$PACKAGE \
+HOMEDIR=$HOMEDIR \
+docker-compose \
+    -f check/docker/docker-compose.yml \
+    --env-file check/docker/.env \
+  run --rm \
+  bandit
