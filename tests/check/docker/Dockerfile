@@ -12,4 +12,4 @@ RUN python3 -m pip install --upgrade pip \
 ARG HOME
 WORKDIR ${HOME}
 
-ADD ${PKG} ${PKG}
+ADD src ${PKG}
