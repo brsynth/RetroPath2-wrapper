@@ -96,24 +96,24 @@ def run(sinkfile,
                     + 'jp.co.infocom.cheminfo.marvin.feature.feature.group,' \
                     + 'org.knime.features.python.feature.group,' \
                     + 'org.rdkit.knime.feature.feature.group' \
-                + ' -bundlepool '+KPATH+' -d '+KPATH
+                + ' -bundlepool ' + KPATH + ' -d ' + KPATH
             call(knime_add_pkgs.split(), stderr=STDOUT, shell=False)# nosec
 
         knime_command = kexec \
             + ' -nosplash -nosave -reset --launcher.suppressErrors -application org.knime.product.KNIME_BATCH_APPLICATION ' \
-            + ' -workflowFile='+RP_WORK_PATH \
-            + ' -workflow.variable=input.dmin,"'+str(dmin)+'",int' \
-            + ' -workflow.variable=input.dmax,"'+str(dmax)+'",int' \
-            + ' -workflow.variable=input.max-steps,"'+str(max_steps)+'",int' \
-            + ' -workflow.variable=input.sourcefile,"'+outdir+"/source.csv"+'",String' \
-            + ' -workflow.variable=input.sinkfile,"'+outdir+"/sink.csv"+'",String' \
-            + ' -workflow.variable=input.rulesfile,"'+outdir+"/rules.csv"+'",String' \
-            + ' -workflow.variable=input.topx,"'+str(topx)+'",int' \
-            + ' -workflow.variable=input.mwmax-source,"'+str(mwmax_source)+'",int' \
-            + ' -workflow.variable=input.mwmax-cof,"'+str(mwmax_cof)+'",int' \
-            + ' -workflow.variable=output.dir,"'+outdir+'/",String' \
-            + ' -workflow.variable=output.solutionfile,"'+results_filename+'",String' \
-            + ' -workflow.variable=output.sourceinsinkfile,"'+src_in_sk_filename+'",String'
+            + ' -workflowFile=' + RP_WORK_PATH \
+            + ' -workflow.variable=input.dmin,"'              + str(dmin)          + '",int' \
+            + ' -workflow.variable=input.dmax,"'              + str(dmax)          + '",int' \
+            + ' -workflow.variable=input.max-steps,"'         + str(max_steps)     + '",int' \
+            + ' -workflow.variable=input.sourcefile,"'        + outdir             + "/source.csv"+'",String' \
+            + ' -workflow.variable=input.sinkfile,"'          + outdir             + "/sink.csv"+'",String' \
+            + ' -workflow.variable=input.rulesfile,"'         + outdir             + "/rules.csv"+'",String' \
+            + ' -workflow.variable=input.topx,"'              + str(topx)          + '",int' \
+            + ' -workflow.variable=input.mwmax-source,"'      + str(mwmax_source)  + '",int' \
+            + ' -workflow.variable=input.mwmax-cof,"'         + str(mwmax_cof)     + '",int' \
+            + ' -workflow.variable=output.dir,"'              + outdir             + '/",String' \
+            + ' -workflow.variable=output.solutionfile,"'     + results_filename   + '",String' \
+            + ' -workflow.variable=output.sourceinsinkfile,"' + src_in_sk_filename + '",String'
 
         try:
             call(knime_command.split(), stderr=STDOUT, timeout=timeout*60, shell=False)# nosec
