@@ -1,3 +1,10 @@
+1.1.0 - Sep 28, 2020
+    - change output error codes:
+      * 1: Source has been found in the sink
+      * 2: Cannot find source-in-sink file
+      * 3: Running the RetroPath2.0 Knime program produced an OSError
+      * 4: Cannot set the RAM usage limit
+
 1.0.9 - Sep 18, 2020
     - handle 'csv' or 'tar.gz' format for rules input file
 

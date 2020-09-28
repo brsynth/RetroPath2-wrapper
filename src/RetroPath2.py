@@ -130,22 +130,22 @@ def run(sinkfile,
                     count += 1
                     if count>1:
                         logger.error('Source has been found in the sink')
-                        return 'sourceinsinkerror', 'Command: '+str(knime_command)+'\n Error: Source found in Sink'
+                        return 1
         except FileNotFoundError as e:
             logger.error('Cannot find'+src_in_sk_filename+' file')
             logger.error(e)
-            return 'sourceinsinknotfounderror', 'Command: '+str(knime_command)+'\n Error: '+str(e)
+            return 2
 
     except OSError as e:
         logger.error('Running the RetroPath2.0 Knime program produced an OSError')
         logger.error(e)
-        return 'oserror', 'Command: '+str(knime_command)+'\n Error: '+str(e)
+        return 3
     except ValueError as e:
         logger.error('Cannot set the RAM usage limit')
         logger.error(e)
-        return 'ramerror', 'Command: '+str(knime_command)+'\n Error: '+str(e)
+        return 4
 
-    return results_filename
+    return 0
 
 
 def build_args_parser():
