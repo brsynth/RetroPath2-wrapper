@@ -3,7 +3,7 @@
 
 from os import getcwd as os_getcwd
 
-from retropath2_wrapper import run, build_args_parser
+from retropath2 import run, build_args_parser
 
 
 def _cli():
