@@ -4,10 +4,10 @@ Created on Jul 15 2020
 @author: Joan Hérisson
 """
 
-from _main import Main
+from _main    import Main
 from tempfile import TemporaryDirectory
-from os import path as os_path
-from os import stat as os_stat
+from os       import path      as os_path
+from os       import stat      as os_stat
 from argparse import Namespace as argparse_Namespace
 
 tempdir = TemporaryDirectory()
@@ -16,7 +16,7 @@ tempdir = TemporaryDirectory()
 class Module(Main):
     __test__ = False
 
-    mod_name  = 'retropath2_wrapper'
+    mod_name  = 'retropath2'
     func_name = 'run'
     data_path = 'data'
     args      = argparse_Namespace()
