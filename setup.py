@@ -50,7 +50,7 @@ setup(
     long_description_content_type='text/markdown',
     url=_url,
     packages=[_package],
-    package_dir={_package: 'src'},
+    package_dir={_package: 'retropath2'},
     package_data={_package: ['workflow/*']},
     include_package_data=True,
     install_requires=required,

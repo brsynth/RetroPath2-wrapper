@@ -1,4 +1,4 @@
-# Retropath2.0 wrapper
+# Retropath2.0 Python wrapper
 
 [![Anaconda-Server Badge](https://anaconda.org/brsynth/retropath2_wrapper/badges/latest_release_date.svg)](https://anaconda.org/brsynth/retropath2_wrapper) [![Anaconda-Server Badge](https://anaconda.org/brsynth/retropath2_wrapper/badges/version.svg)](https://anaconda.org/brsynth/retropath2_wrapper)
 
@@ -31,13 +31,13 @@ Optional:
 
 ## Install
 ### From pip
-retropath2_wrapper requires [Knime](https://www.knime.com/) which is not available through pip. The 3.6.2 version will be downloaded if not already installed.
+retropath2 requires [Knime](https://www.knime.com/) which is not available through pip. The 3.6.2 version will be downloaded if not already installed.
 ```sh
-[sudo] python -m pip install retropath2_wrapper
+[sudo] python -m pip install retropath2
 ```
 ### From Conda
 ```sh
-[sudo] conda install -c brsynth retropath2_wrapper
+[sudo] conda install -c brsynth retropath2
 ```
 
 ## Run
@@ -45,7 +45,7 @@ retropath2_wrapper requires [Knime](https://www.knime.com/) which is not availab
 ### retropath2_wrapper process
 **From Python code**
 ```python
-from retropath2_wrapper import run, build_args_parser
+from retropath2 import run, build_args_parser
 
 parser = build_args_parser()
 args  = parser.parse_args()
@@ -56,7 +56,7 @@ run(args.sinkfile,
 ```
 **From CLI**
 ```sh
-python -m retropath2_wrapper sinkfile.csv sourcefile.csv rulesfile.csv
+python -m retropath2 sinkfile.csv sourcefile.csv rulesfile.csv
 ```
 
 
