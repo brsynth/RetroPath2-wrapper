@@ -1,5 +1,40 @@
-1.0.1 - Sep 03, 2020
+1.1.0 - Sep 28, 2020
+    - change output error codes:
+      * 1: Source has been found in the sink
+      * 2: Cannot find source-in-sink file
+      * 3: Running the RetroPath2.0 Knime program produced an OSError
+      * 4: Cannot set the RAM usage limit
+
+1.0.9 - Sep 18, 2020
+    - handle 'csv' or 'tar.gz' format for rules input file
+
+1.0.8 - Sep 18, 2020
+    - (fix typo in MANIFEST.in) include all files in 'src/workflow'
+
+1.0.7 - Sep 18, 2020
+    - include all files in 'src/workflow'
+
+1.0.6 - Sep 18, 2020
+    - rename module folder into 'src'
+
+1.0.5 - Sep 18, 2020
+    - minor issues fixing
+    - fix args order
+    - change path to Knime
+    - move 'workflow' folder into module folder (remove 'data' folder)
+
+1.0.4 - Sep 17, 2020
+    - publish build_args_parser function
+
+1.0.3 - Sep 17, 2020
+    - build for Python 3.8
+
+1.0.2 - Sep 7, 2020
+    - add the possibility to pass the path to already installed Knime. If Knime not found, then the 3.6.2 version will be downloaded.
+    - split tests
+
+1.0.1 - Sep 3, 2020
     - fix RELEASE filename in MANIFEST.in
 
-1.0.0 - Sep 03, 2020
+1.0.0 - Sep 3, 2020
     - first version

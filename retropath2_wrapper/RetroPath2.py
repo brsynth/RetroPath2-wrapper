@@ -8,25 +8,27 @@ Created on January 16 2020
 """
 
 
-from os import mkdir as os_mkdir
-from os import path as os_path
-from argparse import ArgumentParser as argparse_ArgumentParser
+from os         import mkdir          as os_mkdir
+from os         import path           as os_path
+from argparse   import ArgumentParser as argparse_ArgumentParser
 import logging
-from csv import reader as csv_reader
+from csv        import reader         as csv_reader
 import resource
-from shutil import copy as shutil_cp
+from shutil     import copy           as shutil_cp
 from subprocess import call, STDOUT, TimeoutExpired# nosec
-from brs_utils import download_and_extract_gz
+from brs_utils  import download_and_extract_tar_gz
+from tarfile    import is_tarfile
+from tarfile    import open           as tar_open
 
 # logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 KVER         = '3.6.2'
 KURL         = 'http://download.knime.org/analytics-platform/linux/knime_'+KVER+'.linux.gtk.x86_64.tar.gz'
-KINSTALL     = '/usr/local'
+KINSTALL     = os_path.dirname(os_path.abspath( __file__ ))
 KPATH        = KINSTALL+'/knime_'+KVER
 KEXEC        = KPATH+'/knime'
-RP_WORK_PATH = os_path.dirname(os_path.abspath( __file__ ))+'/workflow/RetroPath2.0.knwf'
+RP_WORK_PATH = os_path.dirname(os_path.abspath( __file__ ))+'/workflow/RetroPath2.0-v9.knwf'
 MAX_VIRTUAL_MEMORY = 20000*1024*1024 # 20 GB -- define what is the best
 
 ##
@@ -41,9 +43,10 @@ def limit_virtual_memory():
 #
 def run(sinkfile,
         sourcefile,
-        max_steps,
         rulesfile,
-        outdir,
+        outdir='out',
+        kexec='',
+        max_steps=3,
         topx=100,
         dmin=0,
         dmax=1000,
@@ -53,15 +56,25 @@ def run(sinkfile,
         is_forward=False,
         logger=None):
 
-    if logger==None:
+    if not logger:
         logging.basicConfig(level=logging.DEBUG)
         logger = logging.getLogger(__name__)
 
     if not os_path.exists(outdir):
         os_mkdir(outdir)
-    shutil_cp(sinkfile, outdir+"/sink.csv")
+    shutil_cp(sinkfile,   outdir+"/sink.csv")
     shutil_cp(sourcefile, outdir+"/source.csv")
-    shutil_cp(rulesfile, outdir+"/rules.csv")
+    untar_rulesfile = rulesfile
+    if is_tarfile(rulesfile):
+        tar = tar_open(rulesfile, "r:gz")
+        for tarinfo in tar:
+            untar_rulesfile = tarinfo.name
+            tar.extract(untar_rulesfile)
+        tar.close()
+    shutil_cp(untar_rulesfile,  outdir+"/rules.csv")
+
+    if not kexec:
+        kexec = KEXEC
 
     ### run the KNIME RETROPATH2.0 workflow
     try:
@@ -69,9 +82,10 @@ def run(sinkfile,
         results_filename   = 'results.csv'
         src_in_sk_filename = 'source-in-sink.csv'
 
-        if not os_path.exists(KEXEC):
-            download_and_extract_gz(KURL, KINSTALL)
-            knime_add_pkgs = KEXEC \
+        if not os_path.exists(kexec):
+            download_and_extract_tar_gz(KURL, KINSTALL)
+            # Add packages to Knime
+            knime_add_pkgs = kexec \
                 + ' -application org.eclipse.equinox.p2.director' \
                 + ' -nosplash -consolelog' \
                 + ' -r http://update.knime.org/community-contributions/trunk,' \
@@ -82,27 +96,27 @@ def run(sinkfile,
                     + 'jp.co.infocom.cheminfo.marvin.feature.feature.group,' \
                     + 'org.knime.features.python.feature.group,' \
                     + 'org.rdkit.knime.feature.feature.group' \
-                + ' -bundlepool '+KPATH+' -d '+KPATH
+                + ' -bundlepool ' + KPATH + ' -d ' + KPATH
             call(knime_add_pkgs.split(), stderr=STDOUT, shell=False)# nosec
 
-        knime_command = KEXEC \
+        knime_command = kexec \
             + ' -nosplash -nosave -reset --launcher.suppressErrors -application org.knime.product.KNIME_BATCH_APPLICATION ' \
-            + ' -workflowFile='+RP_WORK_PATH \
-            + ' -workflow.variable=input.dmin,"'+str(dmin)+'",int' \
-            + ' -workflow.variable=input.dmax,"'+str(dmax)+'",int' \
-            + ' -workflow.variable=input.max-steps,"'+str(max_steps)+'",int' \
-            + ' -workflow.variable=input.sourcefile,"'+outdir+"/source.csv"+'",String' \
-            + ' -workflow.variable=input.sinkfile,"'+outdir+"/sink.csv"+'",String' \
-            + ' -workflow.variable=input.rulesfile,"'+outdir+"/rules.csv"+'",String' \
-            + ' -workflow.variable=input.topx,"'+str(topx)+'",int' \
-            + ' -workflow.variable=input.mwmax-source,"'+str(mwmax_source)+'",int' \
-            + ' -workflow.variable=input.mwmax-cof,"'+str(mwmax_cof)+'",int' \
-            + ' -workflow.variable=output.dir,"'+outdir+'/",String' \
-            + ' -workflow.variable=output.solutionfile,"'+results_filename+'",String' \
-            + ' -workflow.variable=output.sourceinsinkfile,"'+src_in_sk_filename+'",String'
+            + ' -workflowFile=' + RP_WORK_PATH \
+            + ' -workflow.variable=input.dmin,"'              + str(dmin)          + '",int' \
+            + ' -workflow.variable=input.dmax,"'              + str(dmax)          + '",int' \
+            + ' -workflow.variable=input.max-steps,"'         + str(max_steps)     + '",int' \
+            + ' -workflow.variable=input.sourcefile,"'        + outdir             + "/source.csv"+'",String' \
+            + ' -workflow.variable=input.sinkfile,"'          + outdir             + "/sink.csv"+'",String' \
+            + ' -workflow.variable=input.rulesfile,"'         + outdir             + "/rules.csv"+'",String' \
+            + ' -workflow.variable=input.topx,"'              + str(topx)          + '",int' \
+            + ' -workflow.variable=input.mwmax-source,"'      + str(mwmax_source)  + '",int' \
+            + ' -workflow.variable=input.mwmax-cof,"'         + str(mwmax_cof)     + '",int' \
+            + ' -workflow.variable=output.dir,"'              + outdir             + '/",String' \
+            + ' -workflow.variable=output.solutionfile,"'     + results_filename   + '",String' \
+            + ' -workflow.variable=output.sourceinsinkfile,"' + src_in_sk_filename + '",String'
 
         try:
-            output = call(knime_command.split(), stderr=STDOUT, timeout=timeout*60, shell=False)# nosec
+            call(knime_command.split(), stderr=STDOUT, timeout=timeout*60, shell=False)# nosec
         except TimeoutExpired:
             logger.warning('*** WARNING')
             logger.warning('      |- Time limit ('+str(timeout)+' minutes) reached')
@@ -116,43 +130,44 @@ def run(sinkfile,
                     count += 1
                     if count>1:
                         logger.error('Source has been found in the sink')
-                        return 'sourceinsinkerror', 'Command: '+str(knime_command)+'\n Error: Source found in Sink'
+                        return 1
         except FileNotFoundError as e:
             logger.error('Cannot find'+src_in_sk_filename+' file')
             logger.error(e)
-            return 'sourceinsinknotfounderror', 'Command: '+str(knime_command)+'\n Error: '+str(e)
+            return 2
 
     except OSError as e:
         logger.error('Running the RetroPath2.0 Knime program produced an OSError')
         logger.error(e)
-        return 'oserror', 'Command: '+str(knime_command)+'\n Error: '+str(e)
+        return 3
     except ValueError as e:
         logger.error('Cannot set the RAM usage limit')
         logger.error(e)
-        return 'ramerror', 'Command: '+str(knime_command)+'\n Error: '+str(e)
+        return 4
 
-    return 'Job', 'SUCCESS'
-
+    return 0
 
 
 def build_args_parser():
-    parser = argparse_ArgumentParser('Python wrapper to parse RP2 to generate rpSBML collection of unique and complete (cofactors) pathways')
+    parser = argparse_ArgumentParser(prog='RetroPath2', description='Python wrapper to parse RP2 to generate rpSBML collection of unique and complete (cofactors) pathways')
     parser = _add_arguments(parser)
 
     return parser
 
 def _add_arguments(parser):
-    parser.add_argument('-sinkfile', type=str)
-    parser.add_argument('-sourcefile', type=str)
-    parser.add_argument('-max_steps', type=int)
-    parser.add_argument('-rulesfile', type=str)
-    parser.add_argument('-topx', type=int)
-    parser.add_argument('-dmin', type=int)
-    parser.add_argument('-dmax', type=int)
-    parser.add_argument('-mwmax_source', type=int)
-    parser.add_argument('-mwmax_cof', type=int)
-    parser.add_argument('-outdir', type=str)
-    parser.add_argument('-timeout', type=int)
-    parser.add_argument('-is_forward', type=str)
+    parser.add_argument('sinkfile', type=str)
+    parser.add_argument('sourcefile', type=str)
+    parser.add_argument('rulesfile', type=str)
+    parser.add_argument('--outdir', type=str, default='out')
+    parser.add_argument('--knime_exec', type=str, default='',
+                                        help='path to Knime executable file (Knime will be downloaded if not already installed or path is wrong).')
+    parser.add_argument('--max_steps', type=int, default=3)
+    parser.add_argument('--topx', type=int, default=100)
+    parser.add_argument('--dmin', type=int, default=0)
+    parser.add_argument('--dmax', type=int, default=1000)
+    parser.add_argument('--mwmax_source', type=int, default=1000)
+    parser.add_argument('--mwmax_cof', type=int, default=1000)
+    parser.add_argument('--timeout', type=int, default=30)
+    parser.add_argument('--is_forward', type=str, default=False)
 
     return parser
