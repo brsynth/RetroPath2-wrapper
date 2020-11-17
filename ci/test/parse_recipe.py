@@ -1,7 +1,9 @@
-from yaml   import safe_load as yaml_safe_load
-from yaml   import YAMLError
-from os     import path      as os_path
-from shutil import copyfile
+from yaml     import safe_load as yaml_safe_load
+from yaml     import YAMLError
+from os       import path      as os_path
+from shutil   import copyfile
+from tempfile import NamedTemporaryFile
+from sys      import argv as sys_argv
 
 current_folder = os_path.dirname(os_path.realpath(__file__))
 
@@ -9,9 +11,6 @@ current_folder = os_path.dirname(os_path.realpath(__file__))
 channels_file = current_folder+'/../../recipe/conda_channels.txt'
 recipe_file   = current_folder+'/../../recipe/meta.yaml'
 bld_cfg_file  = current_folder+'/../../recipe/conda_build_config.yaml'
-# output files
-env_file      = current_folder+'/test-environment.yml'
-test_file     = current_folder+'/test.sh'
 
 def parse_meta(filename):
 
@@ -40,41 +39,41 @@ def parse_meta(filename):
 
     return requirements, tests
 
-def parse_build_config(filename):
-    with open(filename, 'r') as f:
-        f_configs = f.read()
-        try: configs = yaml_safe_load(f_configs)
-        except TypeError: pass
-    return configs
 
 
-def write_dependencies(filename, requirements):
 
-    channels = open(channels_file, 'r').read().split()
+if __name__ == '__main__':
 
-    with open(filename, 'w') as f:
-        f.write('channels:\n')
-        for c in channels:
-            f.write('  - '+c+'\n')
-        f.write('dependencies:\n')
-        for req in requirements:
-            f.write('  - '+req+'\n')
+    requirements, tests = parse_meta(recipe_file)
 
-def write_tests(filename, tests):
-    with open(filename, 'w') as f:
-        f.write('cd .. ; ')
-        f.write(tests['commands'][0]+' ')
-        for source_files in tests['source_files']:
-            f.write(source_files)
+    if any(arg in sys_argv for arg in ['test']):
+        if len(sys_argv) < 3:
+            args = 'commands sources'
+        else:
+            args = sys_argv
+        if any(arg in args for arg in ['commands', 'cmd']):
+            print(' && '.join(tests['commands']), end=' ')
+        if any(arg in args for arg in ['sources', 'src']):
+            print(' '.join(['../'+e for e in tests['source_files']]))
+        else:
+            print()
 
+    if any(arg in sys_argv for arg in ['requirements', 'req']):
+        print('channels:')
+        print('\n'.join(['  - '+c for c in open(channels_file, 'r').read().split()]))
+        print('dependencies:')
+        print('\n'.join(['  - '+c for c in requirements]))
+        print('  - pyyaml')
+        exit()
 
-requirements, tests = parse_meta(recipe_file)
-write_dependencies(env_file, requirements)
-write_tests(test_file, tests)
-
-bld_cfgs = parse_build_config(bld_cfg_file)
-for pkg in bld_cfgs:
-    for ver in bld_cfgs[pkg]:
-        env_file_cfg = env_file+'.'+pkg+str(ver)
-        dep = pkg+' '+str(ver)
-        print(dep)
+        print(' '.join(['-c '+c for c in open(channels_file, 'r').read().split()]))
+        if len(sys_argv) < 3:
+            args = 'channels packages'
+        else:
+            args = sys_argv
+        if any(arg in args for arg in ['channels']):
+            print(' '.join(['-c '+c for c in open(channels_file, 'r').read().split()]), end=' ')
+        if any(arg in args for arg in ['packages', 'pkg']):
+            print(' '.join(requirements))
+        else:
+            print()
