@@ -1,4 +1,4 @@
-{% set name = "credisdict" %}
+{% set name = "retropath2_wrapper" %}
 {% set data = load_setup_py_data() %}
 
 package:
