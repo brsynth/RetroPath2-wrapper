@@ -20,7 +20,7 @@ This CI toolkit is designed to provide full development chain for a conda packag
 
 Requirements can be provided by a docker container by running the following commands (at package root folder):
 ```bash
-docker run -it --rm -v $PWD:$PWD:ro -w $PWD continuumio/miniconda3 bash
+docker run -it --rm -v $PWD:$PWD -w $PWD continuumio/miniconda3 bash
 conda update --all -y
 conda install -y make
 cd ci
@@ -86,10 +86,19 @@ For environment automatic building, tests can be processed within conda environm
 make test-inconda [env=<conda_env_name>]  args=[PATH_1, PATH_2...]
 ```
 
+### Run in interactive mode
 To run the code in a debug process, it can be done with the following commands at the root of the repository:
 ```bash
 conda activate {PACKAGE}_test
+```
+#### Run from command-line
+```bash
 python -m {PACKAGE} --help
+```
+#### Run from Python command-line
+```bash
+python
+from brs_libs import rpSBML
 ```
 
 ## Workflows

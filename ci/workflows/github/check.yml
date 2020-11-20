@@ -13,6 +13,7 @@ on:
       - '**/LICENSE*'
       - 'recipe'
       - 'docs'
+      - '.gitignore'
       - '.github'
       - '!.github/workflows/check*'
   pull_request:

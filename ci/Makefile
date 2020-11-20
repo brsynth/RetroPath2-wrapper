@@ -62,4 +62,4 @@ conda-check-recipe: ## Check conda recipe
 	@$(MAKE_CMD) -f conda.mk conda-recipe-check
 
 conda-create-run_env: ## Make an conda environment to run program
-	@$(MAKE_CMD) -f conda.mk check-environment-test env=run
+	@$(MAKE_CMD) -f conda.mk check-environment-test env=${PACKAGE}_test
