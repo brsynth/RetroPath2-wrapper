@@ -7,6 +7,7 @@ Created on Jul 15 2020
 from module    import Module
 from os        import path as os_path
 from brs_utils import extract_tar_gz
+from tempfile  import gettempdir
 
 class Test_Main(Module):
     __test__ = True
@@ -15,7 +16,7 @@ class Test_Main(Module):
         from brs_utils import extract_gz
 
         if not os_path.exists(self.args.rulesfile):
-            extract_tar_gz('data/rules.tar.gz', 'data')
+            extract_tar_gz(os_path.join('data', 'rules-d2.tar.gz'), gettempdir())
 
     #
     # def test_wrong_knime_path(self):

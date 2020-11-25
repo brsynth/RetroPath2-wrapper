@@ -6,19 +6,27 @@ Created on Jul 15 2020
 
 from module    import Module
 from os        import path as os_path
-from brs_utils import extract_tar_gz
+from brs_utils import extract_tar_gz, download_and_extract_tar_gz
+from tempfile  import gettempdir
+from subprocess import call, STDOUT, TimeoutExpired# nosec
+
 
 class Test_Main(Module):
     __test__ = True
 
+    KVER         = '3.6.2'
+    # KVER         = '3.7.1'
+    KURL         = 'http://download.knime.org/analytics-platform/linux/knime_'+KVER+'.linux.gtk.x86_64.tar.gz'
+    KINSTALL     = gettempdir()
+    KPATH        = os_path.join(KINSTALL, 'knime_')+KVER
+    KEXEC        = os_path.join(KPATH, 'knime')
+
     def _preexec(self):
-        from subprocess import call, STDOUT, TimeoutExpired# nosec
-        from brs_utils import download_and_extract_tar_gz, extract_gz
-
         if not os_path.exists(self.args.rulesfile):
-            extract_tar_gz('data/rules.tar.gz', 'data')
+            extract_tar_gz(os_path.join('data', 'rules.tar.gz'), gettempdir())
 
-        download_and_extract_tar_gz(self.KURL, '/tmp')
+        if not os_path.exists(KEXEC):
+            download_and_extract_tar_gz(self.KURL, gettempdir())
         knime_add_pkgs = self.KEXEC \
             + ' -application org.eclipse.equinox.p2.director' \
             + ' -nosplash -consolelog' \
