@@ -138,4 +138,7 @@ def retropath2(sinkfile,
     csv_scopes = sorted(glob(os_path.join(outdir, '*_scope.csv')),
                         key=lambda scope: os_path.getmtime(scope))
 
-    return csv_scopes[-1]
+    if csv_scopes:
+        return csv_scopes[-1]
+    else:
+        return 1
