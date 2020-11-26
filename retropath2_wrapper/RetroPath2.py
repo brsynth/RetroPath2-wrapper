@@ -17,7 +17,6 @@ from subprocess import call, STDOUT, TimeoutExpired# nosec
 from brs_utils  import download_and_extract_tar_gz
 from glob       import glob
 
-
 # KVER         = '3.6.2'
 KVER         = '4.2.2'
 if sys_platform == 'linux':
@@ -67,11 +66,11 @@ def retropath2(sinkfile,
     if not kexec:
         kexec = KEXEC
 
+    results_filename   = 'results.csv'
+    src_in_sk_filename = 'source-in-sink.csv'
+
     ### run the KNIME RETROPATH2.0 workflow
     try:
-
-        results_filename   = 'results.csv'
-        src_in_sk_filename = 'source-in-sink.csv'
 
         if not os_path.exists(kexec):
             download_and_extract_tar_gz(KURL, KINSTALL)
@@ -139,4 +138,4 @@ def retropath2(sinkfile,
     csv_scopes = sorted(glob(os_path.join(outdir, '*_scope.csv')),
                         key=lambda scope: os_path.getmtime(scope))
 
-    return csv_scope[-1]
+    return csv_scopes[-1]
