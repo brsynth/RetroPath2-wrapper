@@ -8,17 +8,24 @@ Created on January 16 2020
 """
 from os         import mkdir          as os_mkdir
 from os         import path           as os_path
+from sys        import platform       as sys_platform
 from argparse   import ArgumentParser as argparse_ArgumentParser
 from logging    import getLogger
 from csv        import reader         as csv_reader
 from resource   import setrlimit, RLIMIT_AS, RLIM_INFINITY
 from subprocess import call, STDOUT, TimeoutExpired# nosec
 from brs_utils  import download_and_extract_tar_gz
+from glob       import glob
 
 
 # KVER         = '3.6.2'
 KVER         = '4.2.2'
-KURL         = 'http://download.knime.org/analytics-platform/linux/knime_'+KVER+'.linux.gtk.x86_64.tar.gz'
+if sys_platform == 'linux':
+    KURL = 'http://download.knime.org/analytics-platform/linux/knime_'+KVER+'.linux.gtk.x86_64.tar.gz'
+elif sys_platform == 'darwin':
+    KURL = 'https://download.knime.org/analytics-platform/macosx/knime-'+KVER+'-app.macosx.cocoa.x86_64.dmg'
+else:
+    KURL = 'https://download.knime.org/analytics-platform/win/knime-'+KVER+'-installer-win32.win32.x86_64.exe'
 KINSTALL     = os_path.dirname(os_path.abspath( __file__ ))
 KPATH        = os_path.join(KINSTALL, 'knime_')+KVER
 KEXEC        = os_path.join(KPATH, 'knime')
@@ -43,7 +50,7 @@ def retropath2(sinkfile,
                max_steps=3,
                topx=100,
                dmin=0,
-               dmax=1000,
+               dmax=100,
                mwmax_source=1000,
                mwmax_cof=1000,
                timeout=30,
@@ -129,4 +136,7 @@ def retropath2(sinkfile,
         logger.error(e)
         return 4
 
-    return os_path.join(outdir, results_filename)
+    csv_scopes = sorted(glob(os_path.join(outdir, '*_scope.csv')),
+                        key=lambda scope: os_path.getmtime(scope))
+
+    return csv_scope[-1]
