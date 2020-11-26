@@ -18,7 +18,7 @@ class Test_RP2(TestCase):
     data_path  = 'data'
     sinkfile   = os_path.join(data_path, 'sink.csv')
     sourcefile = os_path.join(data_path, 'source.csv')
-    rulesfile  = extract_gz(os_path.join(data_path, 'rules-d16.csv.gz'),
+    rulesfile  = extract_gz(os_path.join(data_path, 'rules.csv.gz'),
                             gettempdir())
     ref_file   = os_path.join(data_path, 'scope.csv')
     outdir     = TemporaryDirectory().name
