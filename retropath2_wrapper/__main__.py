@@ -4,6 +4,7 @@
 from os       import getcwd     as os_getcwd
 from tempfile import gettempdir
 
+from brs_utils          import extract_gz
 from retropath2_wrapper import retropath2, build_args_parser
 
 
@@ -11,14 +12,9 @@ def _cli():
     parser = build_args_parser()
     args  = parser.parse_args()
 
-# from shutil     import copy           as shutil_cp
-    # shutil_cp(sinkfile,   os_path.join(outdir, "sink.csv"))
-    # shutil_cp(sourcefile, os_path.join(outdir, "source.csv"))
-    # untar_rulesfile = rulesfile
-
-    # from brs_utils  import extract_tar_gz
-    # if args.rulesfile.endswith('.gz') or args.rulesfile.endswith('.tgz'):
-    #     extract_tar_gz(args.rulesfile, gettempdir())
+    # If rulesfile is a pure gzip archive without tar
+    if args.rulesfile.endswith('.gz') and '.tar.' not in args.rulesfile:
+        args.rulesfile = extract_gz(args.rulesfile, gettempdir())
 
     outFile = retropath2(args.sinkfile,
                          args.sourcefile,
