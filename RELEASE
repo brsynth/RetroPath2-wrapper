@@ -1,3 +1,6 @@
+1.4.0 - Nov 27, 2020
+  - ability to take input files without good extensions (.csv, .gz)
+
 1.3.1 - Nov 27, 2020
   - print out only filename where results are stored in
 
