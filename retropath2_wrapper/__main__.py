@@ -30,7 +30,7 @@ def _cli():
                          args.timeout,
                          args.forward)
 
-    print("Results are stored in", outFile)
+    print(outFile)
 
 
 if __name__ == '__main__':
