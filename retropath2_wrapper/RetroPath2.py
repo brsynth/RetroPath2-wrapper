@@ -37,6 +37,9 @@ RP_WORK_PATH = os_path.join(os_path.dirname(os_path.abspath( __file__ )), 'workf
 MAX_VIRTUAL_MEMORY = 20000*1024*1024 # 20 GB -- define what is the best
 EXT = '.csv'
 
+# logging.basicConfig(level=logging.DEBUG)
+logger = getLogger(__name__)
+
 ##
 #
 #
@@ -54,12 +57,7 @@ def retropath2(sinkfile, sourcefile, rulesfile, outdir,
                dmin=0, dmax=100,
                mwmax_source=1000, mwmax_cof=1000,
                timeout=30,
-               is_forward=False,
-               logger=None):
-
-    if not logger:
-        # logging.basicConfig(level=logging.DEBUG)
-        logger = getLogger(__name__)
+               is_forward=False):
 
     if not os_path.exists(outdir):
         os_mkdir(outdir)
