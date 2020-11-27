@@ -19,6 +19,7 @@ requirements:
     - python {{ python }}
     - brs_utils
     - rdkit
+    - filetype
 
 test:
   source_files:
