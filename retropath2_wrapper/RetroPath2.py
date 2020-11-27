@@ -8,6 +8,8 @@ Created on January 16 2020
 """
 from os         import mkdir          as os_mkdir
 from os         import path           as os_path
+from os         import rename
+from shutil     import copyfile
 from sys        import platform       as sys_platform
 from argparse   import ArgumentParser as argparse_ArgumentParser
 from logging    import getLogger
@@ -16,6 +18,9 @@ from resource   import setrlimit, RLIMIT_AS, RLIM_INFINITY
 from subprocess import call, STDOUT, TimeoutExpired# nosec
 from brs_utils  import download_and_extract_tar_gz
 from glob       import glob
+from filetype   import guess
+from brs_utils  import extract_gz
+from tempfile   import gettempdir, TemporaryDirectory
 
 # KVER         = '3.6.2'
 KVER         = '4.2.2'
@@ -30,6 +35,7 @@ KPATH        = os_path.join(KINSTALL, 'knime_')+KVER
 KEXEC        = os_path.join(KPATH, 'knime')
 RP_WORK_PATH = os_path.join(os_path.dirname(os_path.abspath( __file__ )), 'workflow', 'RetroPath2.0-v9.knwf')
 MAX_VIRTUAL_MEMORY = 20000*1024*1024 # 20 GB -- define what is the best
+EXT = '.csv'
 
 ##
 #
@@ -41,17 +47,12 @@ def limit_virtual_memory():
 ##
 #
 #
-def retropath2(sinkfile,
-               sourcefile,
-               rulesfile,
-               outdir,
+def retropath2(sinkfile, sourcefile, rulesfile, outdir,
                kexec='',
                max_steps=3,
                topx=100,
-               dmin=0,
-               dmax=100,
-               mwmax_source=1000,
-               mwmax_cof=1000,
+               dmin=0, dmax=100,
+               mwmax_source=1000, mwmax_cof=1000,
                timeout=30,
                is_forward=False,
                logger=None):
@@ -66,63 +67,42 @@ def retropath2(sinkfile,
     if not kexec:
         kexec = KEXEC
 
-    results_filename   = 'results.csv'
-    src_in_sk_filename = 'source-in-sink.csv'
 
     ### run the KNIME RETROPATH2.0 workflow
     try:
 
         if not os_path.exists(kexec):
             download_and_extract_tar_gz(KURL, KINSTALL)
-            # Add packages to Knime
-            knime_add_pkgs = kexec \
-                + ' -application org.eclipse.equinox.p2.director' \
-                + ' -nosplash -consolelog' \
-                + ' -r http://update.knime.org/community-contributions/trunk,' \
-                    + 'http://update.knime.com/analytics-platform/'+KVER[:3]+',' \
-                    + 'http://update.knime.com/community-contributions/trusted/'+KVER[:3] \
-                + ' -i org.knime.features.chem.types.feature.group,' \
-                    + 'org.knime.features.datageneration.feature.group,' \
-                    + 'jp.co.infocom.cheminfo.marvin.feature.feature.group,' \
-                    + 'org.knime.features.python.feature.group,' \
-                    + 'org.rdkit.knime.feature.feature.group' \
-                + ' -bundlepool ' + KPATH + ' -d ' + KPATH
-            call(knime_add_pkgs.split(), stderr=STDOUT, shell=False)# nosec
 
-        knime_command = kexec \
-            + ' -nosplash -nosave -reset --launcher.suppressErrors -application org.knime.product.KNIME_BATCH_APPLICATION ' \
-            + ' -workflowFile=' + RP_WORK_PATH \
-            + ' -workflow.variable=input.dmin,"'              + str(dmin)                + '",int' \
-            + ' -workflow.variable=input.dmax,"'              + str(dmax)                + '",int' \
-            + ' -workflow.variable=input.max-steps,"'         + str(max_steps)           + '",int' \
-            + ' -workflow.variable=input.sourcefile,"'        + sourcefile               + '",String' \
-            + ' -workflow.variable=input.sinkfile,"'          + sinkfile                 + '",String' \
-            + ' -workflow.variable=input.rulesfile,"'         + rulesfile                + '",String' \
-            + ' -workflow.variable=input.topx,"'              + str(topx)                + '",int' \
-            + ' -workflow.variable=input.mwmax-source,"'      + str(mwmax_source)        + '",int' \
-            + ' -workflow.variable=input.mwmax-cof,"'         + str(mwmax_cof)           + '",int' \
-            + ' -workflow.variable=output.dir,"'              + os_path.join(outdir, "") + '",String' \
-            + ' -workflow.variable=output.solutionfile,"'     + results_filename         + '",String' \
-            + ' -workflow.variable=output.sourceinsinkfile,"' + src_in_sk_filename       + '",String'
+        # Add packages to Knime
+        install_knime_pkgs(kexec)
 
-        try:
-            call(knime_command.split(), stderr=STDOUT, timeout=timeout*60, shell=False)# nosec
-        except TimeoutExpired:
-            logger.warning('*** WARNING')
-            logger.warning('      |- Time limit ('+str(timeout)+' minutes) reached')
-            logger.warning('      |- Results collected until now are available')
+        with TemporaryDirectory() as tempd:
+
+            rulesfile = format_rulesfile(rulesfile, tempd)
+
+            files = format_files_for_knime(sinkfile, sourcefile, rulesfile, tempd)
+            files['outdir'] = outdir
+
+            call_knime(kexec,
+                       files,
+                       max_steps,
+                       topx,
+                       dmin, dmax,
+                       mwmax_source, mwmax_cof,
+                       timeout)
 
         ### if source is in sink
         try:
             count = 0
-            with open(os_path.join(outdir, src_in_sk_filename)) as f:
+            with open(os_path.join(outdir, files['src-in-sk'])) as f:
                 for i in csv_reader(f, delimiter=',', quotechar='"'):
                     count += 1
                     if count>1:
                         logger.error('Source has been found in the sink')
                         return 1
         except FileNotFoundError as e:
-            logger.error('Cannot find '+src_in_sk_filename+' file')
+            logger.error('Cannot find '+files['src-in-sk']+' file')
             logger.error(e)
             return 2
 
@@ -142,3 +122,74 @@ def retropath2(sinkfile,
         return csv_scopes[-1]
     else:
         return 1
+
+
+def format_rulesfile(rulesfile, indir):
+    # If 'rulesfile' is a pure gzip archive without tar
+    kind = guess(rulesfile)
+    if kind:
+        if kind.mime == 'application/gzip':
+            new_f = os_path.join(indir, os_path.basename(rulesfile)+'.gz')
+            copyfile(rulesfile, new_f)
+            rulesfile = extract_gz(new_f, indir)
+            rename(rulesfile, rulesfile+EXT)
+            rulesfile += EXT
+
+    return rulesfile
+
+
+def format_files_for_knime(sinkfile, sourcefile, rulesfile, indir):
+
+    # Because KNIME accepts only '.csv' file extension, files have to be renamed
+    files = {'sink': sinkfile, 'source': sourcefile, 'rules': rulesfile}
+    for key in files:
+        if os_path.splitext(files[key])[-1] != EXT:
+            new_f = os_path.join(indir, os_path.basename(files[key])+EXT)
+            copyfile(files[key], new_f)
+            files[key] = new_f
+
+    files['results']   = 'results' + EXT
+    files['src-in-sk'] = 'source-in-sink' + EXT
+
+    return files
+
+
+def install_knime_pkgs(kexec):
+    knime_add_pkgs = kexec \
+        + ' -application org.eclipse.equinox.p2.director' \
+        + ' -nosplash -consolelog' \
+        + ' -r http://update.knime.org/community-contributions/trunk,' \
+            + 'http://update.knime.com/analytics-platform/'+KVER[:3]+',' \
+            + 'http://update.knime.com/community-contributions/trusted/'+KVER[:3] \
+        + ' -i org.knime.features.chem.types.feature.group,' \
+            + 'org.knime.features.datageneration.feature.group,' \
+            + 'jp.co.infocom.cheminfo.marvin.feature.feature.group,' \
+            + 'org.knime.features.python.feature.group,' \
+            + 'org.rdkit.knime.feature.feature.group' \
+        + ' -bundlepool ' + KPATH + ' -d ' + KPATH
+    call(knime_add_pkgs.split(), stderr=STDOUT, shell=False)# nosec
+
+
+def call_knime(kexec, files, max_steps, topx, dmin, dmax, mwmax_source, mwmax_cof, timeout):
+        knime_command = kexec \
+            + ' -nosplash -nosave -reset --launcher.suppressErrors -application org.knime.product.KNIME_BATCH_APPLICATION ' \
+            + ' -workflowFile=' + RP_WORK_PATH \
+            + ' -workflow.variable=input.dmin,"'              + str(dmin)           + '",int' \
+            + ' -workflow.variable=input.dmax,"'              + str(dmax)           + '",int' \
+            + ' -workflow.variable=input.max-steps,"'         + str(max_steps)      + '",int' \
+            + ' -workflow.variable=input.sourcefile,"'        + files['source']     + '",String' \
+            + ' -workflow.variable=input.sinkfile,"'          + files['sink']       + '",String' \
+            + ' -workflow.variable=input.rulesfile,"'         + files['rules']      + '",String' \
+            + ' -workflow.variable=input.topx,"'              + str(topx)           + '",int' \
+            + ' -workflow.variable=input.mwmax-source,"'      + str(mwmax_source)   + '",int' \
+            + ' -workflow.variable=input.mwmax-cof,"'         + str(mwmax_cof)      + '",int' \
+            + ' -workflow.variable=output.dir,"'              + files['outdir']     + '",String' \
+            + ' -workflow.variable=output.solutionfile,"'     + files['results']    + '",String' \
+            + ' -workflow.variable=output.sourceinsinkfile,"' + files['src-in-sk']  + '",String'
+
+        try:
+            call(knime_command.split(), stderr=STDOUT, timeout=timeout*60, shell=False)# nosec
+        except TimeoutExpired:
+            logger.warning('*** WARNING')
+            logger.warning('      |- Time limit ('+str(timeout)+' minutes) reached')
+            logger.warning('      |- Results collected until now are available')
