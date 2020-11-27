@@ -11,16 +11,15 @@ from os         import path           as os_path
 from os         import rename
 from shutil     import copyfile
 from sys        import platform       as sys_platform
-from argparse   import ArgumentParser as argparse_ArgumentParser
 from logging    import getLogger
 from csv        import reader         as csv_reader
 from resource   import setrlimit, RLIMIT_AS, RLIM_INFINITY
-from subprocess import call, STDOUT, TimeoutExpired# nosec
+from subprocess import call, STDOUT, TimeoutExpired  # nosec
 from brs_utils  import download_and_extract_tar_gz
 from glob       import glob
 from filetype   import guess
 from brs_utils  import extract_gz
-from tempfile   import gettempdir, TemporaryDirectory
+from tempfile   import TemporaryDirectory
 
 # KVER         = '3.6.2'
 KVER         = '4.2.2'
@@ -30,26 +29,21 @@ elif sys_platform == 'darwin':
     KURL = 'https://download.knime.org/analytics-platform/macosx/knime-'+KVER+'-app.macosx.cocoa.x86_64.dmg'
 else:
     KURL = 'https://download.knime.org/analytics-platform/win/knime-'+KVER+'-installer-win32.win32.x86_64.exe'
-KINSTALL     = os_path.dirname(os_path.abspath( __file__ ))
+KINSTALL     = os_path.dirname(os_path.abspath(__file__))
 KPATH        = os_path.join(KINSTALL, 'knime_')+KVER
 KEXEC        = os_path.join(KPATH, 'knime')
-RP_WORK_PATH = os_path.join(os_path.dirname(os_path.abspath( __file__ )), 'workflow', 'RetroPath2.0-v9.knwf')
-MAX_VIRTUAL_MEMORY = 20000*1024*1024 # 20 GB -- define what is the best
+RP_WORK_PATH = os_path.join(os_path.dirname(os_path.abspath(__file__)), 'workflow', 'RetroPath2.0-v9.knwf')
+MAX_VIRTUAL_MEMORY = 20000*1024*1024  # 20 GB -- define what is the best
 EXT = '.csv'
 
 # logging.basicConfig(level=logging.DEBUG)
 logger = getLogger(__name__)
 
-##
-#
-#
+
 def limit_virtual_memory():
     setrlimit(RLIMIT_AS, (MAX_VIRTUAL_MEMORY, RLIM_INFINITY))
 
 
-##
-#
-#
 def retropath2(sinkfile, sourcefile, rulesfile, outdir,
                kexec='',
                max_steps=3,
@@ -64,7 +58,6 @@ def retropath2(sinkfile, sourcefile, rulesfile, outdir,
 
     if not kexec:
         kexec = KEXEC
-
 
     ### run the KNIME RETROPATH2.0 workflow
     try:
@@ -96,7 +89,7 @@ def retropath2(sinkfile, sourcefile, rulesfile, outdir,
             with open(os_path.join(outdir, files['src-in-sk'])) as f:
                 for i in csv_reader(f, delimiter=',', quotechar='"'):
                     count += 1
-                    if count>1:
+                    if count > 1:
                         logger.error('Source has been found in the sink')
                         return 1
         except FileNotFoundError as e:
@@ -165,29 +158,29 @@ def install_knime_pkgs(kexec):
             + 'org.knime.features.python.feature.group,' \
             + 'org.rdkit.knime.feature.feature.group' \
         + ' -bundlepool ' + KPATH + ' -d ' + KPATH
-    call(knime_add_pkgs.split(), stderr=STDOUT, shell=False)# nosec
+    call(knime_add_pkgs.split(), stderr=STDOUT, shell=False)  # nosec
 
 
 def call_knime(kexec, files, max_steps, topx, dmin, dmax, mwmax_source, mwmax_cof, timeout):
-        knime_command = kexec \
-            + ' -nosplash -nosave -reset --launcher.suppressErrors -application org.knime.product.KNIME_BATCH_APPLICATION ' \
-            + ' -workflowFile=' + RP_WORK_PATH \
-            + ' -workflow.variable=input.dmin,"'              + str(dmin)           + '",int' \
-            + ' -workflow.variable=input.dmax,"'              + str(dmax)           + '",int' \
-            + ' -workflow.variable=input.max-steps,"'         + str(max_steps)      + '",int' \
-            + ' -workflow.variable=input.sourcefile,"'        + files['source']     + '",String' \
-            + ' -workflow.variable=input.sinkfile,"'          + files['sink']       + '",String' \
-            + ' -workflow.variable=input.rulesfile,"'         + files['rules']      + '",String' \
-            + ' -workflow.variable=input.topx,"'              + str(topx)           + '",int' \
-            + ' -workflow.variable=input.mwmax-source,"'      + str(mwmax_source)   + '",int' \
-            + ' -workflow.variable=input.mwmax-cof,"'         + str(mwmax_cof)      + '",int' \
-            + ' -workflow.variable=output.dir,"'              + files['outdir']     + '",String' \
-            + ' -workflow.variable=output.solutionfile,"'     + files['results']    + '",String' \
-            + ' -workflow.variable=output.sourceinsinkfile,"' + files['src-in-sk']  + '",String'
+    knime_command = kexec \
+        + ' -nosplash -nosave -reset --launcher.suppressErrors -application org.knime.product.KNIME_BATCH_APPLICATION ' \
+        + ' -workflowFile=' + RP_WORK_PATH \
+        + ' -workflow.variable=input.dmin,"'              + str(dmin)           + '",int' \
+        + ' -workflow.variable=input.dmax,"'              + str(dmax)           + '",int' \
+        + ' -workflow.variable=input.max-steps,"'         + str(max_steps)      + '",int' \
+        + ' -workflow.variable=input.sourcefile,"'        + files['source']     + '",String' \
+        + ' -workflow.variable=input.sinkfile,"'          + files['sink']       + '",String' \
+        + ' -workflow.variable=input.rulesfile,"'         + files['rules']      + '",String' \
+        + ' -workflow.variable=input.topx,"'              + str(topx)           + '",int' \
+        + ' -workflow.variable=input.mwmax-source,"'      + str(mwmax_source)   + '",int' \
+        + ' -workflow.variable=input.mwmax-cof,"'         + str(mwmax_cof)      + '",int' \
+        + ' -workflow.variable=output.dir,"'              + files['outdir']     + '",String' \
+        + ' -workflow.variable=output.solutionfile,"'     + files['results']    + '",String' \
+        + ' -workflow.variable=output.sourceinsinkfile,"' + files['src-in-sk']  + '",String'
 
-        try:
-            call(knime_command.split(), stderr=STDOUT, timeout=timeout*60, shell=False)# nosec
-        except TimeoutExpired:
-            logger.warning('*** WARNING')
-            logger.warning('      |- Time limit ('+str(timeout)+' minutes) reached')
-            logger.warning('      |- Results collected until now are available')
+    try:
+        call(knime_command.split(), stderr=STDOUT, timeout=timeout*60, shell=False)  # nosec
+    except TimeoutExpired:
+        logger.warning('*** WARNING')
+        logger.warning('      |- Time limit ('+str(timeout)+' minutes) reached')
+        logger.warning('      |- Results collected until now are available')

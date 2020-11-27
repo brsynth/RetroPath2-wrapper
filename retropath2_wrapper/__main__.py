@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 
 
-from os       import getcwd     as os_getcwd
-from tempfile import gettempdir
-
 from retropath2_wrapper import retropath2, build_args_parser
 
 
@@ -25,7 +22,9 @@ def _cli():
                          args.timeout,
                          args.forward)
 
-    print(outFile)
+    print()
+    print("Results are stored in", outFile)
+    print()
 
 
 if __name__ == '__main__':

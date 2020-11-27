@@ -16,10 +16,10 @@ from retropath2_wrapper import retropath2
 class Test_RP2(TestCase):
 
     data_path  = 'data'
-    sinkfile   = os_path.join( data_path, 'sink'   )
-    sourcefile = os_path.join( data_path, 'source' )
-    rulesfile  = os_path.join( data_path, 'rules'  )
-    ref_file   = os_path.join( data_path, 'scope.csv'    )
+    sinkfile   = os_path.join(data_path, 'sink')
+    sourcefile = os_path.join(data_path, 'source')
+    rulesfile  = os_path.join(data_path, 'rules')
+    ref_file   = os_path.join(data_path, 'scope.csv')
     outdir     = TemporaryDirectory().name
     ext = '.csv'
 
