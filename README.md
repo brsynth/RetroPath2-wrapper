@@ -59,13 +59,17 @@ run(args.sinkfile,
 python -m retropath2 sinkfile.csv sourcefile.csv rulesfile.csv
 ```
 
+## Tests
+Test can be run with the following commands:
 
-## Test
-All modes can be tested with:
-```
+### Natively
+```bash
 cd tests
-./test-in-docker.sh
+pytest -v
 ```
+
+# CI/CD
+For further tests and development tools, a CI toolkit is provided in `ci` folder (see [ci/README.md](ci/README.md)).
 
 
 ### How to cite RetroPath2.0?
