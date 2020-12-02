@@ -26,34 +26,34 @@ class Test_RP2(TestCase):
 
     def test_light(self):
 
-        outFile = retropath2(self.sinkfile+self.ext,
-                             self.sourcefile+self.ext,
-                             extract_gz(self.rulesfile+self.ext+'.gz',
-                                        gettempdir()),
-                             self.outdir,
-                             dmin=16)
+        r_code, result = retropath2(self.sinkfile+self.ext,
+                                    self.sourcefile+self.ext,
+                                    extract_gz(self.rulesfile+self.ext+'.gz',
+                                               gettempdir()),
+                                    self.outdir,
+                                    dmin=16)
 
-        self.assertTrue(cmp(outFile, self.ref_file))
+        self.assertTrue(cmp(result, self.ref_file))
 
 
     def test_GZ(self):
 
-        outFile = retropath2(self.sinkfile+self.ext,
-                             self.sourcefile+self.ext,
-                             self.rulesfile+self.ext+'.gz',
-                             self.outdir,
-                             dmin=16)
+        r_code, result = retropath2(self.sinkfile+self.ext,
+                                    self.sourcefile+self.ext,
+                                    self.rulesfile+self.ext+'.gz',
+                                    self.outdir,
+                                    dmin=16)
 
-        self.assertTrue(cmp(outFile, self.ref_file))
+        self.assertTrue(cmp(result, self.ref_file))
 
 
     def test_woCSV(self):
 
         ext = '.dat'
-        outFile = retropath2(self.sinkfile+ext,
-                             self.sourcefile+ext,
-                             self.rulesfile+ext,
-                             self.outdir,
-                             dmin=16)
+        r_code, result = retropath2(self.sinkfile+ext,
+                                    self.sourcefile+ext,
+                                    self.rulesfile+ext,
+                                    self.outdir,
+                                    dmin=16)
 
-        self.assertTrue(cmp(outFile, self.ref_file))
+        self.assertTrue(cmp(result, self.ref_file))

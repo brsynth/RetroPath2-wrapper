@@ -30,8 +30,6 @@ def _cli():
     print(result)
     print()
 
-    return r_code
-
 
 if __name__ == '__main__':
-    sys_exit(_cli())
+    _cli()
