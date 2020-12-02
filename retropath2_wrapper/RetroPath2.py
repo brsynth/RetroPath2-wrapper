@@ -108,7 +108,7 @@ def retropath2(sinkfile, sourcefile, rulesfile, outdir,
                         key=lambda scope: os_path.getmtime(scope))
 
     if csv_scopes:
-        return 0, 'Results are stored in '+csv_scopes[-1]
+        return 0, csv_scopes[-1]
     else:
         return 5, 'RetroPath2.0 has not found any solution'
 

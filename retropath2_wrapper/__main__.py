@@ -25,6 +25,8 @@ def _cli():
     if r_code > 0:
         print('*** Error:')
         print(end='     ')
+    else:
+        print('Results are stored in', result)
     print(result)
     print()
 
