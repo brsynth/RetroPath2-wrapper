@@ -25,35 +25,29 @@ class Test_RP2(TestCase):
 
 
     def test_light(self):
-
         r_code, result = retropath2(self.sinkfile+self.ext,
                                     self.sourcefile+self.ext,
                                     extract_gz(self.rulesfile+self.ext+'.gz',
                                                gettempdir()),
                                     self.outdir,
                                     dmin=16)
-
         self.assertTrue(cmp(result, self.ref_file))
 
 
     def test_GZ(self):
-
         r_code, result = retropath2(self.sinkfile+self.ext,
                                     self.sourcefile+self.ext,
                                     self.rulesfile+self.ext+'.gz',
                                     self.outdir,
                                     dmin=16)
-
         self.assertTrue(cmp(result, self.ref_file))
 
 
     def test_woCSV(self):
-
         ext = '.dat'
         r_code, result = retropath2(self.sinkfile+ext,
                                     self.sourcefile+ext,
                                     self.rulesfile+ext,
                                     self.outdir,
                                     dmin=16)
-
         self.assertTrue(cmp(result, self.ref_file))
