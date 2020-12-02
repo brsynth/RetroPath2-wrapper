@@ -75,13 +75,18 @@ def retropath2(sinkfile, sourcefile, rulesfile, outdir,
             files = format_files_for_knime(sinkfile, sourcefile, rulesfile, tempd)
             files['outdir'] = outdir
 
-            call_knime(kexec,
-                       files,
-                       max_steps,
-                       topx,
-                       dmin, dmax,
-                       mwmax_source, mwmax_cof,
-                       timeout)
+            try:
+                call_knime(kexec,
+                           files,
+                           max_steps,
+                           topx,
+                           dmin, dmax,
+                           mwmax_source, mwmax_cof,
+                           timeout)
+            except TimeoutExpired:
+                return 6, '\n'.join(['*** WARNING',
+                                     '      |- Time limit ('+str(timeout)+' minutes) reached',
+                                     '      |- Results collected until now are available'])
 
         ### if source is in sink
         try:
@@ -90,29 +95,22 @@ def retropath2(sinkfile, sourcefile, rulesfile, outdir,
                 for i in csv_reader(f, delimiter=',', quotechar='"'):
                     count += 1
                     if count > 1:
-                        logger.error('Source has been found in the sink')
-                        return 1
+                        return 1, 'Source has been found in the sink'
         except FileNotFoundError as e:
-            logger.error('Cannot find '+files['src-in-sk']+' file')
-            logger.error(e)
-            return 2
+            return 2, 'Cannot find '+files['src-in-sk']+' file'
 
     except OSError as e:
-        logger.error('Running the RetroPath2.0 Knime program produced an OSError')
-        logger.error(e)
-        return 3
+        return 3, 'Running the RetroPath2.0 Knime program produced an OSError'
     except ValueError as e:
-        logger.error('Cannot set the RAM usage limit')
-        logger.error(e)
-        return 4
+        return 4, 'Cannot set the RAM usage limit'
 
     csv_scopes = sorted(glob(os_path.join(outdir, '*_scope.csv')),
                         key=lambda scope: os_path.getmtime(scope))
 
     if csv_scopes:
-        return csv_scopes[-1]
+        return 0, 'Results are stored in '+csv_scopes[-1]
     else:
-        return 1
+        return 5, 'RetroPath2.0 has not found any solution'
 
 
 def format_rulesfile(rulesfile, indir):
@@ -178,9 +176,4 @@ def call_knime(kexec, files, max_steps, topx, dmin, dmax, mwmax_source, mwmax_co
         + ' -workflow.variable=output.solutionfile,"'     + files['results']    + '",String' \
         + ' -workflow.variable=output.sourceinsinkfile,"' + files['src-in-sk']  + '",String'
 
-    try:
-        call(knime_command.split(), stderr=STDOUT, timeout=timeout*60, shell=False)  # nosec
-    except TimeoutExpired:
-        logger.warning('*** WARNING')
-        logger.warning('      |- Time limit ('+str(timeout)+' minutes) reached')
-        logger.warning('      |- Results collected until now are available')
+    call(knime_command.split(), stderr=STDOUT, timeout=timeout*60, shell=False)  # nosec
