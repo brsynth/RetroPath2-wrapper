@@ -1,3 +1,6 @@
+1.4.1 - Dec 12, 2020
+  - change print out and return codes
+
 1.4.0 - Nov 27, 2020
   - ability to take input files without good extensions (.csv, .gz)
 
