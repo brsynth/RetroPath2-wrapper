@@ -26,7 +26,7 @@ def _cli():
         print('*** Error:')
         print(end='     ')
     else:
-        print('Results are stored in', result)
+        print('Results are stored in', end='')
     print(result)
     print()
 
