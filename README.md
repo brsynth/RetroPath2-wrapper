@@ -30,14 +30,24 @@ Optional:
 * KNIME (code was tested on 3.6.2 version)
 
 ## Install
-### From pip
-retropath2 requires [Knime](https://www.knime.com/) which is not available through pip. The 3.6.2 version will be downloaded if not already installed.
-```sh
-[sudo] python -m pip install retropath2
+
+### Prerequisite
+
+The conda package manager is required. Fresh instructions on how to install conda are [available online](https://docs.conda.io/projects/conda/en/latest/user-guide/install/).
+The KNIME is installed 
+
+### conda environment
+
+In case a new conda environment `<my_env>` need to be set up, first start with:
+```shell
+conda create -n my_env python=3
 ```
-### From Conda
-```sh
-[sudo] conda install -c brsynth retropath2
+
+### conda package
+
+Install in the `<my_env>` conda environment:
+```shell
+conda install -c brsynth -c conda-forge -n <my_env> retropath2_wrapper 
 ```
 
 ## Run
