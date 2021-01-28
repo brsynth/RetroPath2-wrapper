@@ -17,9 +17,9 @@ requirements:
     - python {{ python }}
   run:
     - python {{ python }}
-    - brs_utils
-    - rdkit
-    - filetype
+    - brs_utils # brsynth
+    - filetype  # conda-forge
+    - colorlog  # main
 
 test:
   source_files:
