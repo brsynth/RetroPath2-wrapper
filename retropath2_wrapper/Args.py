@@ -20,10 +20,15 @@ def _add_arguments(parser):
     parser.add_argument('sourcefile', type=str)
     parser.add_argument('rulesfile', type=str)
     parser.add_argument('outdir', type=str)
-    parser.add_argument('--knime_exec', type=str, default='',
-                        help='path to Knime executable file (Knime will be \
+    parser.add_argument('--kexec', type=str,
+                        help='path to KNIME executable file (KNIME will be \
                               downloaded if not already installed or path is \
                               wrong).')
+    parser.add_argument('--kver', type=str,
+                        help='version of KNIME (mandatory if --kexec is passed).')
+    parser.add_argument('--skip_kpkg_install', action='store_true')
+    parser.add_argument('--kwf', type=str,
+                        help='path to Knime workflow file.')
     parser.add_argument('--max_steps', type=int, default=3)
     parser.add_argument('--topx', type=int, default=100)
     parser.add_argument('--dmin', type=int, default=0)
@@ -32,5 +37,10 @@ def _add_arguments(parser):
     parser.add_argument('--mwmax_cof', type=int, default=1000)
     parser.add_argument('--timeout', type=int, default=30)
     parser.add_argument('--forward', action='store_true')
+    parser.add_argument('--log', metavar='ARG',
+                        type=str, choices=['debug', 'info', 'warning', 'error', 'critical',
+                                           'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
+                        default='def_info',
+                        help='Adds a console logger for the specified level (default: error)')
 
     return parser

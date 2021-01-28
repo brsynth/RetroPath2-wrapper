@@ -4,31 +4,71 @@
 from retropath2_wrapper import retropath2, build_args_parser
 from os                 import path as os_path
 from sys                import exit as sys_exit
-
+from colorlog           import ColoredFormatter
+import logging
 
 def _cli():
     parser = build_args_parser()
     args  = parser.parse_args()
+    if args.kexec and args.kver is None:
+        parser.error("--kexec requires --kver.")
 
-    r_code, result = retropath2(args.sinkfile, args.sourcefile, args.rulesfile,
-                                args.outdir,
-                                args.knime_exec,
-                                args.max_steps,
-                                args.topx,
-                                args.dmin, args.dmax,
-                                args.mwmax_source, args.mwmax_cof,
-                                args.timeout,
-                                args.forward)
+    # Create logger
+    logger = creage_logger('RetroPath2.0', args.log)
+
+    logger.debug(args)
+
+    r_code = retropath2(
+        args.sinkfile, args.sourcefile, args.rulesfile,
+        args.outdir,
+        args.kexec, not args.skip_kpkg_install, args.kver
+        args.kwf,
+        args.max_steps, args.topx, args.dmin, args.dmax, args.mwmax_source, args.mwmax_cof,
+        args.timeout,
+        args.forward,
+        logger=logger
+        )
+
+    if r_code == 0:
+        logger.info('Results are stored in '+args.outdir)
 
 
-    print()
-    if r_code > 0:
-        print('*** Error:')
-        print(end='     ')
+def creage_logger(
+    name: str = __name__,
+    log_level: str = 'def_info'
+    ) -> logging.Logger:
+    """
+    Create a logger with name and log_level.
+
+    Parameters
+    ----------
+    name : str
+        A string containing the name that the logger will print out
+
+    log_level : str
+        A string containing the verbosity of the logger
+
+    Returns
+    -------
+    Logger
+        The logger object.
+
+    """    
+    logger  = logging.getLogger(name)
+    handler = logging.StreamHandler()
+
+    if log_level.startswith('def_'):
+        log_format = '%(log_color)s%(message)s%(reset)s'
+        log_level = log_level[4:]
     else:
-        print('Results are stored in', end='')
-    print(result)
-    print()
+        log_format = '%(log_color)s%(levelname)-8s | %(asctime)s.%(msecs)03d %(module)s - %(funcName)s(): %(message)s%(reset)s'
+ 
+    formatter = ColoredFormatter(log_format)
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    logger.setLevel(getattr(logging, log_level.upper()))
+
+    return logger
 
 
 if __name__ == '__main__':
