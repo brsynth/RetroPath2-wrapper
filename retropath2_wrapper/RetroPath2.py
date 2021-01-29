@@ -2,13 +2,13 @@
 """
 Created on January 16 2020
 
-@author: Melchior du Lac, Joan Hérisson
+@author: Joan Hérisson, Melchior du Lac
 @description: Python wrapper to run RetroPath2.0 KNIME workflow
 
 """
 from os         import mkdir     as os_mkdir
 from os         import path      as os_path
-from os         import rename
+from os         import rename, devnull
 from shutil     import copyfile
 from sys        import platform  as sys_platform
 from logging    import getLogger
@@ -21,6 +21,40 @@ from brs_utils  import extract_gz
 from tempfile   import TemporaryDirectory
 from typing     import Dict, List, Tuple
 from logging    import Logger
+# from retropath2_wrapper._version import __version__
+
+
+def print_conf(
+    kexec: str = None,
+    kver: str = None,
+    workflow: str = None,
+    logger: Logger = getLogger(__name__)
+    ):
+    """
+    Print configuration.
+
+    Parameters
+    ----------
+    files : Dict
+        Dictionnary with paths of source, sink and rules files.
+    logger : Logger
+        The logger object.
+
+    Returns
+    -------
+    int Return code.
+
+    """
+    logger.info('Configuration')
+    logger.info(' + '+logger.name)
+    # logger.info('    - version: '+__version__)
+    logger.info(' + KNIME')
+    logger.info('    - path: '+kexec)
+    logger.info('    - version: '+kver)
+    logger.info(' + RetroPath2.0 workflow')
+    logger.info('    - path: '+workflow)
+    logger.info('    - version: r20210127')
+    logger.info('')
 
 
 def retropath2(
@@ -28,41 +62,46 @@ def retropath2(
     outdir: str,
     kexec: str = None, kpkg_install: bool = True, kver: str = None,
     workflow: str = None,
-    max_steps=3, topx=100, dmin=0, dmax=100, mwmax_source=1000, mwmax_cof=1000,
-    timeout=30,
-    is_forward=False,
-    logger=getLogger(__name__)
-    ) -> Tuple[int, str]:
+    max_steps: int = 3, topx: int = 100, dmin: int = 0, dmax: int = 100, mwmax_source: int = 1000, mwmax_cof: int = 1000,
+    timeout: int = 30,
+    is_forward: bool = False,
+    logger: Logger = getLogger(__name__)
+    ) -> int:
 
     # Create outdir if does not exist
     if not os_path.exists(outdir):
         os_mkdir(outdir)
 
-    # Setting kexec, kpath, kinstall, kver
-    if kexec:
-        kpath    = kexec[:kexec.rfind('/')]
-        kinstall = kpath[:kpath.rfind('/')]
-    else:
-        kinstall = os_path.dirname(os_path.abspath(__file__))
-        kver     = '4.3.0'
-        kpath    = os_path.join(kinstall, 'knime_')+kver
-        kexec    = os_path.join(kpath, 'knime')
-
     # Take workflow in the package if not passed as an argument
     if not workflow:
         workflow = os_path.join(
             os_path.dirname(os_path.abspath(__file__)),
-            'workflow',
-            'RetroPath2.0-v9.knwf'
+            'workflows',
+            'RetroPath2.0_r20210127.knwf'
             )
 
-    # Install KNIME if not found
-    if not os_path.exists(kexec):
-        install_knime(kinstall, kver, logger)
+    # Setting kexec, kpath, kinstall, kver
+    if kexec:
+        kpath    = kexec[:kexec.rfind('/')]
+        kinstall = kpath[:kpath.rfind('/')]
+        print_conf(kexec, kver, workflow, logger)
+    else:
+        kinstall = os_path.dirname(os_path.abspath(__file__))
+        if not kver:
+            kver     = '4.3.0'
+        kpath    = os_path.join(kinstall, 'knime_')+kver
+        kexec    = os_path.join(kpath, 'knime')
+        print_conf(kexec, kver, workflow, logger)
+        # Install KNIME if not found
+        if not os_path.exists(kexec):
+            install_knime(kinstall, kver, logger)
 
-    # Add packages to Knime
+    logger.info('Initializing')
+    # Add packages to KNIME
     if kpkg_install:
-        install_knime_pkgs(kpath, kver, logger)
+        r_code = install_knime_pkgs(kpath, kver, logger)
+        if r_code > 0:
+            return r_code
 
     with TemporaryDirectory() as tempd:
 
@@ -77,19 +116,20 @@ def retropath2(
         files['outdir'] = outdir
 
         # Call KNIME
-        code = call_knime(
+        r_code = call_knime(
                     kexec, workflow, files,
                     max_steps, topx, dmin, dmax, mwmax_source, mwmax_cof,
                     timeout,
                     logger
                     )
-        if code > 0:
-            return code
+        if r_code > 0:
+            return r_code
 
+        logger.info('Results')
         # Check if source is in sink
-        code = check_src_in_sink(files, logger=logger)
-        if code > 0:
-            return code
+        r_code = check_src_in_sink(files, logger=logger)
+        if r_code > 0:
+            return r_code
 
     code = check_scope(outdir, logger)
 
@@ -144,6 +184,8 @@ def check_src_in_sink(
     int Return code.
 
     """
+    logger.info( '   |- Checking... ')
+
     try:
         count = 0
         with open(os_path.join(files['outdir'], files['src-in-sk'])) as f:
@@ -165,7 +207,7 @@ def install_knime(
     kver: str,
     logger: Logger = getLogger(__name__)
     ):
-   """
+    """
     Install KNIME.
 
     Parameters
@@ -193,7 +235,7 @@ def install_knime(
 
 
 def gunzip_to_csv(filename: str, indir: str) -> str:
-   """
+    """
     Uncompress gzip file into indir.
 
     Parameters
@@ -220,7 +262,7 @@ def format_files_for_knime(
     indir: str,
     logger: Logger = getLogger(__name__)
     ) -> Dict:
-   """
+    """
     Format files according to KNIME expectations.
 
     Parameters
@@ -241,7 +283,7 @@ def format_files_for_knime(
     Dict Dictionary containing filenames.
 
    """
-    logger.info('Formatting files for KNIME...')
+    logger.info('   |- Formatting files for KNIME...')
 
     # If 'rulesfile' is a pure gzip archive without tar
     kind = guess(rulesfile)
@@ -274,7 +316,7 @@ def install_knime_pkgs(
     kver: str,
     logger: Logger = getLogger(__name__)
     ) -> int:
-   """
+    """
     Install KNIME packages needed to execute RetroPath2.0 workflow.
 
     Parameters
@@ -291,9 +333,9 @@ def install_knime_pkgs(
     int Return code.
 
    """
-    logger.info('Installing KNIME packages...')
-    logger.debug('kpath: '+kpath)
-    logger.debug('kver: '+kver)
+    logger.info( '   |- Checking KNIME packages... ')
+    logger.debug('        + kpath: '+kpath)
+    logger.debug('        + kver: '+kver)
 
     args = \
         ' -application org.eclipse.equinox.p2.director' \
@@ -315,12 +357,14 @@ def install_knime_pkgs(
             + args
 
     try:
-        r_code = run(
+        printout = open(devnull, 'wb') if logger.level > 10 else None
+        CPE = run(
             cmd.split(),
-            stderr=STDOUT,
+            stdout=printout,
+            stderr=printout,
             shell=False)  # nosec
-        logger.debug(r_code)
-        return r_code
+        logger.debug(CPE)
+        return CPE.returncode
 
     except OSError as e:
         logger.error(e)
@@ -340,7 +384,7 @@ def call_knime(
     timeout: int,
     logger: Logger = getLogger(__name__)
     ) -> int:
-   """
+    """
     Install KNIME packages needed to execute RetroPath2.0 workflow.
 
     Parameters
@@ -369,7 +413,9 @@ def call_knime(
 
    """
 
-    logger.info('Call KNIME...')
+    logger.info('Running KNIME')
+    logger.info('   |- path: '+kexec)
+    logger.info('   |- workflow: '+workflow)
 
     args = '' \
         + ' -nosplash -nosave -reset --launcher.suppressErrors -application org.knime.product.KNIME_BATCH_APPLICATION ' \
@@ -395,14 +441,16 @@ def call_knime(
     logger.debug(cmd)
 
     try:
-        r_code = run(
+        printout = open(devnull, 'wb') if logger.level > 10 else None
+        CPE = run(
             cmd.split(),
-            stderr=STDOUT,
+            stdout=printout,
+            stderr=printout,
             timeout=timeout*60,
             shell=False
             )  # nosec
-        logger.debug(r_code)
-        return r_code
+        logger.debug(CPE)
+        return CPE.returncode
 
     except TimeoutExpired as e:
         logger.warning('Time limit ('+str(timeout)+' minutes) reached')
