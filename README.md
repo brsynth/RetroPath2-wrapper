@@ -4,59 +4,40 @@
 
 Implementation of the KNIME retropath2.0 workflow. Takes for input the minimal (dmin) and maximal (dmax) diameter for the reaction rules and the maximal path length (maxSteps). The tool  expects the following files: `rules.csv`, `sink.csv` and `source.csv` and produces results in an output folder.
 
-## Input
-
-Required:
-* **sink_file**: (string) Path to the collection of chemical species to finish metabolic route exploration
-* **source_file**: (string) Path to the target compound desired to be synthesised
-* **rules_file**: (string) Path to the reaction rules
-
-Optional:
-* **--outdir**: (string, default='out') Path to the folder where result files are written
-* **--knime_exec**: (integer, default=9999) Path to Knime exec file
-* **--max_steps** : (integer, default='3') Maximal number of steps
-* **--topx** : (integer, default: 100) For each iteration, number of rules
-* **--dmin** : (integer, default: 0)
-* **--dmax** : (integer, default: 1000)
-* **--mwmax_source** : (integer, default: 1000)
-* **--mwmax_cof** : (integer, default: 1000)
-* **--timeout** : (integer, default: 30) Timeout in minutes
-* **--is_forward** : (bool, default: False) Forward or reverse synthesis
-
-
 ## Prerequisites
 
 * Python 3
-* KNIME (code was tested on 3.6.2 version)
+* KNIME (code was tested on 4.3.0 version)
 
 ## Install
-### From pip
-retropath2 requires [Knime](https://www.knime.com/) which is not available through pip. The 3.6.2 version will be downloaded if not already installed.
-```sh
-[sudo] python -m pip install retropath2
-```
+retropath2 requires [Knime](https://www.knime.com/) which is not available through pip. The 4.3.0 version will be downloaded if not already installed.
 ### From Conda
 ```sh
-[sudo] conda install -c brsynth retropath2
+[sudo] conda install -c brsynth -c conda-forge retropath2_wrapper
 ```
 
 ## Run
 
 ### retropath2_wrapper process
-**From Python code**
-```python
-from retropath2 import run, build_args_parser
-
-parser = build_args_parser()
-args  = parser.parse_args()
-
-run(args.sinkfile,
-    args.sourcefile,
-    args.rulesfile)
-```
 **From CLI**
 ```sh
-python -m retropath2 sinkfile.csv sourcefile.csv rulesfile.csv
+python -m retropath2_wrapper <sinkfile> <sourcefile> <rulesfile> <outdir>
+```
+**From Python code**
+```python
+from retropath2_wrapper import retropath2, build_args_parser
+
+parser = build_args_parser()
+args   = parser.parse_args()
+
+r_code = retropath2(
+    args.sinkfile, args.sourcefile, args.rulesfile,
+    args.outdir,
+    args.kexec, not args.skip_kpkg_install, args.kver,
+    args.kwf,
+    args.max_steps, args.topx, args.dmin, args.dmax, args.mwmax_source, args.mwmax_cof,
+    args.timeout,
+    args.forward)
 ```
 
 ## Tests
