@@ -31,7 +31,7 @@ check: ## Test code with 'pytest', this is the fastest way to test the code
 	   @$(MAKE_CMD) -f test.mk check
 
 test: ## Test code with 'pytest', this is the fastest way to test the code
-	   @$(MAKE_CMD) -f test.mk test args=$(args)
+	   @$(MAKE_CMD) -f test.mk test args="$(args)"
 
 %-inconda: ## Test conda package
 ifneq ($(strip $(env)),)
@@ -39,8 +39,8 @@ ifneq ($(strip $(env)),)
 endif
 	@$(MAKE_CMD) -f conda.mk check-environment-$* env=$(env)
 	@$(MAKE_CMD) -f conda.mk conda-run-env env=$(env) \
-																				 cmd="make -C .. $*" \
-																				 args="$(args)"
+										   cmd="make -C .. $*" \
+										   args="$(args)"
 
 
 conda-all: conda-build conda-test conda-convert conda-publish ## (default) Perform all conda process (build, test, convert, publish)

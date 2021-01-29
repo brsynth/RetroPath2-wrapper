@@ -15,9 +15,6 @@ help:
 MAKE_CMD = $(MAKE) -s --no-print-directory
 ECHO = echo -n ">>>"
 
-# # cli args
-# ARGS = $(filter-out $@,$(MAKECMDGOALS))
-
 
 all: check test ## Run check and test code
 
@@ -25,7 +22,8 @@ all: check test ## Run check and test code
 check: flake bandit ## Run flake and bandit over code and tests
 bandit: ## Run bandit over code
 	@echo "=== BANDIT REPORT ==="
-	@bandit -r ../../${PACKAGE}
+	# -lll to only catch the higher level security issues
+	@bandit -r -lll ../../${PACKAGE}
 flake: ## Run flake over code and tests
 	@echo "=== FLAKE REPORT ==="
 	# stop the build if there are Python syntax errors or undefined names
@@ -44,8 +42,8 @@ else
 endif
 
 test: ## Test code with 'pytest'
-	@$(ECHO) "Testing $(test_src)...\n"
+	@$(ECHO) "Testing...\n"
 	@export PYTHONPATH=$$PWD/../.. ; \
 	cd ../.. ; \
-	$(test_cmd) -p no:cacheprovider $(test_src) ; \
-	echo OK
+	$(test_cmd) -p no:cacheprovider $(test_src) \
+	&& echo OK
