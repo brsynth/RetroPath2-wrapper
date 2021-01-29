@@ -1,3 +1,1 @@
-include RELEASE
-recursive-include extras *
-recursive-include retropath2_wrapper/workflow *
+recursive-include retropath2_wrapper/workflows *
