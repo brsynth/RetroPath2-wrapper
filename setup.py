@@ -1,4 +1,5 @@
 from setuptools import setup
+# from retropath2_wrapper import _version
 
 _readme = 'README.md'
 
@@ -36,7 +37,6 @@ setup(
     packages                      = [_package],
     package_dir                   = {_package: _package},
     include_package_data          = True,
-    # install_requires              = required,
     test_suite                    = 'pytest',
     license                       = 'MIT',
     classifiers=[
@@ -44,5 +44,5 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
     ],
-    python_requires               = '>=3.5',
+    python_requires               = '>=3.6',
 )
