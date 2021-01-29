@@ -51,3 +51,17 @@ class Test_RP2(TestCase):
                                     self.outdir,
                                     dmin=16)
         self.assertTrue(cmp(result, self.ref_file))
+
+    # def test_lycopene(self):
+    #     data_path  = 'data/lycopene'
+    #     sinkfile   = os_path.join(data_path, 'in', 'sink')
+    #     sourcefile = os_path.join(data_path, 'in', 'source')
+    #     rulesfile  = os_path.join(data_path, 'in', 'rules_d12')
+    #     ref_file   = os_path.join(data_path, 'out', 'target_scope.csv')
+    #     ext = '.dat'
+    #     r_code, result = retropath2(self.sinkfile+ext,
+    #                                 self.sourcefile+ext,
+    #                                 self.rulesfile+ext,
+    #                                 self.outdir,
+    #                                 dmin=16)
+    #     self.assertTrue(cmp(result, self.ref_file))
