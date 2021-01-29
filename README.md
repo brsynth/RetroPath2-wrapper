@@ -10,10 +10,24 @@ Implementation of the KNIME retropath2.0 workflow. Takes for input the minimal (
 * KNIME (code was tested on 4.3.0 version)
 
 ## Install
-retropath2 requires [Knime](https://www.knime.com/) which is not available through pip. The 4.3.0 version will be downloaded if not already installed.
-### From Conda
-```sh
-[sudo] conda install -c brsynth -c conda-forge retropath2_wrapper
+
+### Prerequisite
+
+The conda package manager is required. Fresh instructions on how to install conda are [available online](https://docs.conda.io/projects/conda/en/latest/user-guide/install/).
+The KNIME is installed 
+
+### conda environment
+
+In case a new conda environment `<my_env>` need to be set up, first start with:
+```shell
+conda create -n my_env python=3
+```
+
+### conda package
+
+Install in the `<my_env>` conda environment:
+```shell
+conda install -c brsynth -c conda-forge -n <my_env> retropath2_wrapper 
 ```
 
 ## Run
