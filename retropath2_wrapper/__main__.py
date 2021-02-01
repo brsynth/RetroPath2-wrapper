@@ -23,7 +23,7 @@ def _cli():
 
     logger.debug(args)
 
-    r_code = retropath2(
+    r_code, r_filename = retropath2(
         args.sinkfile, args.sourcefile, args.rulesfile,
         args.outdir,
         args.kexec, not args.skip_kpkg_install, args.kver,

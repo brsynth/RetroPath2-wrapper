@@ -65,7 +65,7 @@ def retropath2(
     timeout: int = 30,
     is_forward: bool = False,
     logger: Logger = getLogger(__name__)
-    ) -> int:
+    ) -> Tuple[int, str]:
 
     # Create outdir if does not exist
     if not os_path.exists(outdir):
@@ -109,7 +109,7 @@ def retropath2(
             kvars['kver'],
             logger)
         if r_code > 0:
-            return r_code
+            return r_code, None
 
     with TemporaryDirectory() as tempd:
 
@@ -130,17 +130,17 @@ def retropath2(
                     logger
                     )
         if r_code > 0:
-            return r_code
+            return r_code, None
 
         logger.info('Results')
         # Check if source is in sink
         r_code = check_src_in_sink(files, logger=logger)
         if r_code > 0:
-            return r_code
+            return r_code, None
 
-    code = check_scope(outdir, logger)
+    code, results_filename = check_scope(outdir, logger)
 
-    return code
+    return code, results_filename
 
 
 def set_vars(
@@ -231,10 +231,10 @@ def check_scope(
         )
 
     if csv_scopes:
-        return 0
+        return 0, csv_scopes[-1]
     else:
         logger.warning('RetroPath2.0 has found no solution')
-        return 5
+        return 5, None
 
 
 def check_src_in_sink(
@@ -320,7 +320,10 @@ def gunzip_to_csv(filename: str, indir: str) -> str:
         Path where install.
 
     """
-    new_f = os_path.join(indir, os_path.basename(filename)+'.gz')
+    new_f = os_path.join(
+        indir,
+        os_path.basename(filename)+'.gz'
+        )
     copyfile(filename, new_f)
     filename = extract_gz(new_f, indir)
     rename(filename, filename+'.csv')
