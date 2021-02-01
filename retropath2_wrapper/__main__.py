@@ -15,11 +15,11 @@ from logging import (
 def _cli():
     parser = build_args_parser()
     args  = parser.parse_args()
-    if args.kexec and args.kver is None:
+    if args.kver is None and not args.skip_kpkg_install and not args.kexec is None:
         parser.error("--kexec requires --kver.")
 
     # Create logger
-    logger = creage_logger(parser.prog, args.log)
+    logger = create_logger(parser.prog, args.log)
 
     logger.debug(args)
 
@@ -38,7 +38,7 @@ def _cli():
         logger.info('   |- path: '+args.outdir)
 
 
-def creage_logger(
+def create_logger(
     name: str = __name__,
     log_level: str = 'def_info'
     ) -> Logger:
