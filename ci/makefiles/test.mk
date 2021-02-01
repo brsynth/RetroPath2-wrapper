@@ -1,6 +1,7 @@
 include ../../extras/.env
 include ../.env
 
+SHELL := /bin/bash
 
 # HELP
 # This will output the help for each task

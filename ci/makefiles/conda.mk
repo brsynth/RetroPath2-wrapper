@@ -1,6 +1,8 @@
 include ../../extras/.env
 include ../.env
 
+SHELL := /bin/bash
+
 tmpfile := $(shell mktemp -u)
 tmpdir  := $(shell dirname $(tmpfile))
 
