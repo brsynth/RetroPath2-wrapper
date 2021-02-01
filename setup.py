@@ -1,5 +1,5 @@
 from setuptools import setup
-# from retropath2_wrapper import _version
+from retropath2_wrapper import _version
 
 _readme = 'README.md'
 
@@ -8,8 +8,8 @@ with open(_readme, 'r', encoding='utf-8') as f:
 
 _release = 'RELEASE'
 
-with open(_release, 'r') as f:
-    _version = f.readline().split()[0]
+# with open(_release, 'r') as f:
+#     _version = f.readline().split()[0]
 
 _extras_path = 'extras'
 with open(_extras_path+'/.env', 'r', encoding='utf-8') as f:
@@ -27,7 +27,7 @@ with open(_extras_path+'/.env', 'r', encoding='utf-8') as f:
 
 setup(
     name                          = _package,
-    version                       = _version,
+    version                       = __version__,
     author                        = _authors,
     author_email                  = _corr_author,
     description                   = _descr,
