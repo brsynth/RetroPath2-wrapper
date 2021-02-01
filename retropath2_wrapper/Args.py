@@ -57,8 +57,8 @@ def _add_arguments(parser):
                                            'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
                         default='def_info',
                         help='Adds a console logger for the specified level (default: error)')
-    # parser.add_argument('--version', action='version',
-    #                     version='%(prog)s {}'.format(__version__),
-    #                     help='show the version number and exit')
+    parser.add_argument('--version', action='version',
+                        version='%(prog)s {}'.format(__version__),
+                        help='show the version number and exit')
 
     return parser
