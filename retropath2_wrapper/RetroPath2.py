@@ -21,22 +21,21 @@ from brs_utils  import extract_gz
 from tempfile   import TemporaryDirectory
 from typing     import Dict, List, Tuple
 from logging    import Logger
-# from retropath2_wrapper._version import __version__
+from retropath2_wrapper._version import __version__
 
 
-def print_conf(
-    kexec: str = None,
-    kver: str = None,
-    workflow: str = None,
-    logger: Logger = getLogger(__name__)
-    ):
+__KNIME_VER__        = '4.3.0'
+__RETROPATH2_KWF__   = 'RetroPath2.0_r20210127.knwf'
+
+
+def print_conf(kvars: Dict, logger: Logger = getLogger(__name__)):
     """
     Print configuration.
 
     Parameters
     ----------
-    files : Dict
-        Dictionnary with paths of source, sink and rules files.
+    kvars : Dict
+        Dictionnary with variables to print.
     logger : Logger
         The logger object.
 
@@ -47,13 +46,13 @@ def print_conf(
     """
     logger.info('Configuration')
     logger.info(' + '+logger.name)
-    # logger.info('    - version: '+__version__)
+    logger.info('    - version: '+__version__)
     logger.info(' + KNIME')
-    logger.info('    - path: '+kexec)
-    logger.info('    - version: '+kver)
+    logger.info('    - path: '+kvars['kexec'])
+    # logger.info('    - version: '+kvars['kver'])
     logger.info(' + RetroPath2.0 workflow')
-    logger.info('    - path: '+workflow)
-    logger.info('    - version: r20210127')
+    logger.info('    - path: '+kvars['workflow'])
+    # logger.info('    - version: r20210127')
     logger.info('')
 
 
@@ -72,34 +71,43 @@ def retropath2(
     if not os_path.exists(outdir):
         os_mkdir(outdir)
 
-    # Take workflow in the package if not passed as an argument
-    if not workflow:
-        workflow = os_path.join(
-            os_path.dirname(os_path.abspath(__file__)),
-            'workflows',
-            'RetroPath2.0_r20210127.knwf'
-            )
+    # Store KNIME vars into a dictionary
+    kvars = set_vars(
+        kexec,
+        kver,
+        kpkg_install,
+        workflow)
+    logger.debug(kvars)
+    # Store RetroPath2 params into a dictionary
+    rp2_params = {
+        'max_steps'    : max_steps,
+        'topx'         : topx,
+        'dmin'         : dmin,
+        'dmax'         : dmax,
+        'mwmax_source' : mwmax_source,
+        'mwmax_cof'    : mwmax_cof
+    }
+    logger.debug(rp2_params)
 
-    # Setting kexec, kpath, kinstall, kver
-    if kexec:
-        kpath    = kexec[:kexec.rfind('/')]
-        kinstall = kpath[:kpath.rfind('/')]
-        print_conf(kexec, kver, workflow, logger)
-    else:
-        kinstall = os_path.dirname(os_path.abspath(__file__))
-        if not kver:
-            kver     = '4.3.0'
-        kpath    = os_path.join(kinstall, 'knime_')+kver
-        kexec    = os_path.join(kpath, 'knime')
-        print_conf(kexec, kver, workflow, logger)
-        # Install KNIME if not found
-        if not os_path.exists(kexec):
-            install_knime(kinstall, kver, logger)
+    # Print out configuration
+    print_conf(kvars, logger)
+
+    # Install KNIME
+    #      if kexec is not specified
+    #  and executable not detected in default path
+    if kvars['kexec_install']:
+        install_knime(
+            kvars['kinstall'],
+            kvars['kver'],
+            logger)
 
     logger.info('Initializing')
     # Add packages to KNIME
     if kpkg_install:
-        r_code = install_knime_pkgs(kpath, kver, logger)
+        r_code = install_knime_pkgs(
+            kvars['kpath'],
+            kvars['kver'],
+            logger)
         if r_code > 0:
             return r_code
 
@@ -107,18 +115,17 @@ def retropath2(
 
         # Format files for KNIME
         files = format_files_for_knime(
-                    sinkfile,
-                    sourcefile,
-                    rulesfile,
-                    tempd,
+                    sinkfile, sourcefile, rulesfile,
+                    tempd, outdir,
                     logger
                     )
-        files['outdir'] = outdir
+        logger.debug(files)
 
         # Call KNIME
         r_code = call_knime(
-                    kexec, workflow, files,
-                    max_steps, topx, dmin, dmax, mwmax_source, mwmax_cof,
+                    kvars,
+                    files,
+                    rp2_params,
                     timeout,
                     logger
                     )
@@ -134,6 +141,70 @@ def retropath2(
     code = check_scope(outdir, logger)
 
     return code
+
+
+def set_vars(
+    kexec: str,
+    kver: str,
+    kpkg_install: bool,
+    workflow: str
+    ) -> Dict:
+    """
+    Set variables and store them into a dictionary.
+
+    Parameters
+    ----------
+    kexec : str
+        Path to KNIME executable.
+    kver : str
+        Version of KNIME to install.
+    kpkg_install : bool
+        Boolean to know if KNIME packages have to be installed.
+    workflow: str
+        Path to workflow to process.
+    logger : Logger
+        The logger object.
+
+    """
+
+    # Take workflow in the package if not passed as an argument
+    if workflow is None:
+        workflow = os_path.join(
+            os_path.dirname(os_path.abspath(__file__)),
+            'workflows',
+            __RETROPATH2_KWF__
+            )
+
+    # Setting kexec, kpath, kinstall, kver
+    kexec_install = False
+    if kexec is None:
+        kinstall = os_path.dirname(os_path.abspath(__file__))
+        if not kver:
+            kver = __KNIME_VER__
+        kpath = os_path.join(
+            kinstall,
+            'knime_'
+            ) + kver
+        kexec = os_path.join(
+            kpath,
+            'knime'
+            )
+        if not os_path.exists(kexec):
+            kexec_install = True
+    else:
+        kpath = kexec[:kexec.rfind('/')]
+        kinstall = kpath[:kpath.rfind('/')]
+
+    # Build a dict to store KNIME vars
+    return {
+        'kexec'         : kexec,
+        'kexec_install' : kexec_install,
+        'kver'          : kver,
+        'kpath'         : kpath,
+        'kinstall'      : kinstall,
+        'kpkg_install'  : kpkg_install,
+        'workflow'      : workflow
+    }
 
 
 def check_scope(
@@ -220,8 +291,11 @@ def install_knime(
         The logger object.
 
     """
+    logger.info('Downloading KNIME '+kver+'...')
+
     if sys_platform == 'linux':
         kurl = 'http://download.knime.org/analytics-platform/linux/knime_'+kver+'.linux.gtk.x86_64.tar.gz'
+        download_and_extract_tar_gz(kurl, kinstall)
 
     elif sys_platform == 'darwin':
         # kurl = 'https://download.knime.org/analytics-platform/macosx/knime-'+kver+'-app.macosx.cocoa.x86_64.dmg'
@@ -230,8 +304,8 @@ def install_knime(
     else:
         kurl = 'https://download.knime.org/analytics-platform/win/knime-'+kver+'-installer-win32.win32.x86_64.exe'
 
-    logger.info('Downloading KNIME '+kver+'...')
-    download_and_extract_tar_gz(kurl, kinstall)
+    logger.debug('   |- url: '+kurl)
+    logger.debug('   |- install dir: '+kinstall)
 
 
 def gunzip_to_csv(filename: str, indir: str) -> str:
@@ -256,10 +330,8 @@ def gunzip_to_csv(filename: str, indir: str) -> str:
 
 
 def format_files_for_knime(
-    sinkfile: str,
-    sourcefile: str,
-    rulesfile: str,
-    indir: str,
+    sinkfile: str, sourcefile: str, rulesfile: str,
+    indir: str, outdir: str,
     logger: Logger = getLogger(__name__)
     ) -> Dict:
     """
@@ -275,6 +347,8 @@ def format_files_for_knime(
         Path of rules file.
     indir : str
         Path where install.
+    outdir : str
+        Path to output the resuts.
     logger : Logger
         The logger object.
 
@@ -291,14 +365,16 @@ def format_files_for_knime(
         if kind.mime == 'application/gzip':
             rulesfile = gunzip_to_csv(rulesfile, indir)
 
-    # Because KNIME accepts only '.csv' file extension, files have to be renamed
     files = {
-        'sink'      : sinkfile,
-        'source'    : sourcefile,
-        'rules'     : rulesfile,
+        'sink'      : os_path.abspath(sinkfile),
+        'source'    : os_path.abspath(sourcefile),
+        'rules'     : os_path.abspath(rulesfile),
         'results'   : 'results'+'.csv',
-        'src-in-sk' : 'source-in-sink'+'.csv'
+        'src-in-sk' : 'source-in-sink'+'.csv',
+        'outdir'    : outdir
         }
+    # Because KNIME accepts only '.csv' file extension,
+    # files have to be renamed
     for key in ['sink', 'source', 'rules']:
         if os_path.splitext(files[key])[-1] != '.csv':
             new_f = os_path.join(
@@ -322,7 +398,7 @@ def install_knime_pkgs(
     Parameters
     ----------
     kpath : str
-        Path to KNIME executable.
+        Path that contains KNIME executable.
     kver : str
         Version of KNIME installed.
     logger : Logger
@@ -372,15 +448,9 @@ def install_knime_pkgs(
 
 
 def call_knime(
-    kexec: str,
-    workflow: str,
+    kvars: Dict,
     files: Dict,
-    max_steps: int,
-    topx: int,
-    dmin: int,
-    dmax: int,
-    mwmax_source: int,
-    mwmax_cof: int,
+    params: Dict,
     timeout: int,
     logger: Logger = getLogger(__name__)
     ) -> int:
@@ -389,19 +459,12 @@ def call_knime(
 
     Parameters
     ----------
-    kexec: str
-        Path to KNIME executable.
-    workflow: str
-        Path to workflow to execute.
+    kvars: Dict
+        KNIME variables.
     files: Dict
         Paths of sink, source, rules files.
-    max_steps: int
-        Maximum number of steps to run.
-    topx: int
-    dmin: int
-    dmax: int
-    mwmax_source: int
-    mwmax_cof: int
+    params: Dict
+        Parameters of the workflow to process.
     timeout: int
         Time after which the run returns.
     logger : Logger
@@ -414,36 +477,28 @@ def call_knime(
    """
 
     logger.info('Running KNIME')
-    logger.info('   |- path: '+kexec)
-    logger.info('   |- workflow: '+workflow)
 
-    args = '' \
-        + ' -nosplash -nosave -reset --launcher.suppressErrors -application org.knime.product.KNIME_BATCH_APPLICATION ' \
-        + ' -workflowFile=' + workflow \
-        + ' -workflow.variable=input.dmin,"'              + str(dmin)           + '",int' \
-        + ' -workflow.variable=input.dmax,"'              + str(dmax)           + '",int' \
-        + ' -workflow.variable=input.max-steps,"'         + str(max_steps)      + '",int' \
-        + ' -workflow.variable=input.sourcefile,"'        + files['source']     + '",String' \
-        + ' -workflow.variable=input.sinkfile,"'          + files['sink']       + '",String' \
-        + ' -workflow.variable=input.rulesfile,"'         + files['rules']      + '",String' \
-        + ' -workflow.variable=input.topx,"'              + str(topx)           + '",int' \
-        + ' -workflow.variable=input.mwmax-source,"'      + str(mwmax_source)   + '",int' \
-        + ' -workflow.variable=input.mwmax-cof,"'         + str(mwmax_cof)      + '",int' \
-        + ' -workflow.variable=output.dir,"'              + files['outdir']     + '",String' \
-        + ' -workflow.variable=output.solutionfile,"'     + files['results']    + '",String' \
-        + ' -workflow.variable=output.sourceinsinkfile,"' + files['src-in-sk']  + '",String'
+    args = ' -nosplash -nosave -reset --launcher.suppressErrors -application org.knime.product.KNIME_BATCH_APPLICATION ' \
+         + ' -workflowFile=' + kvars['workflow'] \
+         + ' -workflow.variable=input.dmin,"'              + str(params['dmin'])         + '",int' \
+         + ' -workflow.variable=input.dmax,"'              + str(params['dmax'])         + '",int' \
+         + ' -workflow.variable=input.max-steps,"'         + str(params['max_steps'])    + '",int' \
+         + ' -workflow.variable=input.sourcefile,"'        + files['source']             + '",String' \
+         + ' -workflow.variable=input.sinkfile,"'          + files['sink']               + '",String' \
+         + ' -workflow.variable=input.rulesfile,"'         + files['rules']              + '",String' \
+         + ' -workflow.variable=input.topx,"'              + str(params['topx'])         + '",int' \
+         + ' -workflow.variable=input.mwmax-source,"'      + str(params['mwmax_source']) + '",int' \
+         + ' -workflow.variable=input.mwmax-cof,"'         + str(params['mwmax_cof'])    + '",int' \
+         + ' -workflow.variable=output.dir,"'              + files['outdir']             + '",String' \
+         + ' -workflow.variable=output.solutionfile,"'     + files['results']            + '",String' \
+         + ' -workflow.variable=output.sourceinsinkfile,"' + files['src-in-sk']          + '",String'
 
-    if ' ' in kexec:
-        cmd = '"'+kexec+'"' + args
-    else:
-        cmd = kexec + args
-
-    logger.debug(cmd)
+    logger.debug(kvars['kexec'] + ' ' + args)
 
     try:
         printout = open(devnull, 'wb') if logger.level > 10 else None
         CPE = run(
-            cmd.split(),
+            [kvars['kexec']] + args.split(),
             stdout=printout,
             stderr=printout,
             timeout=timeout*60,
