@@ -1,15 +1,11 @@
 from setuptools import setup
-from retropath2_wrapper import _version
+from os         import path   as os_path
+from re         import search as re_search
 
 _readme = 'README.md'
 
 with open(_readme, 'r', encoding='utf-8') as f:
     long_description = f.read()
-
-_release = 'RELEASE'
-
-# with open(_release, 'r') as f:
-#     _version = f.readline().split()[0]
 
 _extras_path = 'extras'
 with open(_extras_path+'/.env', 'r', encoding='utf-8') as f:
@@ -25,9 +21,22 @@ with open(_extras_path+'/.env', 'r', encoding='utf-8') as f:
         if line.startswith('CORR_AUTHOR='):
             _corr_author = line.splitlines()[0].split('=')[1].lower()
 
+_release = 'RELEASE'
+_version = os_path.join(
+    _package,
+    '_version.py'
+)
+# with open(_release, 'r') as f:
+#     _version = f.readline().split()[0]
+with open(_version, 'r') as f:
+    m = re_search('"(.+)"', f.readline().split('=')[1])
+    if m:
+        version = m.group(1)
+
+
 setup(
     name                          = _package,
-    version                       = __version__,
+    version                       = version,
     author                        = _authors,
     author_email                  = _corr_author,
     description                   = _descr,
