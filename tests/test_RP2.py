@@ -37,47 +37,47 @@ class Test_RP2(TestCase):
     logger     = create_logger(__name__, 'DEBUG')
 
 
-    def test_light(self):
-        r_code, result = retropath2(
-            self.sinkfile+self.csv,
-            self.sourcefile+self.csv,
-            extract_gz(
-                self.rulesfile,
-                gettempdir()),
-            self.outdir,
-            dmin=16
-            )
-        self.assertTrue(cmp(result, self.ref_file+self.csv))
+    # def test_light(self):
+    #     r_code, result = retropath2(
+    #         self.sinkfile+self.csv,
+    #         self.sourcefile+self.csv,
+    #         extract_gz(
+    #             self.rulesfile,
+    #             gettempdir()),
+    #         self.outdir,
+    #         dmin=16
+    #         )
+    #     self.assertTrue(cmp(result, self.ref_file+self.csv))
 
 
-    def test_GZ(self):
-        r_code, result = retropath2(
-            self.sinkfile+self.csv,
-            self.sourcefile+self.csv,
-            self.rulesfile,
-            self.outdir,
-            dmin=16,
-            logger=self.logger
-            )
-        self.assertTrue(cmp(result, self.ref_file+self.csv))
+    # def test_GZ(self):
+    #     r_code, result = retropath2(
+    #         self.sinkfile+self.csv,
+    #         self.sourcefile+self.csv,
+    #         self.rulesfile,
+    #         self.outdir,
+    #         dmin=16,
+    #         logger=self.logger
+    #         )
+    #     self.assertTrue(cmp(result, self.ref_file+self.csv))
 
 
-    def test_woCSV(self):
-        if not os_path.exists(self.outdir):
-            os_mkdir(self.outdir)
-        rulesfile = gunzip_to_csv(
-            self.rulesfile_d12,
-            self.outdir
-            )
-        ext = '.dat'
-        r_code, result = retropath2(
-            self.sinkfile + ext,
-            self.sourcefile + ext,
-            rulesfile,
-            self.outdir,
-            dmin=12
-            )
-        self.assertTrue(cmp(result, self.ref_file+'_d12'+self.csv))
+    # def test_woCSV(self):
+    #     if not os_path.exists(self.outdir):
+    #         os_mkdir(self.outdir)
+    #     rulesfile = gunzip_to_csv(
+    #         self.rulesfile_d12,
+    #         self.outdir
+    #         )
+    #     ext = '.dat'
+    #     r_code, result = retropath2(
+    #         self.sinkfile + ext,
+    #         self.sourcefile + ext,
+    #         rulesfile,
+    #         self.outdir,
+    #         dmin=12
+    #         )
+    #     self.assertTrue(cmp(result, self.ref_file+'_d12'+self.csv))
 
 
     def test_set_vars_None(self):
@@ -90,22 +90,20 @@ class Test_RP2(TestCase):
             )
 
         # Prepare expectd data
-        kinstall = os_path.join(
-            Path(os_path.dirname(os_path.abspath(__file__))).parent,
-            'retropath2_wrapper'
-            )
+        from retropath2_wrapper import __path__ as rp2_path
+        rp2_path = rp2_path[0]
+        kinstall = rp2_path
         kver = __KNIME_VER__
         kpath    = os_path.join(kinstall, 'knime_')+kver
         kexec    = os_path.join(kpath, 'knime')
         workflow = os_path.join(
-            Path(os_path.dirname(os_path.abspath(__file__))).parent,
-            'retropath2_wrapper',
+            rp2_path,
             'workflows',
             __RETROPATH2_KWF__
             )
         kvars_expected = {
             'kexec'         : kexec,
-            'kexec_install' : False,
+            'kexec_install' : not os_path.exists(kpath),
             'kver'          : kver,
             'kpath'         : kpath,
             'kinstall'      : kinstall,
