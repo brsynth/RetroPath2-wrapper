@@ -11,7 +11,6 @@ from os         import path      as os_path
 from os         import rename, devnull
 from shutil     import copyfile
 from sys        import platform  as sys_platform
-from logging    import getLogger
 from csv        import reader    as csv_reader
 from subprocess import run, STDOUT, TimeoutExpired  # nosec
 from brs_utils  import download_and_extract_tar_gz
@@ -20,7 +19,7 @@ from filetype   import guess
 from brs_utils  import extract_gz
 from tempfile   import TemporaryDirectory
 from typing     import Dict, List, Tuple
-from logging    import Logger
+from logging    import Logger, getLogger
 from retropath2_wrapper._version import __version__
 
 
