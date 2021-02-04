@@ -6,20 +6,36 @@ Created on January 16 2020
 @description: Python wrapper to run RetroPath2.0 KNIME workflow
 
 """
-from os         import mkdir     as os_mkdir
-from os         import path      as os_path
-from os         import rename, devnull
+from os         import (
+    mkdir as os_mkdir,
+    path  as os_path,
+    rename,
+    devnull
+)
 from shutil     import copyfile
 from sys        import platform  as sys_platform
 from csv        import reader    as csv_reader
-from subprocess import run, STDOUT, TimeoutExpired  # nosec
-from brs_utils  import download_and_extract_tar_gz
+from subprocess import (
+    run,
+    STDOUT,
+    TimeoutExpired
+)  # nosec
+from brs_utils  import (
+    download_and_extract_tar_gz,
+    extract_gz
+)
 from glob       import glob
 from filetype   import guess
-from brs_utils  import extract_gz
 from tempfile   import TemporaryDirectory
-from typing     import Dict, List, Tuple
-from logging    import Logger, getLogger
+from typing     import (
+    Dict,
+    List,
+    Tuple
+)
+from logging    import (
+    Logger,
+    getLogger
+)
 from retropath2_wrapper._version import __version__
 
 
@@ -393,7 +409,7 @@ def install_knime_pkgs(
     kpath: str,
     kver: str,
     logger: Logger = getLogger(__name__)
-    ) -> int:
+) -> int:
     """
     Install KNIME packages needed to execute RetroPath2.0 workflow.
 
@@ -440,7 +456,8 @@ def install_knime_pkgs(
             cmd.split(),
             stdout=printout,
             stderr=printout,
-            shell=False)  # nosec
+            shell=False
+        )  # nosec
         logger.debug(CPE)
         return CPE.returncode
 
