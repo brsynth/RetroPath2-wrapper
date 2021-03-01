@@ -15,6 +15,7 @@ on:
       - 'docs'
       - '.github'
       - '!.github/workflows/check*'
+      - '**/_version.py'
   pull_request:
     branches: [ master ]
 

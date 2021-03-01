@@ -10,7 +10,9 @@ from os         import (
     mkdir as os_mkdir,
     path  as os_path,
     rename,
-    devnull
+    devnull,
+    geteuid,
+    getegid
 )
 from shutil     import copyfile
 from sys        import platform  as sys_platform
@@ -22,7 +24,8 @@ from subprocess import (
 )  # nosec
 from brs_utils  import (
     download_and_extract_tar_gz,
-    extract_gz
+    extract_gz,
+    chown_r
 )
 from glob       import glob
 from filetype   import guess
@@ -223,7 +226,8 @@ def set_vars(
 
 
 def check_scope(
-    outdir: str, logger: Logger = getLogger(__name__)
+    outdir: str,
+    logger: Logger = getLogger(__name__)
     ) -> int:
     """
     Check if result is present in outdir.
@@ -311,6 +315,7 @@ def install_knime(
     if sys_platform == 'linux':
         kurl = 'http://download.knime.org/analytics-platform/linux/knime_'+kver+'.linux.gtk.x86_64.tar.gz'
         download_and_extract_tar_gz(kurl, kinstall)
+        chown_r(kinstall, geteuid(), getegid())
 
     elif sys_platform == 'darwin':
         # kurl = 'https://download.knime.org/analytics-platform/macosx/knime-'+kver+'-app.macosx.cocoa.x86_64.dmg'

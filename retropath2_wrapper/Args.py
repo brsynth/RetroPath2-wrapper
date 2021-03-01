@@ -31,15 +31,31 @@ def _add_arguments(parser):
     #
 
     # KNIME options
-    parser.add_argument('--kexec', type=str,
-                        help='path to KNIME executable file (KNIME will be \
-                              downloaded if not already installed or path is \
-                              wrong).')
-    parser.add_argument('--kver', type=str,
-                        help='version of KNIME (mandatory if --kexec is passed).')
-    parser.add_argument('--skip_kpkg_install', action='store_true')
-    parser.add_argument('--kwf', type=str,
-                        help='path to Knime workflow file.')
+    parser.add_argument(
+        '--kexec',
+        type=str,
+        default=None,
+        help='path to KNIME executable file (KNIME will be \
+              downloaded if not already installed or path is \
+              wrong).'
+    )
+    parser.add_argument(
+        '--kver',
+        type=str,
+        default=None,
+        help='version of KNIME (mandatory if --kexec is passed).',
+    )
+    parser.add_argument(
+        '--skip_kpkg_install',
+        action='store_true',
+        default=False,
+        help='Skip the installation of Knime packages (default: False).'
+    )
+    parser.add_argument(
+        '--kwf',
+        type=str,
+        help='path to Knime workflow file.'
+    )
 
     # RetroPath2.0 workflow options
     parser.add_argument('--max_steps'    , type=int, default=3)
@@ -52,13 +68,22 @@ def _add_arguments(parser):
     parser.add_argument('--forward'      , action='store_true')
 
     # Program options
-    parser.add_argument('--log', metavar='ARG',
-                        type=str, choices=['debug', 'info', 'warning', 'error', 'critical',
-                                           'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
-                        default='def_info',
-                        help='Adds a console logger for the specified level (default: error)')
-    parser.add_argument('--version', action='version',
-                        version='%(prog)s {}'.format(__version__),
-                        help='show the version number and exit')
+    parser.add_argument(
+        '--log',
+        metavar='ARG',
+        type=str,
+        choices=[
+            'debug', 'info', 'warning', 'error', 'critical',
+            'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'
+        ],
+        default='def_info',
+        help='Adds a console logger for the specified level (default: error)'
+    )
+    parser.add_argument(
+        '--version',
+        action='version',
+        version='%(prog)s {}'.format(__version__),
+        help='show the version number and exit'
+    )
 
     return parser

@@ -18,7 +18,7 @@ from brs_utils import (
 def _cli():
     parser = build_args_parser()
     args  = parser.parse_args()
-    if args.kver is None and not args.skip_kpkg_install and not args.kexec is None:
+    if args.kver is None and not args.skip_kpkg_install and args.kexec is not None:
         parser.error("--kexec requires --kver.")
 
     # Create logger
