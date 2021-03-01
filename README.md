@@ -54,6 +54,16 @@ r_code = retropath2(
     args.forward)
 ```
 
+
+`retropath2()` function returns one of the following codes:
+* 0: `No error`
+* 1: `Source has been found in the sink`
+* 2: `Cannot find source-in-sink file`
+* 3: `Running the RetroPath2.0 Knime program produced an OSError`
+* 4: `RetroPath2.0 has found no solution`
+* 5: `Time limit reached`
+
+
 ## Tests
 Test can be run with the following commands:
 

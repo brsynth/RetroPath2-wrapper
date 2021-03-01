@@ -253,7 +253,7 @@ def check_scope(
         return 0, csv_scopes[-1]
     else:
         logger.warning('RetroPath2.0 has found no solution')
-        return 5, None
+        return 4, None
 
 
 def check_src_in_sink(
@@ -534,7 +534,7 @@ def call_knime(
     except TimeoutExpired as e:
         logger.warning('Time limit ('+str(timeout)+' minutes) reached')
         logger.warning('   |- Results collected until now are available')
-        return 6
+        return 5
 
     except OSError as e:
         logger.error(e)

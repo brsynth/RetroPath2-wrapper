@@ -1,3 +1,9 @@
+1.5.2 - Mar 1, 2021
+  - set current user as owner of downloaded Knime folder
+  - change output error codes:
+      * 4: RetroPath2.0 has found no solution
+      * 5: Time limit reached
+
 1.5.1 - Feb 4, 2021
   - import colored logger from brs_utils
 

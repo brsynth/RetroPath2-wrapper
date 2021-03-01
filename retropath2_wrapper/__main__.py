@@ -15,6 +15,7 @@ from brs_utils import (
     create_logger
 )
 
+
 def _cli():
     parser = build_args_parser()
     args  = parser.parse_args()
