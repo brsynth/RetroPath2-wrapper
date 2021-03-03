@@ -46,10 +46,10 @@ def _add_arguments(parser):
         help='version of KNIME (mandatory if --kexec is passed).',
     )
     parser.add_argument(
-        '--skip_kpkg_install',
+        '--kpkg_install',
         action='store_true',
         default=False,
-        help='Skip the installation of Knime packages (default: False).'
+        help='Install Knime packages (default: False).'
     )
     parser.add_argument(
         '--kwf',

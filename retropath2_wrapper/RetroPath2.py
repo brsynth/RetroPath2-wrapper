@@ -118,16 +118,23 @@ def retropath2(
             kvars['kinstall'],
             kvars['kver'],
             logger)
-
-    logger.info('Initializing')
-    # Add packages to KNIME
-    if kpkg_install:
         r_code = install_knime_pkgs(
             kvars['kpath'],
             kvars['kver'],
             logger)
         if r_code > 0:
             return r_code, None
+    else:
+        # Add packages to KNIME
+        if kpkg_install:
+            r_code = install_knime_pkgs(
+                kvars['kpath'],
+                kvars['kver'],
+                logger)
+            if r_code > 0:
+                return r_code, None
+
+    logger.info('Initializing')
 
     with TemporaryDirectory() as tempd:
 
@@ -326,6 +333,7 @@ def install_knime(
 
     logger.debug('   |- url: '+kurl)
     logger.debug('   |- install dir: '+kinstall)
+    
 
 
 def gunzip_to_csv(filename: str, indir: str) -> str:
