@@ -1,3 +1,6 @@
+1.6.0 - Mar 3, 2021
+  - skip packages installation by default to avoid failed updates
+
 1.5.2 - Mar 1, 2021
   - set current user as owner of downloaded Knime folder
   - change output error codes:
