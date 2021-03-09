@@ -19,6 +19,7 @@ requirements:
     - python {{ python }}
     - brs_utils # brsynth
     - filetype  # conda-forge
+    - colored # conda-forge
 
 test:
   source_files:
