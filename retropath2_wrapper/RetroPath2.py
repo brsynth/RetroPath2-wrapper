@@ -117,7 +117,10 @@ def retropath2(
     outdir: str,
     kexec: str = None, kpkg_install: bool = True, kver: str = None,
     workflow: str = None,
+<<<<<<< HEAD
     kvars: Dict = None,
+=======
+>>>>>>> b5dbb1cf1476b24828daf19b01e42c74dc11e21f
     max_steps: int = 3,
     topx: int = 100,
     dmin: int = 0, dmax: int = 100,
@@ -125,6 +128,7 @@ def retropath2(
     timeout: int = 30,
     is_forward: bool = False,
     logger: Logger = getLogger(__name__)
+<<<<<<< HEAD
 ) -> Tuple[str, Dict]:
 
     if kvars is None:
@@ -136,6 +140,21 @@ def retropath2(
             workflow
         )
         logger.debug('kvars: ' + str(kvars))
+=======
+) -> Tuple[int, str]:
+
+    # Create outdir if does not exist
+    if not os_path.exists(outdir):
+        os_mkdir(outdir)
+
+    # Store KNIME vars into a dictionary
+    kvars = set_vars(
+        kexec,
+        kver,
+        kpkg_install,
+        workflow)
+    logger.debug(kvars)
+>>>>>>> b5dbb1cf1476b24828daf19b01e42c74dc11e21f
     # Store RetroPath2 params into a dictionary
     rp2_params = {
         'max_steps'    : max_steps,
@@ -246,12 +265,21 @@ def check_input(
 
     return 'OK', inchi
 
+<<<<<<< HEAD
 
 def check_src_in_sink_1(
     source_inchi: str,
     sink_file: str,
     logger: Logger = getLogger(__name__)
 ) -> int:
+=======
+def set_vars(
+    kexec: str,
+    kver: str,
+    kpkg_install: bool,
+    workflow: str
+) -> Dict:
+>>>>>>> b5dbb1cf1476b24828daf19b01e42c74dc11e21f
     """
     Check if source is present in sink file. InChIs have to be strictly equal.
 
@@ -289,7 +317,13 @@ def check_src_in_sink_1(
 def check_inchi_from_file(
     file: str,
     logger: Logger = getLogger(__name__)
+<<<<<<< HEAD
 ) -> str:
+=======
+) -> int:
+    """
+    Check if result is present in outdir.
+>>>>>>> b5dbb1cf1476b24828daf19b01e42c74dc11e21f
 
     logger.info('   |- InChI')
 
@@ -335,9 +369,14 @@ def check_inchi_from_file(
     return inchi
 
 
+<<<<<<< HEAD
 def check_src_in_sink_2(
     source_inchi: str,
     src_in_sink_file: str,
+=======
+def check_src_in_sink(
+    files: Dict,
+>>>>>>> b5dbb1cf1476b24828daf19b01e42c74dc11e21f
     logger: Logger = getLogger(__name__)
 ) -> int:
     """
@@ -409,10 +448,13 @@ def install_knime(
     logger.info('   |--url: '+kurl)
     logger.info('   |--install_dir: '+kinstall)
 
+<<<<<<< HEAD
     download_and_extract_tar_gz(kurl, kinstall)
     chown_r(kinstall, geteuid(), getegid())
     
 
+=======
+>>>>>>> b5dbb1cf1476b24828daf19b01e42c74dc11e21f
 def gunzip_to_csv(filename: str, indir: str) -> str:
     """
     Uncompress gzip file into indir.
