@@ -1,3 +1,7 @@
+1.7.0 - Mar 9, 2021
+  - add the ability to pass InChI and name of target to produce directy in cli argument (--source_inchi --source_name)
+  - printout cosmetic
+
 1.6.0 - Mar 3, 2021
   - skip packages installation by default to avoid failed updates
 

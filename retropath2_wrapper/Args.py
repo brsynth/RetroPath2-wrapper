@@ -48,7 +48,6 @@ def _add_arguments(parser):
 
     # KNIME options
     parser.add_argument(
-<<<<<<< HEAD
         '--source_file',
         type=str,
         help='Path of file containing the InChI (not compliant with --source_name nor --source_inchi)'
@@ -64,23 +63,6 @@ def _add_arguments(parser):
         type=str,
         default=None,
         help='InChI of compound to produce (not compliant with --source_file).'
-=======
-        '--target_file',
-        type=str,
-        help='Path of file containing the InChI (not compliant with --target_compound nor --target_inchi)'
-    )
-    parser.add_argument(
-        '--target_name',
-        type=str,
-        default=None,
-        help='Name of compound to produce (needs --inchi, not compliant with --target_file).'
-    )
-    parser.add_argument(
-        '--target_inchi',
-        type=str,
-        default=None,
-        help='InChI of compound to produce (not compliant with --target_file).'
->>>>>>> b5dbb1cf1476b24828daf19b01e42c74dc11e21f
     )
     parser.add_argument(
         '--kexec',
