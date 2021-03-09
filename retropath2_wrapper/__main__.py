@@ -219,21 +219,21 @@ def parse_and_check_args(
     if not os_path.exists(args.outdir):
         os_mkdir(args.outdir)
 
-    if args.target_file is not None:
-        if args.target_name is not None:
-            parser.error("--target_name is not compliant with --target_file.")
-        if args.target_inchi is not None:
-            parser.error("--target_inchi is not compliant with --target_file.")
+    if args.source_file is not None:
+        if args.source_name is not None:
+            parser.error("--source_name is not compliant with --source_file.")
+        if args.source_inchi is not None:
+            parser.error("--source_inchi is not compliant with --source_file.")
     else:
-        if args.target_inchi is None:
-            parser.error("--target_inchi is mandatory.")
-        if args.target_name is None or args.target_name == '':
-            args.target_name = 'target'
+        if args.source_inchi is None:
+            parser.error("--source_inchi is mandatory.")
+        if args.source_name is None or args.source_name == '':
+            args.source_name = 'target'
         # Create temporary source file
-        args.target_file = os_path.join(args.outdir, 'source.csv')
-        with open(args.target_file, 'w') as temp_f:
+        args.source_file = os_path.join(args.outdir, 'source.csv')
+        with open(args.source_file, 'w') as temp_f:
             temp_f.write('Name,InChI\n')
-            temp_f.write('"%s","%s"' % (args.target_name, args.target_inchi))
+            temp_f.write('"%s","%s"' % (args.source_name, args.source_inchi))
 
     return args
 
