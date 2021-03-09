@@ -79,11 +79,14 @@ def retropath2(
     outdir: str,
     kexec: str = None, kpkg_install: bool = True, kver: str = None,
     workflow: str = None,
-    max_steps: int = 3, topx: int = 100, dmin: int = 0, dmax: int = 100, mwmax_source: int = 1000, mwmax_cof: int = 1000,
+    max_steps: int = 3,
+    topx: int = 100,
+    dmin: int = 0, dmax: int = 100,
+    mwmax_source: int = 1000, mwmax_cof: int = 1000,
     timeout: int = 30,
     is_forward: bool = False,
     logger: Logger = getLogger(__name__)
-    ) -> Tuple[int, str]:
+) -> Tuple[int, str]:
 
     # Create outdir if does not exist
     if not os_path.exists(outdir):
@@ -173,7 +176,7 @@ def set_vars(
     kver: str,
     kpkg_install: bool,
     workflow: str
-    ) -> Dict:
+) -> Dict:
     """
     Set variables and store them into a dictionary.
 
@@ -235,7 +238,7 @@ def set_vars(
 def check_scope(
     outdir: str,
     logger: Logger = getLogger(__name__)
-    ) -> int:
+) -> int:
     """
     Check if result is present in outdir.
 
@@ -264,8 +267,9 @@ def check_scope(
 
 
 def check_src_in_sink(
-    files: Dict, logger: Logger = getLogger(__name__)
-    ) -> int:
+    files: Dict,
+    logger: Logger = getLogger(__name__)
+) -> int:
     """
     Check if source is present in sink.
 
@@ -303,7 +307,7 @@ def install_knime(
     kinstall: str,
     kver: str,
     logger: Logger = getLogger(__name__)
-    ):
+) -> None:
     """
     Install KNIME.
 
@@ -335,7 +339,6 @@ def install_knime(
     logger.debug('   |- install dir: '+kinstall)
     
 
-
 def gunzip_to_csv(filename: str, indir: str) -> str:
     """
     Uncompress gzip file into indir.
@@ -364,7 +367,7 @@ def format_files_for_knime(
     sinkfile: str, sourcefile: str, rulesfile: str,
     indir: str, outdir: str,
     logger: Logger = getLogger(__name__)
-    ) -> Dict:
+) -> Dict:
     """
     Format files according to KNIME expectations.
 
@@ -485,7 +488,7 @@ def call_knime(
     params: Dict,
     timeout: int,
     logger: Logger = getLogger(__name__)
-    ) -> int:
+) -> int:
     """
     Install KNIME packages needed to execute RetroPath2.0 workflow.
 

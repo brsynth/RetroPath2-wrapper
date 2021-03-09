@@ -21,16 +21,49 @@ def _add_arguments(parser):
     ## Positional arguments
     #
 
-    parser.add_argument('sinkfile'   , type=str)
-    parser.add_argument('sourcefile' , type=str)
-    parser.add_argument('rulesfile'  , type=str)
-    parser.add_argument('outdir'     , type=str)
+    parser.add_argument(
+        'sink_file',
+        type=str,
+        help='Path of file containing metabolites present in the system'
+    )
+    # parser.add_argument(
+    #     'source',
+    #     type=str,
+    #     help='InChI of compound to produce if starts with \'InchI=\', path of file containing the InChI otherwise'
+    # )
+    parser.add_argument(
+        'rules_file',
+        type=str,
+        help='Path of file containing reaction rules'
+    )
+    parser.add_argument(
+        'outdir',
+        type=str,
+        help='Folder path where results will be written into'
+    )
 
 
     ## Optional arguments
     #
 
     # KNIME options
+    parser.add_argument(
+        '--target_file',
+        type=str,
+        help='Path of file containing the InChI (not compliant with --target_compound nor --target_inchi)'
+    )
+    parser.add_argument(
+        '--target_name',
+        type=str,
+        default=None,
+        help='Name of compound to produce (needs --inchi, not compliant with --target_file).'
+    )
+    parser.add_argument(
+        '--target_inchi',
+        type=str,
+        default=None,
+        help='InChI of compound to produce (not compliant with --target_file).'
+    )
     parser.add_argument(
         '--kexec',
         type=str,
