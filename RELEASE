@@ -1,4 +1,9 @@
-1.7.0 - Mar 9, 2021
+1.7.2 - Apr 22, 2021
+  - fix(check_inchi_from_file): work for unquoted source ID
+  - style(retropath2): disable unused argument "is_forward"
+  - docs(README): update use section
+
+1.7.1 - Mar 9, 2021
   - fix(main): fix variable names
 
 1.7.0 - Mar 9, 2021
