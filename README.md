@@ -72,7 +72,7 @@ r_code = retropath2(
 For convenience, the retropath2_wrapper make an attempt to install the KNIME application, and the needed KNIME dependancies. KNIME installation can be skipped by setting  `kexec` to the KNIME executable path, and KNIME dependancies can be skipped using `kpkg_install=False`.
 
 Already installed KNIME app can hence be used that way, eg:
-```
+```python
 from retropath2_wrapper import retropath2
 
 r_code = retropath2(
