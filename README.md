@@ -32,28 +32,62 @@ conda install -c brsynth -c conda-forge -n <my_env> retropath2_wrapper
 
 ## Run
 
-### retropath2_wrapper process
-**From CLI**
+### From CLI
 ```sh
 python -m retropath2_wrapper <sinkfile> <sourcefile> <rulesfile> <outdir>
 ```
-**From Python code**
-```python
-from retropath2_wrapper import retropath2, build_args_parser
 
-parser = build_args_parser()
-args   = parser.parse_args()
+### From Python code
+
+The minimal required arguments are `sink_file`, `source_file`, `rules_file` and `outdir`.
+```python
+from retropath2_wrapper import retropath2
 
 r_code = retropath2(
-    args.sinkfile, args.sourcefile, args.rulesfile,
-    args.outdir,
-    args.kexec, not args.skip_kpkg_install, args.kver,
-    args.kwf,
-    args.max_steps, args.topx, args.dmin, args.dmax, args.mwmax_source, args.mwmax_cof,
-    args.timeout,
-    args.forward)
+    sink_file='/path/to/sink/file',
+    source_file='/path/to/source/file',
+    rules_file='/path/to/rules/file',
+    outdir='/path/to/outdir'
+    )
 ```
 
+Exploration settings have default values and can be tuned:
+```python
+from retropath2_wrapper import retropath2
+
+r_code = retropath2(
+    sink_file='/path/to/sink/file',
+    source_file='/path/to/source/file',
+    rules_file='/path/to/rules/file',
+    outdir='/path/to/outdir',
+    max_steps=3,
+    topx=100,
+    dmin=0,
+    dmax=100,
+    mwmax_source=1000,
+    mwmax_cof=1000,
+    )
+```
+
+For convenience, the retropath2_wrapper make an attempt to install the KNIME application, and the needed KNIME dependancies. KNIME installation can be skipped by setting  `kexec` to the KNIME executable path, and KNIME dependancies can be skipped using `kpkg_install=False`.
+
+Already installed KNIME app can hence be used that way, eg:
+```
+from retropath2_wrapper import retropath2
+
+r_code = retropath2(
+    sink_file='/path/to/sink/file',
+    source_file='/path/to/source/file',
+    rules_file='/path/to/rules/file',
+    outdir='/path/to/outdir'
+    kexec='/Applications/KNIME 4.3.0.app/Contents/MacOS/knime',
+    kpkg_install=False
+    )
+```
+
+Executions can be timed out using the `timeout` arguments (in minutes).
+
+### Return codes
 
 `retropath2()` function returns one of the following codes:
 * 0: `No error`
