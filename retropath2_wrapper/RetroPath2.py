@@ -42,6 +42,7 @@ from retropath2_wrapper._version import __version__
 from csv import reader as csv_reader
 from colored import fg, bg, attr
 from logging import StreamHandler
+from csv import reader
 
 
 __KNIME_VER__        = '4.3.0'
@@ -295,11 +296,12 @@ def check_inchi_from_file(
 
     try:
         with open(file, 'r') as f:
-            header = f.readline()
-            if header != 'Name,InChI\n':
+            f_reader = reader(f)
+            header = next(f_reader)
+            if [_.lower() for _ in header[:2]] != ['name', 'inchi']:
                 logger.error(header)
                 return False
-            inchi = f.readline().split('","')[1][:-1]
+            compound_id, inchi = next(f_reader)[:2]  # Sniff first inchi
             # Match
             #
             #   InChI=
