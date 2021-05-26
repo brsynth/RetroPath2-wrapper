@@ -98,7 +98,7 @@ def _add_arguments(parser):
     parser.add_argument('--mwmax_source' , type=int, default=1000)
     parser.add_argument('--mwmax_cof'    , type=int, default=1000)
     parser.add_argument('--timeout'      , type=int, default=30)
-    parser.add_argument('--forward'      , action='store_true')
+    # parser.add_argument('--forward'      , action='store_true')
 
     # Program options
     parser.add_argument(
