@@ -14,7 +14,10 @@ Implementation of the KNIME retropath2.0 workflow. Takes for input the minimal (
 ### Prerequisite
 
 The conda package manager is required. Fresh instructions on how to install conda are [available online](https://docs.conda.io/projects/conda/en/latest/user-guide/install/).
-The KNIME is installed 
+
+On Linux system, the tool tries to install the KNIME Anlytical Platform as well as the RetroPath2.0 node dependancies.
+
+On MacOS, the user needs to first install by himself KNIME, and be sure that the RetroPath2.0 node dependancies are installed. To install node dependancies, we recommand to follow the RetroPath2.0 instructions from https://www.myexperiment.org/workflows/4987.html.
 
 ### conda environment
 
@@ -32,9 +35,16 @@ conda install -c brsynth -c conda-forge -n <my_env> retropath2_wrapper
 
 ## Run
 
-### From CLI
+**Disclaimer**: we recommand to provide absolute path to files, problems can arise with relative paths.
+
+### From CLI (Linux)
 ```sh
-python -m retropath2_wrapper <sinkfile> <sourcefile> <rulesfile> <outdir>
+python -m retropath2_wrapper <sink-file> <rules-file> <out-dir> --source_file <source-file>
+```
+
+### From CLI (MacOS)
+```sh
+python -m retropath2_wrapper <sink-file> <rules-file> <out-dir> --source_file <source-file> --kexec <path-to-knime-exec>
 ```
 
 ### From Python code
@@ -102,7 +112,7 @@ Executions can be timed out using the `timeout` arguments (in minutes).
 Test can be run with the following commands:
 
 ### Natively
-```bash
+```sh
 cd tests
 pytest -v
 ```
