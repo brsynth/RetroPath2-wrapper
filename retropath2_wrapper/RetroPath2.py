@@ -297,10 +297,11 @@ def check_inchi_from_file(
         with open(file, 'r') as f:
             f_reader = reader(f)
             header = next(f_reader)
-            if [_.lower() for _ in header[:2]] != ['name', 'inchi']:
+            if [_.strip().lower() for _ in header[:2]] != ['name', 'inchi']:
                 logger.error(header)
                 return False
             compound_id, inchi = next(f_reader)[:2]  # Sniff first inchi
+            inchi = inchi.strip()  # Remove trailing spaces
             # Match
             #
             #   InChI=
