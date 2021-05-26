@@ -110,7 +110,6 @@ def _cli():
         kvars=kvars,
         max_steps=args.max_steps, topx=args.topx, dmin=args.dmin, dmax=args.dmax, mwmax_source=args.mwmax_source, mwmax_cof=args.mwmax_cof,
         timeout=args.timeout,
-        is_forward=args.forward,
         logger=logger
     )
 

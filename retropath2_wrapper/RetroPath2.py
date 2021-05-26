@@ -124,7 +124,6 @@ def retropath2(
     dmin: int = 0, dmax: int = 100,
     mwmax_source: int = 1000, mwmax_cof: int = 1000,
     timeout: int = 30,
-    # is_forward: bool = False,
     logger: Logger = getLogger(__name__)
 ) -> Tuple[str, Dict]:
 
