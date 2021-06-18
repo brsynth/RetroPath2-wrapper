@@ -1,3 +1,9 @@
+2.0.0 - May 26, 2021
+  - docs(README): provide details for MacOS execution
+  - fix(Args): disable unused argument
+  - fix(retropath2): handle spaces in CSV files
+  - fix(__main__): remove unused option
+
 1.7.2 - Apr 22, 2021
   - fix(check_inchi_from_file): work for unquoted source ID
   - style(retropath2): disable unused argument "is_forward"
