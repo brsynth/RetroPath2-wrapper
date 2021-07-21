@@ -149,7 +149,7 @@ def retropath2(
 
     r_code, inchi = check_input(source_file, sink_file)
     if r_code != 'OK':
-        return r_code, None
+        return str(r_code), None
 
     # Install KNIME
     #      if kexec is not specified
@@ -166,7 +166,7 @@ def retropath2(
             logger
         )
         if r_code > 0:
-            return str(r_code)
+            return str(r_code), None
         elif r_code == -1:
             return 'OSError', None
     else:
@@ -178,7 +178,7 @@ def retropath2(
                 logger
             )
             if r_code > 0:
-                return str(r_code)
+                return str(r_code), None
             elif r_code == -1:
                 return 'OSError', None
 
@@ -207,7 +207,7 @@ def retropath2(
             logger
         )
         if r_code > 0:
-            return str(r_code)
+            return str(r_code), None
         elif r_code == -1:
             return 'TimeLimit', files
         elif r_code == -2:
