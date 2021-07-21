@@ -38,7 +38,6 @@ from logging    import (
     getLogger
 )
 from re import match
-from retropath2_wrapper._version import __version__
 from csv import reader as csv_reader
 from colored import fg, bg, attr
 from logging import StreamHandler
@@ -207,7 +206,7 @@ def retropath2(
             logger
         )
         if r_code > 0:
-            return str(r_code), None
+            return str(r_code), files
         elif r_code == -1:
             return 'TimeLimit', files
         elif r_code == -2:
@@ -219,7 +218,7 @@ def retropath2(
         logger = logger
     )
     if r_code != 0:
-        return r_code, None
+        return str(r_code), None
 
     return 'OK', files
 

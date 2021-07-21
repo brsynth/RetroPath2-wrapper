@@ -5,7 +5,7 @@ Created on May 4 2020
 
 """
 
-from argparse  import ArgumentParser
+from argparse import ArgumentParser
 from retropath2_wrapper._version import __version__
 
 

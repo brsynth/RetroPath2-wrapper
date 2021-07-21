@@ -1,27 +1,13 @@
 #!/usr/bin/env python
 
 
-from retropath2_wrapper import (
-    retropath2,
-    build_args_parser
-)
-from retropath2_wrapper.RetroPath2 import (
-    set_vars
-)
-from retropath2_wrapper._version import __version__
 from os import (
     path as os_path,
     mkdir as os_mkdir,
     getcwd
 )
-from sys import (
-    exit as sys_exit
-)
-from brs_utils import (
-    create_logger
-)
 from argparse import ArgumentParser
-from logging    import (
+from logging import (
     Logger,
     getLogger
 )
@@ -30,6 +16,17 @@ from typing import (
     Dict,
 )
 from colored import fg, bg, attr
+from brs_utils import (
+    create_logger
+)
+from .RetroPath2 import (
+    set_vars,
+    retropath2
+)
+from .Args import (
+    build_args_parser
+)
+from ._version import __version__
 
 
 __ERROR_CODES__ = {
@@ -112,6 +109,7 @@ def _cli():
         timeout=args.timeout,
         logger=logger
     )
+    print(r_code)
 
     if r_code == 'OK' or r_code == 'TimeLimit':
         logger.info('{attr1}Results{attr2}'.format(attr1=attr('bold'), attr2=attr('reset')))
