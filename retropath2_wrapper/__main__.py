@@ -179,43 +179,6 @@ def parse_and_check_args(
     if not os_path.exists(args.outdir):
         os_mkdir(args.outdir)
 
-    # TARGET
-    if args.source_file is not None:
-        if args.source_name is not None:
-            parser.error("--source_name is not compliant with --source_file.")
-        if args.source_inchi is not None:
-            parser.error("--source_inchi is not compliant with --source_file.")
-    else:
-        if args.source_inchi is None:
-            parser.error("--source_inchi is mandatory.")
-        if args.source_name is None or args.source_name == '':
-            args.source_name = 'source'
-        # Create temporary source file
-        args.source_file = os_path.join(args.outdir, 'source.csv')
-        with open(args.source_file, 'w') as temp_f:
-            temp_f.write('Name,InChI\n')
-            temp_f.write('"%s","%s"' % (args.source_name, args.source_inchi))
-
-    # OUTDIR
-    if not os_path.isabs(args.outdir):
-        args.outdir = os_path.join(getcwd(), args.outdir)
-
-    return args
-
-
-def parse_and_check_args(
-    parser: ArgumentParser
-) -> None:
-
-    args = parser.parse_args()
-
-    if args.kver is None and args.kpkg_install and args.kexec is not None:
-        parser.error("--kexec requires --kver.")
-
-    # Create outdir if does not exist
-    if not os_path.exists(args.outdir):
-        os_mkdir(args.outdir)
-
     if args.source_file is not None:
         if args.source_name is not None:
             parser.error("--source_name is not compliant with --source_file.")
@@ -230,7 +193,7 @@ def parse_and_check_args(
         args.source_file = os_path.join(args.outdir, 'source.csv')
         with open(args.source_file, 'w') as temp_f:
             temp_f.write('Name,InChI\n')
-            temp_f.write('"%s","%s"' % (args.source_name, args.source_inchi))
+            temp_f.write('"%s","%s"' % (args.source_name, args.source_inchi.strip()))
 
     return args
 
