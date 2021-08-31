@@ -217,8 +217,12 @@ def retropath2(
         src_in_sink_file = os_path.join(files['outdir'], files['src-in-sk']),
         logger = logger
     )
-    if r_code != 0:
-        return str(r_code), None
+    if r_code > 0:
+        return str(r_code), files
+    elif r_code == -1:
+        return 'SrcInSink', files
+    elif r_code == -2:
+        return 'FileNotFound', files
 
     return 'OK', files
 
