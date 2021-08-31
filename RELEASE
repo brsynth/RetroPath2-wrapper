@@ -1,19 +1,23 @@
+2.0.1 - Jul 22, 2021
+  - chore(error): changed returned error codes
+  - fix(main): strip spaces in `source_inchi`
+
 2.0.0 - May 26, 2021
   - docs(README): provide details for MacOS execution
   - fix(Args): disable unused argument
   - fix(retropath2): handle spaces in CSV files
-  - fix(__main__): remove unused option
+  - fix(main): remove unused option
 
 1.7.2 - Apr 22, 2021
   - fix(check_inchi_from_file): work for unquoted source ID
-  - style(retropath2): disable unused argument "is_forward"
+  - style(retropath2): disable unused argument `is_forward`
   - docs(README): update use section
 
 1.7.1 - Mar 9, 2021
   - fix(main): fix variable names
 
 1.7.0 - Mar 9, 2021
-  - add the ability to pass InChI and name of target to produce directy in cli argument (--source_inchi --source_name)
+  - add the ability to pass InChI and name of target to produce directy in cli argument (`--source_inchi` `--source_name`)
   - printout cosmetic
 
 1.6.0 - Mar 3, 2021
