@@ -1,3 +1,6 @@
+2.0.2 - Jul 22, 2021
+  - fix: matches species with multiple letters when checking
+
 2.0.1 - Jul 22, 2021
   - chore(error): changed returned error codes
   - fix(main): strip spaces in `source_inchi`
