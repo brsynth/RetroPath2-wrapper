@@ -14,7 +14,7 @@ help:
 .DEFAULT_GOAL := all
 
 MAKE_CMD = $(MAKE) -s --no-print-directory
-ECHO = echo -n ">>>"
+ECHO = echo ">>>"
 
 
 all: check test ## Run check and test code
@@ -43,8 +43,11 @@ else
 endif
 
 test: ## Test code with 'pytest'
-	@$(ECHO) "Testing...\n"
 	@export PYTHONPATH=$$PWD/../.. ; \
 	cd ../.. ; \
-	$(test_cmd) -p no:cacheprovider $(test_src) \
-	&& echo OK
+	$(test_cmd) -p no:cacheprovider $(test_src) ; \
+	res_test=$$? ; \
+	if [ $$res_test -eq 0 ] || [ $$res_test -eq 5 ] ; then \
+		exit 0 ; \
+	fi
+
