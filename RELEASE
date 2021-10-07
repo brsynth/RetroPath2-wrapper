@@ -1,3 +1,6 @@
+2.0.3 - Oct 7, 2021
+  - chore(RetroPath2): replace UNIX-only function
+
 2.0.2 - Jul 22, 2021
   - fix: matches species with multiple letters when checking
 
