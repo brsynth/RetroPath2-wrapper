@@ -11,9 +11,10 @@ from os         import (
     path  as os_path,
     rename,
     devnull,
-    geteuid,
-    getegid
+    # geteuid,
+    # getegid
 )
+from getpass import getuser
 from shutil     import copyfile
 from sys        import platform  as sys_platform
 from subprocess import (
@@ -416,7 +417,8 @@ def install_knime(
     logger.info('   |--install_dir: '+kinstall)
 
     download_and_extract_tar_gz(kurl, kinstall)
-    chown_r(kinstall, geteuid(), getegid())
+    chown_r(kinstall, getuser())
+    # chown_r(kinstall, geteuid(), getegid())
     
 
 def gunzip_to_csv(filename: str, indir: str) -> str:
