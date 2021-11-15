@@ -1,6 +1,6 @@
 # Retropath2.0 Python wrapper
 
-[![Anaconda-Server Badge](https://anaconda.org/conda-forge/retropath2_wrapper/badges/latest_release_date.svg)](https://anaconda.org/conda-forge/retropath2_wrapper) [![Anaconda-Server Badge](https://anaconda.org/conda-forge/retropath2_wrapper/badges/version.svg)](https://anaconda.org/conda-forge/retropath2_wrapper)
+[![Anaconda-Server Badge](https://anaconda.org/conda-forge/retropath2_wrapper/badges/version.svg)](https://anaconda.org/conda-forge/retropath2_wrapper) [![Anaconda-Server Badge](https://anaconda.org/conda-forge/retropath2_wrapper/badges/latest_release_date.svg)](https://anaconda.org/conda-forge/retropath2_wrapper)
 
 Implementation of the KNIME retropath2.0 workflow. Takes for input the minimal (dmin) and maximal (dmax) diameter for the reaction rules and the maximal path length (maxSteps). The tool  expects the following files: `rules.csv`, `sink.csv` and `source.csv` and produces results in an output folder.
 
