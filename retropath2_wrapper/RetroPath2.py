@@ -43,6 +43,9 @@ from csv import reader as csv_reader
 from colored import fg, bg, attr
 from logging import StreamHandler
 from csv import reader
+from Args import (
+    DEFAULT_TIMEOUT
+)
 
 
 __KNIME_VER__        = '4.3.0'
@@ -123,7 +126,7 @@ def retropath2(
     topx: int = 100,
     dmin: int = 0, dmax: int = 100,
     mwmax_source: int = 1000, mwmax_cof: int = 1000,
-    timeout: int = 30,
+    timeout: int = DEFAULT_TIMEOUT,
     logger: Logger = getLogger(__name__)
 ) -> Tuple[str, Dict]:
 

@@ -8,6 +8,7 @@ Created on May 4 2020
 from argparse import ArgumentParser
 from retropath2_wrapper._version import __version__
 
+DEFAULT_TIMEOUT = 60
 
 def build_args_parser():
     parser = ArgumentParser(prog='retropath2_wrapper', description='Python wrapper to parse RP2 to generate rpSBML collection of unique and complete (cofactors) pathways')
@@ -97,7 +98,12 @@ def _add_arguments(parser):
     parser.add_argument('--dmax'         , type=int, default=1000)
     parser.add_argument('--mwmax_source' , type=int, default=1000)
     parser.add_argument('--mwmax_cof'    , type=int, default=1000)
-    parser.add_argument('--timeout'      , type=int, default=30)
+    parser.add_argument(
+        '--timeout',
+        type=int,
+        default=DEFAULT_TIMEOUT,
+        help=f'Defines the time after which the program will stop and return calculated results (default: {DEFAULT_TIMEOUT})'
+    )
     # parser.add_argument('--forward'      , action='store_true')
 
     # Program options
