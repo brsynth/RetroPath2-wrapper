@@ -43,7 +43,7 @@ from csv import reader as csv_reader
 from colored import fg, bg, attr
 from logging import StreamHandler
 from csv import reader
-from Args import (
+from .Args import (
     DEFAULT_TIMEOUT
 )
 
