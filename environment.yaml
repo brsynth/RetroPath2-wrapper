@@ -1,4 +1,4 @@
-name: retropath2_wrapper-dev
+name: retropath2_wrapper
 channels:
   - conda-forge
 dependencies:
