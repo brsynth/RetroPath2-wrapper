@@ -6,18 +6,11 @@ name: Check
 on:
 
   push:
-    branches: [ master, dev ]
-    paths-ignore:
-      - '**/RELEASE*'
-      - '**/README*'
-      - '**/LICENSE*'
-      - 'recipe'
-      - 'docs'
-      - '.github'
-      - '!.github/workflows/check*'
-      - '**/_version.py'
+    branches: [ main, master, dev ]
+    paths:
+      - '**.py'
   pull_request:
-    branches: [ master ]
+    branches: [ main, master ]
 
 jobs:
 
@@ -26,16 +19,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: docker://continuumio/miniconda3
-
-    - name: Updating conda
-      run: conda update --all -y
-
-    - name: Installing make
-      run: conda install -y make
-
-    - name: Checking package
-      run: |
-        cd ci
-        make check-inconda
+      - uses: actions/checkout@v2
+      - uses: docker://continuumio/miniconda3
+      - name: Updating conda
+        run: conda update --all -y
+      - name: Installing make
+        run: conda install -y make
+      - name: Checkout CI/CD Toolkit
+        uses: actions/checkout@v2
+        with:
+          repository: breakthewall/cicd-toolkit
+          path: cicd-toolkit
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Checking package
+        run: |
+          cd cicd-toolkit
+          make check-buildenv env=check
+          conda run -n check make check
