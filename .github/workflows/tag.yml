@@ -1,99 +1,101 @@
 name: Tag
 
+
 on:
   push:
     branches:
       - stable
-    # paths:
-    #   - '**.py'
-    #   - '!tests/**'
+    paths:
+      - '**.py'
+      - '!tests/**'
+
 
 jobs:
 
-  # Build-Recipe:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Installing make
-  #       run: |
-  #         sudo apt-get update
-  #         sudo apt-get -y install make
-  #     - name: Checkout CI/CD Toolkit
-  #       uses: actions/checkout@v2
-  #       with:
-  #         repository: breakthewall/cicd-toolkit
-  #         path: cicd-toolkit
-  #         persist-credentials: false
-  #         fetch-depth: 0
-  #     - name: Building recipe
-  #       run: |
-  #         cd cicd-toolkit
-  #         make -C makefiles -f conda.mk build-recipe
-  #     - name: Saving recipe
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: recipe
-  #         path: cicd-toolkit/recipe/meta.yaml
+  Build-Recipe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Installing make
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install make
+      - name: Checkout CI/CD Toolkit
+        uses: actions/checkout@v2
+        with:
+          repository: breakthewall/cicd-toolkit
+          path: cicd-toolkit
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Building recipe
+        run: |
+          cd cicd-toolkit
+          make -C makefiles -f conda.mk build-recipe
+      - name: Saving recipe
+        uses: actions/upload-artifact@v2
+        with:
+          name: recipe
+          path: cicd-toolkit/recipe/meta.yaml
 
-  # Conda-Build:
-  #   needs: [Build-Recipe]
-  #   runs-on: ${{ matrix.os }}-latest
-  #   strategy:
-  #     matrix:
-  #       os: ["ubuntu", "windows", "macos"]
-  #   defaults:
-  #     run:
-  #       shell: bash -l {0}
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Checkout CI/CD Toolkit
-  #       uses: actions/checkout@v2
-  #       with:
-  #         repository: breakthewall/cicd-toolkit
-  #         path: cicd-toolkit
-  #         persist-credentials: false
-  #         fetch-depth: 0
-  #     - name: Loading recipe
-  #       uses: actions/download-artifact@v2
-  #       with:
-  #         name: recipe
-  #         path: cicd-toolkit/recipe
-  #     - name: Deploying miniconda
-  #       uses: conda-incubator/setup-miniconda@v2
-  #       with:
-  #         miniconda-version: "latest"
-  #         environment-file: cicd-toolkit/recipe/conda_build_env.yaml
-  #         activate-environment: test
-  #     - name: Building & Testing conda package
-  #       run: |
-  #         conda-build cicd-toolkit/recipe
+  Conda-Build:
+    needs: [Build-Recipe]
+    runs-on: ${{ matrix.os }}-latest
+    strategy:
+      matrix:
+        os: ["ubuntu", "windows", "macos"]
+    defaults:
+      run:
+        shell: bash -l {0}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Checkout CI/CD Toolkit
+        uses: actions/checkout@v2
+        with:
+          repository: breakthewall/cicd-toolkit
+          path: cicd-toolkit
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Loading recipe
+        uses: actions/download-artifact@v2
+        with:
+          name: recipe
+          path: cicd-toolkit/recipe
+      - name: Deploying miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          miniconda-version: "latest"
+          environment-file: cicd-toolkit/recipe/conda_build_env.yaml
+          activate-environment: test
+      - name: Building & Testing conda package
+        run: |
+          conda-build cicd-toolkit/recipe
 
   Tag:
-    # needs: [Conda-Build]
+    needs: [Conda-Build]
     runs-on: ubuntu-latest
-    # outputs: # Create variable usable from another job
-    #   new_tag: ${{ steps.tag_version.outputs.new_tag }}
+    outputs: # Create variable usable from another job
+      new_tag: ${{ steps.tag_version.outputs.new_tag }}
     steps:
-      # ## CREATE TAG/RELEASE
-      # - uses: actions/checkout@v2
-      #   with:
-      #     persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
-      #     fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
-      # - name: Bump version and push tag
-      #   id: tag_version
-      #   uses: mathieudutour/github-tag-action@v5.6
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     release_branches: stable
-      #     tag_prefix:
-      # - name: Create Release
-      #   uses: actions/create-release@v1
-      #   with:
-      #     tag_name: ${{ steps.tag_version.outputs.new_tag }}
-      #     release_name: Release ${{ steps.tag_version.outputs.new_tag }}
-      #     body: ${{ steps.tag_version.outputs.changelog }}
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      ## CREATE TAG/RELEASE
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
+          fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v5.6
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          release_branches: stable
+          tag_prefix:
+      - name: Create Release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ steps.tag_version.outputs.new_tag }}
+          release_name: Release ${{ steps.tag_version.outputs.new_tag }}
+          body: ${{ steps.tag_version.outputs.changelog }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       ## UPDATE CHANGELOG
       - uses: actions/checkout@v2
         with:
