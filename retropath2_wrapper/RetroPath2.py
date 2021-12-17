@@ -333,8 +333,7 @@ def check_inchi_from_file(
             #       Other (sub-)layers
             #       matches:
             #           (/.+)? --> if '/' is present, then at least one character/symbol is mandatory
-            # if match('InChI=1(S)?/(([a-z|[A-Z])\d+)+(/.+)?$', inchi) is None:
-            if match('InChI=1(S)?/(([a-z|[A-Z])+\d+)+(/.+)?$', inchi) is None:
+            if match('InChI=1(S)?/(([a-z|[A-Z])+\d*)+(/.+)?$', inchi) is None:
                 logger.error('        {inchi} is not a valid InChI notation'.format(inchi=inchi))
                 return ''
 

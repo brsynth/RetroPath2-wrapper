@@ -17,7 +17,8 @@ from retropath2_wrapper.RetroPath2 import (
     __KNIME_VER__,
     __RETROPATH2_KWF__,
     set_vars,
-    gunzip_to_csv
+    gunzip_to_csv,
+    check_inchi_from_file
 )
 from retropath2_wrapper.__main__ import create_logger
 
@@ -126,3 +127,21 @@ class Test_RP2(TestCase):
     #                                 self.outdir,
     #                                 dmin=16)
     #     self.assertTrue(cmp(result, self.ref_file))
+
+
+class TestMethods:
+
+    inchi_test_file = Path(__file__).parent / 'data' / 'inchi_test_cases.csv'
+
+    def test_check_inchi_from_file(self, tmpdir):
+        with open(self.inchi_test_file) as ifh:
+            inchis = ifh.read().splitlines() 
+        for inchi in inchis:
+            tmp_file = Path(tmpdir) / 'source.csv'
+            with open(tmp_file, 'w') as ofh:
+                ofh.write('"Name","InChI"\n')
+                ofh.write(f'"target","{inchi}"')
+            try:
+                assert check_inchi_from_file(tmp_file) != ''
+            except AssertionError as e:
+                raise e
