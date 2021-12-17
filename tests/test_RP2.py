@@ -131,18 +131,16 @@ class Test_RP2(TestCase):
 
 class TestMethods:
 
+    inchi_test_file = Path(__file__).parent / 'data' / 'inchi_test_cases.csv'
+
     def test_check_inchi_from_file(self, tmpdir):
-        inchis = [
-            'InChI=1S/C3H6O/c1-3(2)4/h1-2H3',
-            'InChI=1S/C14H12O3/c15-12-5-3-10(4-6-12)1-2-11-7-13(16)9-14(17)8-11/h1-9,15-17H/b2-1+',
-            'InChI=1S/H2O2/c1-2/h1-2H',
-            'InChI=1S/C4H10O/c1-4(2)3-5/h4-5H,3H2,1-2H3'
-        ]
+        with open(self.inchi_test_file) as ifh:
+            inchis = ifh.read().splitlines() 
         for inchi in inchis:
             tmp_file = Path(tmpdir) / 'source.csv'
-            with open(tmp_file, 'w') as fh:
-                fh.write('"Name","InChI"\n')
-                fh.write(f'"target","{inchi}"')
+            with open(tmp_file, 'w') as ofh:
+                ofh.write('"Name","InChI"\n')
+                ofh.write(f'"target","{inchi}"')
             try:
                 assert check_inchi_from_file(tmp_file) != ''
             except AssertionError as e:
