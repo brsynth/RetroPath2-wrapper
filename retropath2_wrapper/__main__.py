@@ -87,9 +87,9 @@ def _cli():
     kvars = set_vars(
         args.kexec,
         args.kver,
-        args.kpkg_install,
-        args.kwf
+        args.kpkg_install
     )
+    kvars['workflow'] = args.workflow
 
     # Print out configuration
     if not args.silent and args.log.lower() not in ['critical', 'error']:
@@ -106,6 +106,7 @@ def _cli():
         outdir=args.outdir,
         kvars=kvars,
         max_steps=args.max_steps, topx=args.topx, dmin=args.dmin, dmax=args.dmax, mwmax_source=args.mwmax_source, mwmax_cof=args.mwmax_cof,
+        workflow=args.workflow,
         timeout=args.timeout,
         logger=logger
     )

@@ -44,7 +44,8 @@ from colored import fg, bg, attr
 from logging import StreamHandler
 from csv import reader
 from .Args import (
-    DEFAULT_TIMEOUT
+    DEFAULT_TIMEOUT,
+    DEFAULT_RETROPATH2_KWF
 )
 
 
@@ -56,7 +57,6 @@ def set_vars(
     kexec: str,
     kver: str,
     kpkg_install: bool,
-    workflow: str
 ) -> Dict:
     """
     Set variables and store them into a dictionary.
@@ -69,20 +69,10 @@ def set_vars(
         Version of KNIME to install.
     kpkg_install : bool
         Boolean to know if KNIME packages have to be installed.
-    workflow: str
-        Path to workflow to process.
     logger : Logger
         The logger object.
 
     """
-
-    # Take workflow in the package if not passed as an argument
-    if workflow is None:
-        workflow = os_path.join(
-            os_path.dirname(os_path.abspath(__file__)),
-            'workflows',
-            __RETROPATH2_KWF__
-            )
 
     # Setting kexec, kpath, kinstall, kver
     kexec_install = False
@@ -111,8 +101,7 @@ def set_vars(
         'kver'          : kver,
         'kpath'         : kpath,
         'kinstall'      : kinstall,
-        'kpkg_install'  : kpkg_install,
-        'workflow'      : workflow
+        'kpkg_install'  : kpkg_install
     }
 
 
@@ -120,7 +109,7 @@ def retropath2(
     sink_file: str, source_file: str, rules_file: str,
     outdir: str,
     kexec: str = None, kpkg_install: bool = True, kver: str = None,
-    workflow: str = None,
+    workflow: str = DEFAULT_RETROPATH2_KWF,
     kvars: Dict = None,
     max_steps: int = 3,
     topx: int = 100,
@@ -135,8 +124,7 @@ def retropath2(
         kvars = set_vars(
             kexec,
             kver,
-            kpkg_install,
-            workflow
+            kpkg_install
         )
         logger.debug('kvars: ' + str(kvars))
     # Store RetroPath2 params into a dictionary

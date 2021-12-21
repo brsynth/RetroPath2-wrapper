@@ -86,8 +86,7 @@ class Test_RP2(TestCase):
         kvars = set_vars(
             kexec        = None,
             kver         = None,
-            kpkg_install = True,
-            workflow     = None
+            kpkg_install = True
             )
 
         # Prepare expectd data
@@ -108,8 +107,7 @@ class Test_RP2(TestCase):
             'kver'          : kver,
             'kpath'         : kpath,
             'kinstall'      : kinstall,
-            'kpkg_install'  : True,
-            'workflow'      : workflow
+            'kpkg_install'  : True
         }
         self.assertDictEqual(kvars, kvars_expected)
 

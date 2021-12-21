@@ -7,8 +7,11 @@ Created on May 4 2020
 
 from argparse import ArgumentParser
 from retropath2_wrapper._version import __version__
+from os import path as os_path 
+here = os_path.dirname(os_path.realpath(__file__))
 
 DEFAULT_TIMEOUT = 60
+DEFAULT_RETROPATH2_KWF = os_path.join(here, 'workflows', 'RetroPath2.0_r20210127.knwf')
 
 def build_args_parser():
     parser = ArgumentParser(prog='retropath2_wrapper', description='Python wrapper to parse RP2 to generate rpSBML collection of unique and complete (cofactors) pathways')
@@ -64,6 +67,12 @@ def _add_arguments(parser):
         type=str,
         default=None,
         help='InChI of compound to produce (not compliant with --source_file).'
+    )
+    parser.add_argument(
+        '--workflow',
+        type=str,
+        default=DEFAULT_RETROPATH2_KWF,
+        help=f'RetroPath2.0 workflow to wrap (default: {DEFAULT_RETROPATH2_KWF}).'
     )
     parser.add_argument(
         '--kexec',
