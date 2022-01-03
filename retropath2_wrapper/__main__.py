@@ -40,7 +40,6 @@ __ERROR_CODES__ = {
            'InChI': 6
 }
 
-
 def print_conf(
     kvars: Dict,
     prog: str,
