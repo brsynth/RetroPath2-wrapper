@@ -110,7 +110,7 @@ class Test_RP2(TestCase):
             'kver'          : kver,
             'kpath'         : kpath,
             'kinstall'      : kinstall,
-            'kpkg_install'  : True,
+            'kpkg_install'  : True
 #            'workflow'      : workflow
         }
         self.assertDictEqual(kvars, kvars_expected)
