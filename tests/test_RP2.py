@@ -14,11 +14,13 @@ from pathlib   import Path
 from shutil    import copyfile
 from retropath2_wrapper.RetroPath2 import (
     retropath2,
-    __KNIME_VER__,
-    __RETROPATH2_KWF__,
     set_vars,
     gunzip_to_csv,
     check_inchi_from_file
+)
+from retropath2_wrapper.Args import (
+    DEFAULT_KNIME_VERSION,
+    DEFAULT_RP2_VERSION
 )
 from retropath2_wrapper.__main__ import create_logger
 
@@ -85,29 +87,29 @@ class Test_RP2(TestCase):
         # Process the function to test
         kvars = set_vars(
             kexec        = None,
-            kver         = None,
             kpkg_install = True
-            )
+        )
 
         # Prepare expectd data
         from retropath2_wrapper import __path__ as rp2_path
         rp2_path = rp2_path[0]
         kinstall = rp2_path
-        kver = __KNIME_VER__
+        kver = DEFAULT_KNIME_VERSION
         kpath    = os_path.join(kinstall, 'knime_')+kver
         kexec    = os_path.join(kpath, 'knime')
         workflow = os_path.join(
             rp2_path,
             'workflows',
-            __RETROPATH2_KWF__
-            )
+            f'RetroPath2.0_r{DEFAULT_RP2_VERSION}.knwf'
+        )
         kvars_expected = {
             'kexec'         : kexec,
             'kexec_install' : not os_path.exists(kpath),
             'kver'          : kver,
             'kpath'         : kpath,
             'kinstall'      : kinstall,
-            'kpkg_install'  : True
+            'kpkg_install'  : True,
+            'workflow'      : workflow
         }
         self.assertDictEqual(kvars, kvars_expected)
 
