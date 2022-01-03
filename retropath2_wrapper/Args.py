@@ -9,7 +9,7 @@ from argparse import ArgumentParser
 from retropath2_wrapper._version import __version__
 
 DEFAULT_TIMEOUT = 60
-DEFAULT_KNIME_VERSION = '4.3.0'
+DEFAULT_KNIME_VERSION = '4.5.0'
 DEFAULT_RP2_VERSION = '20211221'
 
 def build_args_parser():
