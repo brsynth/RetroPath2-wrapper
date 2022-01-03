@@ -27,6 +27,8 @@ from retropath2_wrapper.__main__ import create_logger
 
 class Test_RP2(TestCase):
 
+    maxDiff = None
+
     # Set attributes
     csv        = '.csv'
     gz         = '.gz'
