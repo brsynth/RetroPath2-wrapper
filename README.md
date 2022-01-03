@@ -7,7 +7,7 @@ Implementation of the KNIME retropath2.0 workflow. Takes for input the minimal (
 ## Prerequisites
 
 * Python 3
-* KNIME (code was tested on 4.3.0 version)
+* KNIME (code was tested on 4.5.0 version)
 
 ## Install
 
@@ -19,18 +19,11 @@ On Linux system, the tool tries to install the KNIME Anlytical Platform as well 
 
 On MacOS, the user needs to first install by himself KNIME, and be sure that the RetroPath2.0 node dependancies are installed. To install node dependancies, we recommand to follow the RetroPath2.0 instructions from https://www.myexperiment.org/workflows/4987.html.
 
-### conda environment
-
-In case a new conda environment `<my_env>` need to be set up, first start with:
-```shell
-conda create -n my_env python=3
-```
-
 ### conda package
 
 Install in the `<my_env>` conda environment:
 ```shell
-conda install -c brsynth -c conda-forge -n <my_env> retropath2_wrapper 
+conda install -c conda-forge -n <my_env> retropath2_wrapper 
 ```
 
 ## Run
@@ -113,12 +106,12 @@ Test can be run with the following commands:
 
 ### Natively
 ```sh
-cd tests
-pytest -v
+conda install -c conda-forge pytest
+python -m pytest tests
 ```
 
 # CI/CD
-For further tests and development tools, a CI toolkit is provided in `ci` folder (see [ci/README.md](ci/README.md)).
+For further tests and development tools, a CI toolkit is provided in `cicd-toolkit` folder (see [cicd-toolkit/README.md](cicd-toolit/README.md)).
 
 
 ### How to cite RetroPath2.0?
