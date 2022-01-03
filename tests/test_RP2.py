@@ -92,7 +92,7 @@ class Test_RP2(TestCase):
             kpkg_install = True
         )
 
-        # Prepare expectd data
+        # Prepare expected data
         from retropath2_wrapper import __path__ as rp2_path
         rp2_path = rp2_path[0]
         kinstall = rp2_path
@@ -111,7 +111,7 @@ class Test_RP2(TestCase):
             'kpath'         : kpath,
             'kinstall'      : kinstall,
             'kpkg_install'  : True,
-            'workflow'      : workflow
+#            'workflow'      : workflow
         }
         self.assertDictEqual(kvars, kvars_expected)
 
