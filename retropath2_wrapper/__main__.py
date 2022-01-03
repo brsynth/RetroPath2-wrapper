@@ -85,11 +85,11 @@ def _cli():
     
     # Store KNIME vars into a dictionary
     kvars = set_vars(
-        args.kexec,
-        args.kver,
-        args.kpkg_install
+        kexec=args.kexec,
+        kver=args.kver,
+        kpkg_install=args.kpkg_install,
+        rp2_version=args.rp2_version
     )
-    kvars['workflow'] = args.workflow
 
     # Print out configuration
     if not args.silent and args.log.lower() not in ['critical', 'error']:
@@ -106,7 +106,7 @@ def _cli():
         outdir=args.outdir,
         kvars=kvars,
         max_steps=args.max_steps, topx=args.topx, dmin=args.dmin, dmax=args.dmax, mwmax_source=args.mwmax_source, mwmax_cof=args.mwmax_cof,
-        workflow=args.workflow,
+        rp2_version=args.rp2_version,
         timeout=args.timeout,
         logger=logger
     )

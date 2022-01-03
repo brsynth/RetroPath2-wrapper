@@ -7,11 +7,10 @@ Created on May 4 2020
 
 from argparse import ArgumentParser
 from retropath2_wrapper._version import __version__
-from os import path as os_path 
-here = os_path.dirname(os_path.realpath(__file__))
 
 DEFAULT_TIMEOUT = 60
-DEFAULT_RETROPATH2_KWF = os_path.join(here, 'workflows', 'RetroPath2.0_r20210127.knwf')
+DEFAULT_KNIME_VERSION = '4.3.0'
+DEFAULT_RP2_VERSION = '20211221'
 
 def build_args_parser():
     parser = ArgumentParser(prog='retropath2_wrapper', description='Python wrapper to parse RP2 to generate rpSBML collection of unique and complete (cofactors) pathways')
@@ -69,12 +68,6 @@ def _add_arguments(parser):
         help='InChI of compound to produce (not compliant with --source_file).'
     )
     parser.add_argument(
-        '--workflow',
-        type=str,
-        default=DEFAULT_RETROPATH2_KWF,
-        help=f'RetroPath2.0 workflow to wrap (default: {DEFAULT_RETROPATH2_KWF}).'
-    )
-    parser.add_argument(
         '--kexec',
         type=str,
         default=None,
@@ -85,7 +78,7 @@ def _add_arguments(parser):
     parser.add_argument(
         '--kver',
         type=str,
-        default=None,
+        default=DEFAULT_KNIME_VERSION,
         help='version of KNIME (mandatory if --kexec is passed).',
     )
     parser.add_argument(
@@ -95,9 +88,11 @@ def _add_arguments(parser):
         help='Install Knime packages (default: False).'
     )
     parser.add_argument(
-        '--kwf',
+        '--rp2_version',
         type=str,
-        help='path to Knime workflow file.'
+        default=DEFAULT_RP2_VERSION,
+        choices=['20210127', '20211221'],
+        help=f'version of RetroPath2.0 workflow (default: {DEFAULT_RP2_VERSION}).'
     )
 
     # RetroPath2.0 workflow options
