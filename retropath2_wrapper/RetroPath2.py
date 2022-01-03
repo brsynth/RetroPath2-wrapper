@@ -11,6 +11,7 @@ from os         import (
     path  as os_path,
     rename,
     devnull,
+    environ as os_environ
     # geteuid,
     # getegid
 )
@@ -45,18 +46,18 @@ from logging import StreamHandler
 from csv import reader
 from .Args import (
     DEFAULT_TIMEOUT,
-    DEFAULT_RETROPATH2_KWF
+    DEFAULT_KNIME_VERSION,
+    DEFAULT_RP2_VERSION
 )
 
-
-__KNIME_VER__        = '4.3.0'
-__RETROPATH2_KWF__   = 'RetroPath2.0_r20210127.knwf'
+here = os_path.dirname(os_path.realpath(__file__))
 
 
 def set_vars(
     kexec: str,
-    kver: str,
     kpkg_install: bool,
+    kver: str = DEFAULT_KNIME_VERSION,
+    rp2_version: str = DEFAULT_RP2_VERSION
 ) -> Dict:
     """
     Set variables and store them into a dictionary.
@@ -69,8 +70,8 @@ def set_vars(
         Version of KNIME to install.
     kpkg_install : bool
         Boolean to know if KNIME packages have to be installed.
-    logger : Logger
-        The logger object.
+    rp2_version : str
+        RetroPath2.0 version.
 
     """
 
@@ -78,8 +79,6 @@ def set_vars(
     kexec_install = False
     if kexec is None:
         kinstall = os_path.dirname(os_path.abspath(__file__))
-        if not kver:
-            kver = __KNIME_VER__
         kpath = os_path.join(
             kinstall,
             'knime_'
@@ -101,15 +100,20 @@ def set_vars(
         'kver'          : kver,
         'kpath'         : kpath,
         'kinstall'      : kinstall,
-        'kpkg_install'  : kpkg_install
+        'kpkg_install'  : kpkg_install,
+        'workflow'      : os_path.join(
+            here,
+            'workflows',
+            f'RetroPath2.0_r{rp2_version}.knwf'
+        )
     }
 
 
 def retropath2(
     sink_file: str, source_file: str, rules_file: str,
     outdir: str,
-    kexec: str = None, kpkg_install: bool = True, kver: str = None,
-    workflow: str = DEFAULT_RETROPATH2_KWF,
+    kexec: str = None, kpkg_install: bool = True, kver: str = DEFAULT_KNIME_VERSION,
+    rp2_version: str = DEFAULT_RP2_VERSION,
     kvars: Dict = None,
     max_steps: int = 3,
     topx: int = 100,
@@ -122,9 +126,10 @@ def retropath2(
     if kvars is None:
         # Store KNIME vars into a dictionary
         kvars = set_vars(
-            kexec,
-            kver,
-            kpkg_install
+            kexec=kexec,
+            kver=kver,
+            kpkg_install=kpkg_install,
+            rp2_version=rp2_version
         )
         logger.debug('kvars: ' + str(kvars))
     # Store RetroPath2 params into a dictionary
@@ -608,6 +613,11 @@ def call_knime(
 
     try:
         printout = open(devnull, 'wb') if logger.level > 10 else None
+        # Hack to link libGraphMolWrap.so (RDKit) against libfreetype.so.6 (from conda)
+        os_environ['LD_LIBRARY_PATH'] = os_environ['LD_LIBRARY_PATH'] + ':' + os_path.join(
+            os_environ['CONDA_PREFIX'],
+            "lib"
+        )
         CPE = run(
             [kvars['kexec']] + args.split(),
             stdout=printout,
@@ -615,6 +625,9 @@ def call_knime(
             timeout=timeout*60,
             shell=False
             )  # nosec
+        os_environ['LD_LIBRARY_PATH'] = ':'.join(
+            os_environ['LD_LIBRARY_PATH'].split(':')[:-1]
+        )
         logger.debug(CPE)
         StreamHandler.terminator = "\n"
         logger.info(' {bold}OK{reset}'.format(bold=attr('bold'), reset=attr('reset')))
