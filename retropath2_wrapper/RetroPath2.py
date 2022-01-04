@@ -103,7 +103,7 @@ def set_vars(
         'workflow'      : os_path.join(
             here,
             'workflows',
-            f'RetroPath2.0_r{rp2_version}.knwf'
+            f'RetroPath2.0_{rp2_version}.knwf'
         )
     }
 
