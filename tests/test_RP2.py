@@ -24,6 +24,7 @@ from retropath2_wrapper.Args import (
 )
 from retropath2_wrapper.__main__ import create_logger
 
+here = os_path.dirname(os_path.realpath(__file__))
 
 class Test_RP2(TestCase):
 
@@ -32,13 +33,12 @@ class Test_RP2(TestCase):
     # Set attributes
     csv        = '.csv'
     gz         = '.gz'
-    data_path  = 'data'
-    sinkfile   = os_path.join(data_path, 'sink')
-    sourcefile = os_path.join(data_path, 'source')
+    data_path  = os_path.join(here, 'data')
+    sinkfile   = os_path.join(data_path, 'lycopene', 'in', 'sink') + csv
+    sourcefile = os_path.join(data_path, 'lycopene', 'in', 'source') + csv
     rulesfile  = os_path.join(data_path, 'rules') + csv + gz
     rulesfile_d12 = os_path.join(data_path, 'rules_d12') + csv + gz
-    ref_file   = os_path.join(data_path, 'scope')
-    outdir     = TemporaryDirectory().name
+    ref_file   = os_path.join(data_path, 'lycopene', 'out', 'r20220104', 'results') + csv
     logger     = create_logger(__name__, 'DEBUG')
 
 
@@ -85,50 +85,24 @@ class Test_RP2(TestCase):
     #     self.assertTrue(cmp(result, self.ref_file+'_d12'+self.csv))
 
 
-    # def test_set_vars_None(self):
-    #     # Process the function to test
-    #     kvars = set_vars(
-    #         kexec        = None,
-    #         kpkg_install = True
-    #     )
-
-    #     # Prepare expected data
-    #     from retropath2_wrapper import __path__ as rp2_path
-    #     rp2_path = rp2_path[0]
-    #     kinstall = rp2_path
-    #     kver = DEFAULT_KNIME_VERSION
-    #     kpath    = os_path.join(kinstall, 'knime_')+kver
-    #     kexec    = os_path.join(kpath, 'knime')
-    #     workflow = os_path.join(
-    #         rp2_path,
-    #         'workflows',
-    #         f'RetroPath2.0_r{DEFAULT_RP2_VERSION}.knwf'
-    #     )
-    #     kvars_expected = {
-    #         'kexec'         : kexec,
-    #         'kexec_install' : not os_path.exists(kpath),
-    #         'kver'          : kver,
-    #         'kpath'         : kpath,
-    #         'kinstall'      : kinstall,
-    #         'kpkg_install'  : True,
-    #         'workflow'      : workflow
-    #     }
-    #     self.assertDictEqual(kvars, kvars_expected)
-
-
-    # def test_lycopene(self):
-    #     data_path  = 'data/lycopene'
-    #     sinkfile   = os_path.join(data_path, 'in', 'sink')
-    #     sourcefile = os_path.join(data_path, 'in', 'source')
-    #     rulesfile  = os_path.join(data_path, 'in', 'rules_d12')
-    #     ref_file   = os_path.join(data_path, 'out', 'target_scope.csv')
-    #     ext = '.dat'
-    #     r_code, result = retropath2(self.sinkfile+ext,
-    #                                 self.sourcefile+ext,
-    #                                 self.rulesfile+ext,
-    #                                 self.outdir,
-    #                                 dmin=16)
-    #     self.assertTrue(cmp(result, self.ref_file))
+    def test_lycopene(self):
+        # with TemporaryDirectory() as tempd:
+            tempd = '/tmp/joan'
+            r_code, result = retropath2(
+                self.sinkfile,
+                self.sourcefile,
+                self.rulesfile_d12,
+                tempd
+            )
+            self.assertTrue(
+                cmp(
+                    os_path.join(
+                        result['outdir'],
+                        result['results']
+                    ),
+                    self.ref_file
+                )
+            )
 
 
 class TestMethods:
