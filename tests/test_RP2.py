@@ -85,24 +85,24 @@ class Test_RP2(TestCase):
     #     self.assertTrue(cmp(result, self.ref_file+'_d12'+self.csv))
 
 
-    def test_lycopene(self):
-        # with TemporaryDirectory() as tempd:
-            tempd = '/tmp/joan'
-            r_code, result = retropath2(
-                self.sinkfile,
-                self.sourcefile,
-                self.rulesfile_d12,
-                tempd
-            )
-            self.assertTrue(
-                cmp(
-                    os_path.join(
-                        result['outdir'],
-                        result['results']
-                    ),
-                    self.ref_file
-                )
-            )
+    # def test_lycopene(self):
+    #     # with TemporaryDirectory() as tempd:
+    #         tempd = '/tmp/joan'
+    #         r_code, result = retropath2(
+    #             self.sinkfile,
+    #             self.sourcefile,
+    #             self.rulesfile_d12,
+    #             tempd
+    #         )
+    #         self.assertTrue(
+    #             cmp(
+    #                 os_path.join(
+    #                     result['outdir'],
+    #                     result['results']
+    #                 ),
+    #                 self.ref_file
+    #             )
+    #         )
 
 
 class TestMethods:
