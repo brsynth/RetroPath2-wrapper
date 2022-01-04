@@ -10,7 +10,7 @@ from retropath2_wrapper._version import __version__
 
 DEFAULT_TIMEOUT = 60
 DEFAULT_KNIME_VERSION = '4.5.0'
-DEFAULT_RP2_VERSION = '20211221'
+DEFAULT_RP2_VERSION = 'r20220104'
 
 def build_args_parser():
     parser = ArgumentParser(prog='retropath2_wrapper', description='Python wrapper to parse RP2 to generate rpSBML collection of unique and complete (cofactors) pathways')
@@ -91,7 +91,7 @@ def _add_arguments(parser):
         '--rp2_version',
         type=str,
         default=DEFAULT_RP2_VERSION,
-        choices=['20210127', '20211221'],
+        choices=['v9', 'r20210127', 'r20220104'],
         help=f'version of RetroPath2.0 workflow (default: {DEFAULT_RP2_VERSION}).'
     )
 
