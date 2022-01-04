@@ -1,5 +1,6 @@
 # Specific
 _exclude_*
+cicd-toolkit
 
 # Generic
 __pycache__
