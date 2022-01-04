@@ -5,3 +5,4 @@ dependencies:
   - brs_utils
   - filetype
   - colored
+  - freetype
