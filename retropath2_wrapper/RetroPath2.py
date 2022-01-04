@@ -613,10 +613,15 @@ def call_knime(
     try:
         printout = open(devnull, 'wb') if logger.level > 10 else None
         # Hack to link libGraphMolWrap.so (RDKit) against libfreetype.so.6 (from conda)
-        os_environ['LD_LIBRARY_PATH'] = os_environ['LD_LIBRARY_PATH'] + ':' + os_path.join(
+        os_environ['LD_LIBRARY_PATH'] = os_environ.get(
+            'LD_LIBRARY_PATH',
+            ''
+        ) + ':' + os_path.join(
             os_environ['CONDA_PREFIX'],
             "lib"
         )
+        # print(' '.join([kvars['kexec']] + args.split()))
+        # exit()
         CPE = run(
             [kvars['kexec']] + args.split(),
             stdout=printout,
