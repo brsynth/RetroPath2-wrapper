@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.1.0](https://github.com/brsynth/RetroPath2-wrapper/tree/2.1.0) (2022-01-04)
+
+[Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/2.0.5...2.1.0)
+
+**Closed issues:**
+
+- INHCI input not recognized [\#3](https://github.com/brsynth/RetroPath2-wrapper/issues/3)
+
 ## [2.0.5](https://github.com/brsynth/RetroPath2-wrapper/tree/2.0.5) (2021-12-17)
 
 [Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/2.0.4...2.0.5)
