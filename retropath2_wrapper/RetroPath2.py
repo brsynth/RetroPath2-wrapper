@@ -16,26 +16,33 @@ from os         import (
     # getegid
 )
 from getpass import getuser
-from shutil     import copyfile
+from shutil import (
+    copyfile,
+    copytree,
+    rmtree
+)
 from sys        import platform  as sys_platform
 from subprocess import (
-    run,
-    STDOUT,
     TimeoutExpired
 )  # nosec
 from brs_utils  import (
     download_and_extract_tar_gz,
+    download,
     extract_gz,
-    chown_r
+    chown_r,
+    subprocess_call
 )
-from filetype   import guess
-from tempfile   import TemporaryDirectory
-from typing     import (
+from filetype import guess
+from tempfile import (
+    NamedTemporaryFile,
+    TemporaryDirectory
+)
+from typing import (
     Dict,
     List,
     Tuple
 )
-from logging    import (
+from logging import (
     Logger,
     getLogger
 )
@@ -79,19 +86,23 @@ def set_vars(
     kexec_install = False
     if kexec is None:
         kinstall = os_path.dirname(os_path.abspath(__file__))
-        kpath = os_path.join(
-            kinstall,
-            'knime_'
-            ) + kver
-        kexec = os_path.join(
-            kpath,
-            'knime'
-            )
+        if sys_platform == 'linux':
+            kpath = os_path.join(kinstall, f'knime_{kver}')
+            kexec = os_path.join(kpath, 'knime')
+        elif sys_platform == 'darwin':
+            kpath = os_path.join(kinstall, f'KNIME_{kver}.app')
+            kexec = os_path.join(kpath, 'Contents', 'MacOS', 'knime')
         if not os_path.exists(kexec):
             kexec_install = True
     else:
-        kpath = kexec[:kexec.rfind('/')]
-        kinstall = kpath[:kpath.rfind('/')]
+        if sys_platform == 'linux':
+            kpath = kexec[:kexec.rfind('/')]
+            kinstall = kpath[:kpath.rfind('/')]
+        elif sys_platform == 'darwin':
+            kpath = kexec[:kexec.rfind('/')]
+            kinstall = kpath[:kpath.rfind('/')]
+            print(kpath, kinstall)
+            exit()
 
     # Build a dict to store KNIME vars
     return {
@@ -156,10 +167,15 @@ def retropath2(
             kvars['kver'],
             logger
         )
+        if sys_platform == 'linux':
+            kpkg_install = kvars['kpath']
+        elif sys_platform == 'darwin':
+            kpkg_install = os_path.join(kvars['kpath'], 'Contents', 'Eclipse')
         r_code = install_knime_pkgs(
-            kvars['kpath'],
-            kvars['kver'],
-            logger
+            kpkg_install=kpkg_install,
+            kver=kvars['kver'],
+            kexec=kvars['kexec'],
+            logger=logger
         )
         if r_code > 0:
             return str(r_code), None
@@ -168,10 +184,15 @@ def retropath2(
     else:
         # Add packages to KNIME
         if kvars['kpkg_install']:
+            if sys_platform == 'linux':
+                kpkg_install = kvars['kpath']
+            elif sys_platform == 'darwin':
+                kpkg_install = os_path.join(kvars['kpath'], 'Contents', 'Eclipse')
             r_code = install_knime_pkgs(
-                kvars['kpath'],
-                kvars['kver'],
-                logger
+                kpkg_install=kpkg_install,
+                kver=kvars['kver'],
+                kexec=kvars['kexec'],
+                logger=logger
             )
             if r_code > 0:
                 return str(r_code), None
@@ -399,21 +420,34 @@ def install_knime(
     logger.info('{attr1}Downloading KNIME {kver}...{attr2}'.format(attr1=attr('bold'), kver=kver, attr2=attr('reset')))
 
     if sys_platform == 'linux':
-        kurl = 'http://download.knime.org/analytics-platform/linux/knime_'+kver+'.linux.gtk.x86_64.tar.gz'
+        kurl = f'http://download.knime.org/analytics-platform/linux/knime_{kver}.linux.gtk.x86_64.tar.gz'
+        download_and_extract_tar_gz(kurl, kinstall)
+        chown_r(kinstall, getuser())
+        # chown_r(kinstall, geteuid(), getegid())
 
     elif sys_platform == 'darwin':
-        # kurl = 'https://download.knime.org/analytics-platform/macosx/knime-'+kver+'-app.macosx.cocoa.x86_64.dmg'
-        kurl = 'https://download.knime.org/analytics-platform/macosx/knime-latest-app.macosx.cocoa.x86_64.dmg'
+        dmg = f'knime_{kver}.app.macosx.cocoa.x86_64.dmg'
+        kurl = f'https://download.knime.org/analytics-platform/macosx/{dmg}'
+        with NamedTemporaryFile() as tempf:
+            download(kurl, tempf.name)
+            app_path = f'{kinstall}/KNIME_{kver}.app'
+            if os_path.exists(app_path):
+                rmtree(app_path)
+            with TemporaryDirectory() as tempd:
+                cmd = f'hdiutil mount -noverify {tempf.name} -mountpoint {tempd}/KNIME'
+                returncode = subprocess_call(cmd, logger=logger)
+                copytree(
+                    f'{tempd}/KNIME/KNIME {kver}.app',
+                    app_path
+                )
+                cmd = f'hdiutil unmount {tempd}/KNIME'
+                returncode = subprocess_call(cmd, logger=logger)
 
-    else:
-        kurl = 'https://download.knime.org/analytics-platform/win/knime-'+kver+'-installer-win32.win32.x86_64.exe'
+    else:  # Windows
+        kurl = f'https://download.knime.org/analytics-platform/win/knime-{kver}-installer-win32.win32.x86_64.exe'
 
     logger.info('   |--url: '+kurl)
     logger.info('   |--install_dir: '+kinstall)
-
-    download_and_extract_tar_gz(kurl, kinstall)
-    chown_r(kinstall, getuser())
-    # chown_r(kinstall, geteuid(), getegid())
     
 
 def gunzip_to_csv(filename: str, indir: str) -> str:
@@ -482,8 +516,8 @@ def format_files_for_knime(
         'rules'     : os_path.abspath(rulesfile),
         'results'   : 'results'+'.csv',
         'src-in-sk' : 'source-in-sink'+'.csv',
-        'outdir'    : outdir
-        }
+        'outdir'    : os_path.abspath(outdir)
+    }
     # Because KNIME accepts only '.csv' file extension,
     # files have to be renamed
     for key in ['sink', 'source', 'rules']:
@@ -499,8 +533,9 @@ def format_files_for_knime(
 
 
 def install_knime_pkgs(
-    kpath: str,
+    kpkg_install: str,
     kver: str,
+    kexec: str,
     logger: Logger = getLogger(__name__)
 ) -> int:
     """
@@ -522,7 +557,7 @@ def install_knime_pkgs(
    """
     StreamHandler.terminator = ""
     logger.info( '   |- Checking KNIME packages...')
-    logger.debug('        + kpath: '+kpath)
+    logger.debug('        + kpkg_install: '+kpkg_install)
     logger.debug('        + kver: '+kver)
 
     args = \
@@ -535,32 +570,14 @@ def install_knime_pkgs(
           + 'org.knime.features.datageneration.feature.group,' \
           + 'org.knime.features.python.feature.group,' \
           + 'org.rdkit.knime.feature.feature.group' \
-      + ' -bundlepool ' + kpath + ' -d ' + kpath
+      + ' -bundlepool ' + kpkg_install + ' -d ' + kpkg_install
 
-    if ' ' in kpath:
-        cmd = '"'+os_path.join(kpath, 'knime')+'"' \
-            + args
-    else:
-        cmd = os_path.join(kpath, 'knime') \
-            + args
+    cmd = f'{kexec} {args}'
 
-    try:
-        printout = open(devnull, 'wb') if logger.level > 10 else None
-        CPE = run(
-            cmd.split(),
-            stdout=printout,
-            stderr=printout,
-            shell=False
-        )  # nosec
-        logger.debug(CPE)
-        StreamHandler.terminator = "\n"
-        logger.info(' OK')
-        return CPE.returncode
-
-    except OSError as e:
-        logger.error(e)
-        return -1
-
+    returncode = subprocess_call(cmd, logger=logger)
+    StreamHandler.terminator = "\n"
+    logger.info(' OK')
+    return returncode
 
 def call_knime(
     kvars: Dict,
@@ -621,22 +638,13 @@ def call_knime(
             os_environ['CONDA_PREFIX'],
             "lib"
         )
-        # print(' '.join([kvars['kexec']] + args.split()))
-        # exit()
-        CPE = run(
-            [kvars['kexec']] + args.split(),
-            stdout=printout,
-            stderr=printout,
-            timeout=timeout*60,
-            shell=False
-            )  # nosec
+        returncode = subprocess_call(cmd=kvars['kexec'] + args, logger=logger)
         os_environ['LD_LIBRARY_PATH'] = ':'.join(
             os_environ['LD_LIBRARY_PATH'].split(':')[:-1]
         )
-        logger.debug(CPE)
         StreamHandler.terminator = "\n"
         logger.info(' {bold}OK{reset}'.format(bold=attr('bold'), reset=attr('reset')))
-        return CPE.returncode
+        return returncode
 
     except TimeoutExpired as e:
         logger.warning('   |- Time limit ({timeout} min) is reached'.format(timeout=timeout))
