@@ -25,9 +25,20 @@ jobs:
         shell: bash -l {0}
 
     steps:
+      - if: matrix.os == 'macos'
+            name: Install KNIME
+            run: |
+              wget https://download.knime.org/analytics-platform/macosx/knime-latest-app.macosx.cocoa.x86_64.dmg
+              hdiutil mount 
+
+
+      - if: matrix.os == 'ubuntu-latest'
+            run: |
+              ionic cordova platform add android
+              ionic cordova build android
+        
       - name: Checkout package repository
         uses: actions/checkout@v2
-
       - name: Deploying miniconda
         uses: conda-incubator/setup-miniconda@v2
         with:
