@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.3.0](https://github.com/brsynth/RetroPath2-wrapper/tree/2.3.0) (2022-01-07)
+
+[Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/2.2.0...2.3.0)
+
+**Closed issues:**
+
+- Cofactor input missing [\#1](https://github.com/brsynth/RetroPath2-wrapper/issues/1)
+
 ## [2.2.0](https://github.com/brsynth/RetroPath2-wrapper/tree/2.2.0) (2022-01-05)
 
 [Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/2.1.0...2.2.0)
