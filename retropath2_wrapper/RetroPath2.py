@@ -28,6 +28,7 @@ from subprocess import (
 from brs_utils  import (
     download_and_extract_tar_gz,
     download,
+    download_and_unzip,
     extract_gz,
     chown_r,
     subprocess_call
@@ -85,13 +86,15 @@ def set_vars(
     # Setting kexec, kpath, kinstall, kver
     kexec_install = False
     if kexec is None:
-        kinstall = os_path.dirname(os_path.abspath(__file__))
-        if sys_platform == 'linux':
-            kpath = os_path.join(kinstall, f'knime_{kver}')
-            kexec = os_path.join(kpath, 'knime')
-        elif sys_platform == 'darwin':
+        kinstall = os_path.join(here, '.knime', sys_platform)
+        if sys_platform == 'darwin':
             kpath = os_path.join(kinstall, f'KNIME_{kver}.app')
             kexec = os_path.join(kpath, 'Contents', 'MacOS', 'knime')
+        else:
+            kpath = os_path.join(kinstall, f'knime_{kver}')
+            kexec = os_path.join(kpath, 'knime')
+            if sys_platform == 'win32':
+                kexec += '.exe'
         if not os_path.exists(kexec):
             kexec_install = True
     else:
@@ -101,8 +104,6 @@ def set_vars(
         elif sys_platform == 'darwin':
             kpath = kexec[:kexec.rfind('/')]
             kinstall = kpath[:kpath.rfind('/')]
-            print(kpath, kinstall)
-            exit()
 
     # Build a dict to store KNIME vars
     return {
@@ -167,10 +168,10 @@ def retropath2(
             kvars['kver'],
             logger
         )
-        if sys_platform == 'linux':
-            kpkg_install = kvars['kpath']
-        elif sys_platform == 'darwin':
+        if sys_platform == 'darwin':
             kpkg_install = os_path.join(kvars['kpath'], 'Contents', 'Eclipse')
+        else:
+            kpkg_install = kvars['kpath']
         r_code = install_knime_pkgs(
             kpkg_install=kpkg_install,
             kver=kvars['kver'],
@@ -184,10 +185,10 @@ def retropath2(
     else:
         # Add packages to KNIME
         if kvars['kpkg_install']:
-            if sys_platform == 'linux':
-                kpkg_install = kvars['kpath']
-            elif sys_platform == 'darwin':
+            if sys_platform == 'darwin':
                 kpkg_install = os_path.join(kvars['kpath'], 'Contents', 'Eclipse')
+            else:
+                kpkg_install = kvars['kpath']
             r_code = install_knime_pkgs(
                 kpkg_install=kpkg_install,
                 kver=kvars['kver'],
@@ -444,7 +445,8 @@ def install_knime(
                 returncode = subprocess_call(cmd, logger=logger)
 
     else:  # Windows
-        kurl = f'https://download.knime.org/analytics-platform/win/knime-{kver}-installer-win32.win32.x86_64.exe'
+        kurl = f'https://download.knime.org/analytics-platform/win/knime_{kver}.win32.win32.x86_64.zip'
+        download_and_unzip(kurl, kinstall)
 
     logger.info('   |--url: '+kurl)
     logger.info('   |--install_dir: '+kinstall)
@@ -557,8 +559,8 @@ def install_knime_pkgs(
    """
     StreamHandler.terminator = ""
     logger.info( '   |- Checking KNIME packages...')
-    logger.debug('        + kpkg_install: '+kpkg_install)
-    logger.debug('        + kver: '+kver)
+    logger.debug(f'        + kpkg_install: {kpkg_install}')
+    logger.debug(f'        + kver: {kver}')
 
     args = \
         ' -application org.eclipse.equinox.p2.director' \
