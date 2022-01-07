@@ -15,9 +15,7 @@ Implementation of the KNIME retropath2.0 workflow. Takes for input the minimal (
 
 The conda package manager is required. Fresh instructions on how to install conda are [available online](https://docs.conda.io/projects/conda/en/latest/user-guide/install/).
 
-On Linux and macOS systems, the tool tries to install the KNIME Anlytical Platform as well as the RetroPath2.0 node dependancies.
-
-On Windows, the user needs to first install by himself KNIME, and be sure that the RetroPath2.0 node dependancies are installed. To install node dependancies, we recommand to follow the RetroPath2.0 instructions from https://www.myexperiment.org/workflows/4987.html.
+The tool tries to install the KNIME Anlytical Platform as well as the RetroPath2.0 node dependancies.
 
 ### conda package
 
@@ -33,11 +31,6 @@ conda install -c conda-forge -n <my_env> retropath2_wrapper
 ### From CLI (Linux, macOS)
 ```sh
 python -m retropath2_wrapper <sink-file> <rules-file> <out-dir> --source_file <source-file>
-```
-
-### From CLI (Windows)
-```sh
-python -m retropath2_wrapper <sink-file> <rules-file> <out-dir> --source_file <source-file> --kexec <path-to-knime-exec>
 ```
 
 ### From Python code
