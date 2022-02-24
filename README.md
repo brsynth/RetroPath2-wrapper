@@ -61,7 +61,6 @@ r_code = retropath2(
     dmin=0,
     dmax=100,
     mwmax_source=1000,
-    mwmax_cof=1000,
     )
 ```
 

@@ -105,7 +105,7 @@ def _cli():
         sink_file=args.sink_file, source_file=args.source_file, rules_file=args.rules_file,
         outdir=args.outdir,
         kvars=kvars,
-        max_steps=args.max_steps, topx=args.topx, dmin=args.dmin, dmax=args.dmax, mwmax_source=args.mwmax_source, mwmax_cof=args.mwmax_cof,
+        max_steps=args.max_steps, topx=args.topx, dmin=args.dmin, dmax=args.dmax, mwmax_source=args.mwmax_source,
         rp2_version=args.rp2_version,
         timeout=args.timeout,
         logger=logger
