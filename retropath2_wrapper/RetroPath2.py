@@ -130,7 +130,7 @@ def retropath2(
     max_steps: int = 3,
     topx: int = 100,
     dmin: int = 0, dmax: int = 100,
-    mwmax_source: int = 1000, mwmax_cof: int = 1000,
+    mwmax_source: int = 1000,
     timeout: int = DEFAULT_TIMEOUT,
     logger: Logger = getLogger(__name__)
 ) -> Tuple[str, Dict]:
@@ -151,7 +151,6 @@ def retropath2(
         'dmin'         : dmin,
         'dmax'         : dmax,
         'mwmax_source' : mwmax_source,
-        'mwmax_cof'    : mwmax_cof
     }
     logger.debug('rp2_params: ' + str(rp2_params))
 
@@ -623,7 +622,6 @@ def call_knime(
          + ' -workflow.variable=input.rulesfile,"'         + files['rules']              + '",String' \
          + ' -workflow.variable=input.topx,"'              + str(params['topx'])         + '",int' \
          + ' -workflow.variable=input.mwmax-source,"'      + str(params['mwmax_source']) + '",int' \
-         + ' -workflow.variable=input.mwmax-cof,"'         + str(params['mwmax_cof'])    + '",int' \
          + ' -workflow.variable=output.dir,"'              + files['outdir']             + '",String' \
          + ' -workflow.variable=output.solutionfile,"'     + files['results']            + '",String' \
          + ' -workflow.variable=output.sourceinsinkfile,"' + files['src-in-sk']          + '",String'
