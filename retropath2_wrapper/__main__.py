@@ -101,7 +101,6 @@ def _cli():
         dmin=args.dmin,
         dmax=args.dmax,
         mwmax_source=args.mwmax_source,
-        mwmax_cof=args.mwmax_cof,
         rp2_version=args.rp2_version,
         timeout=args.timeout,
         logger=logger
