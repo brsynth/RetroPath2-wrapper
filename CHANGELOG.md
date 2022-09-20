@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.3.1](https://github.com/brsynth/RetroPath2-wrapper/tree/2.3.1) (2022-09-20)
+
+[Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/2.3.0...2.3.1)
+
+**Closed issues:**
+
+- Return code error: KeyError: '13'  [\#5](https://github.com/brsynth/RetroPath2-wrapper/issues/5)
+- Remove the `--mwmax_cof` argument from CLI [\#4](https://github.com/brsynth/RetroPath2-wrapper/issues/4)
+
 ## [2.3.0](https://github.com/brsynth/RetroPath2-wrapper/tree/2.3.0) (2022-01-07)
 
 [Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/2.2.0...2.3.0)
