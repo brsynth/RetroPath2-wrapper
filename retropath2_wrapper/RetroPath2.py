@@ -169,6 +169,7 @@ def retropath2(
         'dmin'         : dmin,
         'dmax'         : dmax,
         'mwmax_source' : mwmax_source,
+        'mwmax_cof'    : mwmax_cof
     }
     logger.debug('rp2_params: ' + str(rp2_params))
 
@@ -626,6 +627,7 @@ def call_knime(
          + ' -workflow.variable=input.rulesfile,"'         + files['rules']              + '",String' \
          + ' -workflow.variable=input.topx,"'              + str(params['topx'])         + '",int' \
          + ' -workflow.variable=input.mwmax-source,"'      + str(params['mwmax_source']) + '",int' \
+         + ' -workflow.variable=input.mwmax-cof,"'         + str(params['mwmax_cof'])    + '",int' \
          + ' -workflow.variable=output.dir,"'              + files['outdir']             + '",String' \
          + ' -workflow.variable=output.solutionfile,"'     + files['results']            + '",String' \
          + ' -workflow.variable=output.sourceinsinkfile,"' + files['src-in-sk']          + '",String'
