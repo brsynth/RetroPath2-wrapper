@@ -107,6 +107,7 @@ def _add_arguments(parser):
     parser.add_argument('--dmin'         , type=int, default=0)
     parser.add_argument('--dmax'         , type=int, default=1000)
     parser.add_argument('--mwmax_source' , type=int, default=1000)
+    parser.add_argument('--mwmax_cof'    , type=int, default=1000)
     parser.add_argument(
         '--timeout',
         type=int,
