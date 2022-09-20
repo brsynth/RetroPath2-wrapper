@@ -8,14 +8,27 @@ Created on May 4 2020
 from argparse import ArgumentParser
 from retropath2_wrapper._version import __version__
 
-DEFAULT_TIMEOUT = 60
+
+DEFAULT_TIMEOUT = 60  # minutes
 DEFAULT_KNIME_VERSION = '4.5.0'
-DEFAULT_RP2_VERSION = 'r20220224'
+DEFAULT_RP2_VERSION = 'r20220104'
+RETCODES = {
+    'OK': 0,
+    'NoError': 0,
+    # Warnings
+    'SrcInSink': -1,
+    'NoSolution': -2,
+    'TimeLimit': -3,
+    # Errors
+    'FileNotFound': 1,
+    'OSError': 2,
+    'InChI': 3
+}
+
 
 def build_args_parser():
     parser = ArgumentParser(prog='retropath2_wrapper', description='Python wrapper to parse RP2 to generate rpSBML collection of unique and complete (cofactors) pathways')
     parser = _add_arguments(parser)
-
     return parser
 
 
@@ -23,17 +36,11 @@ def _add_arguments(parser):
 
     ## Positional arguments
     #
-
     parser.add_argument(
         'sink_file',
         type=str,
         help='Path of file containing metabolites present in the system'
     )
-    # parser.add_argument(
-    #     'source',
-    #     type=str,
-    #     help='InChI of compound to produce if starts with \'InchI=\', path of file containing the InChI otherwise'
-    # )
     parser.add_argument(
         'rules_file',
         type=str,
@@ -48,7 +55,6 @@ def _add_arguments(parser):
 
     ## Optional arguments
     #
-
     # KNIME options
     parser.add_argument(
         '--source_file',

@@ -20,7 +20,8 @@ from retropath2_wrapper.RetroPath2 import (
 )
 from retropath2_wrapper.Args import (
     DEFAULT_KNIME_VERSION,
-    DEFAULT_RP2_VERSION
+    DEFAULT_RP2_VERSION,
+    RETCODES
 )
 from retropath2_wrapper.__main__ import create_logger
 
@@ -34,13 +35,25 @@ class Test_RP2(TestCase):
     csv        = '.csv'
     gz         = '.gz'
     data_path  = os_path.join(here, 'data')
-    sinkfile   = os_path.join(data_path, 'lycopene', 'in', 'sink') + csv
-    sourcefile = os_path.join(data_path, 'lycopene', 'in', 'source') + csv
+    iml1515_sinkfile   = os_path.join(data_path, 'lycopene', 'in', 'sink') + csv
+    lycopene_sourcefile = os_path.join(data_path, 'lycopene', 'in', 'source') + csv
+    alanine_sourcefile = os_path.join(data_path, 'alanine', 'in', 'source') + csv
     rulesfile  = os_path.join(data_path, 'rules') + csv + gz
     rulesfile_d12 = os_path.join(data_path, 'rules_d12') + csv + gz
     ref_file   = os_path.join(data_path, 'lycopene', 'out', 'r20220104', 'results') + csv
     logger     = create_logger(__name__, 'DEBUG')
 
+
+    # def test_SrcInSink(self):
+    #     with TemporaryDirectory() as tempd:
+    #         r_code, result = retropath2(
+    #             sink_file=self.iml1515_sinkfile,
+    #             source_file=self.lycopene_sourcefile,
+    #             rules_file=self.rulesfile,
+    #             outdir=tempd,
+    #             logger=self.logger
+    #         )
+    #         self.assertEqual(r_code, RETCODES['SrcInSink'])
 
     # def test_light(self):
     #     r_code, result = retropath2(
