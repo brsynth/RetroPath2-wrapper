@@ -312,7 +312,7 @@ def check_src_in_sink_1(
         logger.error(e)
         return RETCODES['FileNotFound']
 
-    return 0
+    return RETCODES['OK']
 
 
 def check_inchi_from_file(
@@ -357,11 +357,11 @@ def check_inchi_from_file(
             #           (/.+)? --> if '/' is present, then at least one character/symbol is mandatory
             if match(r'InChI=1(S)?/(([a-z|[A-Z])+\d*)+(/.+)?$', inchi) is None:
                 logger.error('        {inchi} is not a valid InChI notation'.format(inchi=inchi))
-                return ''
+                return RETCODES['InChI']
 
     except FileNotFoundError as e:
         logger.error(e)
-        return ''
+        return RETCODES['FileNotFound']
 
     return inchi
 
