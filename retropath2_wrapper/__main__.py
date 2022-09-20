@@ -24,21 +24,10 @@ from .RetroPath2 import (
     retropath2
 )
 from .Args import (
-    build_args_parser
+    build_args_parser,
+    RETCODES
 )
 from ._version import __version__
-
-
-__ERROR_CODES__ = {
-                 0: 0,
-         'NoError': 0,
-       'SrcInSink': 1,
-    'FileNotFound': 2,
-         'OSError': 3,
-      'NoSolution': 4,
-       'TimeLimit': 5,
-           'InChI': 6
-}
 
 
 def print_conf(
@@ -102,25 +91,42 @@ def _cli():
     logger.debug('kvars: ' + str(kvars))
 
     r_code, result_files = retropath2(
-        sink_file=args.sink_file, source_file=args.source_file, rules_file=args.rules_file,
+        sink_file=args.sink_file,
+        source_file=args.source_file,
+        rules_file=args.rules_file,
         outdir=args.outdir,
         kvars=kvars,
-        max_steps=args.max_steps, topx=args.topx, dmin=args.dmin, dmax=args.dmax, mwmax_source=args.mwmax_source, mwmax_cof=args.mwmax_cof,
+        max_steps=args.max_steps,
+        topx=args.topx,
+        dmin=args.dmin,
+        dmax=args.dmax,
+        mwmax_source=args.mwmax_source,
+        mwmax_cof=args.mwmax_cof,
         rp2_version=args.rp2_version,
         timeout=args.timeout,
         logger=logger
     )
-    print(r_code)
 
-    if r_code == 'OK' or r_code == 'TimeLimit':
+    logger.info('')
+
+    if r_code == RETCODES['OK'] or r_code == RETCODES['TimeLimit']:
+        if r_code == RETCODES['TimeLimit']:
+            logger.warning('Time limit is reached.')
         logger.info('{attr1}Results{attr2}'.format(attr1=attr('bold'), attr2=attr('reset')))
         logger.info('   |- Checking... ')
         r_code = check_results(result_files, logger)
         logger.info('   |--path: '+args.outdir)
+    elif r_code == RETCODES['NoSolution']:
+        logger.warning('No solution has been found.')
+        logger.warning('Exiting...')
+    elif r_code == RETCODES['SrcInSink']:
+        logger.warning('It seems that the target product is already in the chassis.')
+        logger.warning('Exiting...')
     else:
+        logger.error(f'The following error occured: {r_code}')
         logger.error('Exiting...')
 
-    return __ERROR_CODES__[r_code]
+    return r_code
 
 
 def check_results(
@@ -129,10 +135,7 @@ def check_results(
 ) -> int:
 
     # Check if any result has been found
-    r_code = check_scope(result_files['outdir'], logger)
-    if r_code == -1:
-        r_code = 'NoSolution'
-    
+    r_code = check_scope(result_files['outdir'], logger)    
     return r_code
 
 
@@ -162,9 +165,9 @@ def check_scope(
 
     if csv_scopes == []:
         logger.warning('       Warning: No solution has been found')
-        return -1
+        return RETCODES['NoSolution']
 
-    return 0
+    return RETCODES['OK']
 
 
 def parse_and_check_args(

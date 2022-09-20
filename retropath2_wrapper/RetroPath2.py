@@ -55,7 +55,8 @@ from csv import reader
 from .Args import (
     DEFAULT_TIMEOUT,
     DEFAULT_KNIME_VERSION,
-    DEFAULT_RP2_VERSION
+    DEFAULT_RP2_VERSION,
+    RETCODES
 )
 
 here = os_path.dirname(os_path.realpath(__file__))
@@ -135,6 +136,23 @@ def retropath2(
     logger: Logger = getLogger(__name__)
 ) -> Tuple[str, Dict]:
 
+    logger.debug(f'sink_file: {sink_file}')
+    logger.debug(f'source_file: {source_file}')
+    logger.debug(f'rules_file: {rules_file}')
+    logger.debug(f'outdir: {outdir}')
+    logger.debug(f'kexec: {kexec}')
+    logger.debug(f'kpkg_install: {kpkg_install}')
+    logger.debug(f'kver: {kver}')
+    logger.debug(f'rp2_version: {rp2_version}')
+    logger.debug(f'kvars: {kvars}')
+    logger.debug(f'max_steps: {max_steps}')
+    logger.debug(f'topx: {topx}')
+    logger.debug(f'dmin: {dmin}')
+    logger.debug(f'dmax: {dmax}')
+    logger.debug(f'mwmax_source: {mwmax_source}')
+    logger.debug(f'mwmax_cof: {mwmax_cof}')
+    logger.debug(f'timeout: {timeout}')
+
     if kvars is None:
         # Store KNIME vars into a dictionary
         kvars = set_vars(
@@ -156,8 +174,9 @@ def retropath2(
     logger.debug('rp2_params: ' + str(rp2_params))
 
     r_code, inchi = check_input(source_file, sink_file)
-    if r_code != 'OK':
-        return str(r_code), None
+    print(r_code)
+    if r_code != RETCODES['OK']:
+        return r_code, None
 
     # Install KNIME
     #      if kexec is not specified
@@ -179,9 +198,9 @@ def retropath2(
             logger=logger
         )
         if r_code > 0:
-            return str(r_code), None
-        elif r_code == -1:
-            return 'OSError', None
+            return r_code, None
+        elif r_code == RETCODES['OSError']:
+            return RETCODES['OSError'], None
     else:
         # Add packages to KNIME
         if kvars['kpkg_install']:
@@ -196,9 +215,9 @@ def retropath2(
                 logger=logger
             )
             if r_code > 0:
-                return str(r_code), None
-            elif r_code == -1:
-                return 'OSError', None
+                return r_code, None
+            elif r_code == RETCODES['OSError']:
+                return RETCODES['OSError'], None
 
     logger.info('{attr1}Initializing{attr2}'.format(attr1=attr('bold'), attr2=attr('reset')))
 
@@ -224,26 +243,15 @@ def retropath2(
             timeout,
             logger
         )
-        if r_code > 0:
-            return str(r_code), files
-        elif r_code == -1:
-            return 'TimeLimit', files
-        elif r_code == -2:
-            return 'OSError', None
+        if r_code == RETCODES['TimeLimit'] or r_code == RETCODES['OSError']:
+            return r_code, files
 
     r_code = check_src_in_sink_2(
-        source_inchi = inchi,
         src_in_sink_file = os_path.join(files['outdir'], files['src-in-sk']),
         logger = logger
     )
-    if r_code > 0:
-        return str(r_code), files
-    elif r_code == -1:
-        return 'SrcInSink', files
-    elif r_code == -2:
-        return 'FileNotFound', files
 
-    return 'OK', files
+    return r_code, files
 
 
 def check_input(
@@ -257,16 +265,16 @@ def check_input(
     # Check if InChI is well-formed
     inchi = check_inchi_from_file(source_file, logger)
     if inchi == '':
-        return 'InChI', None
+        return RETCODES['InChI'], None
 
     # Check if source is in sink
     r_code = check_src_in_sink_1(inchi, sink_file, logger)
     if r_code == -1:
-        return 'SrcInSink', None
+        return RETCODES['SrcInSink'], None
     elif r_code == -2:
-        return 'FileNotFound', None
+        return RETCODES['FileNotFound'], None
 
-    return 'OK', inchi
+    return RETCODES['OK'], inchi
 
 
 def check_src_in_sink_1(
@@ -299,12 +307,12 @@ def check_src_in_sink_1(
             for row in csv_reader(f, delimiter=',', quotechar='"'):
                 if source_inchi == row[1]:
                     logger.error('        source has been found in sink')
-                    return -1
+                    return RETCODES['SrcInSink']
 
     except FileNotFoundError as e:
         logger.error(e)
-        return -2
-    
+        return RETCODES['FileNotFound']
+
     return 0
 
 
@@ -360,7 +368,6 @@ def check_inchi_from_file(
 
 
 def check_src_in_sink_2(
-    source_inchi: str,
     src_in_sink_file: str,
     logger: Logger = getLogger(__name__)
 ) -> int:
@@ -369,8 +376,6 @@ def check_src_in_sink_2(
 
     Parameters
     ----------
-    source_inchi: str
-        Path to file containing the source.
     sink_file: str
         Path to file containing the sink.
     logger : Logger
@@ -381,7 +386,7 @@ def check_src_in_sink_2(
     int Return code.
 
     """
-
+    logger.debug(f'src_in_sink_file: {src_in_sink_file}')
     logger.info('   |- Checking Source in Sink (advanced)')
 
     try:
@@ -390,14 +395,14 @@ def check_src_in_sink_2(
             for i in csv_reader(f, delimiter=',', quotechar='"'):
                 count += 1
                 if count > 1:
-                    logger.error('        |- source has been found in sink')
-                    return -1
+                    logger.warning('        |- source has been found in sink')
+                    return RETCODES['SrcInSink']
 
     except FileNotFoundError as e:
         logger.error(e)
-        return -2
-    
-    return 0
+        return RETCODES['FileNotFound']
+
+    return RETCODES['OK']
 
 
 def install_knime(
@@ -651,8 +656,8 @@ def call_knime(
     except TimeoutExpired as e:
         logger.warning('   |- Time limit ({timeout} min) is reached'.format(timeout=timeout))
         logger.warning('      Results collected until now are available')
-        return -1
+        return RETCODES['TimeLimit']
 
     except OSError as e:
         logger.error(e)
-        return -2
+        return RETCODES['OSError']
