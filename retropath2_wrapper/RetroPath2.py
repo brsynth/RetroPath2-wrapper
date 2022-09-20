@@ -131,7 +131,7 @@ def retropath2(
     max_steps: int = 3,
     topx: int = 100,
     dmin: int = 0, dmax: int = 100,
-    mwmax_source: int = 1000,
+    mwmax_source: int = 1000, mwmax_cof: int = 1000,
     timeout: int = DEFAULT_TIMEOUT,
     logger: Logger = getLogger(__name__)
 ) -> Tuple[str, Dict]:
