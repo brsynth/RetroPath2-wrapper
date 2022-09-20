@@ -173,7 +173,6 @@ def retropath2(
     logger.debug('rp2_params: ' + str(rp2_params))
 
     r_code, inchi = check_input(source_file, sink_file)
-    print(r_code)
     if r_code != RETCODES['OK']:
         return r_code, None
 
