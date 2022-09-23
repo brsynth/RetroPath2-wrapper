@@ -72,20 +72,22 @@ def _cli():
     if args.log.lower() in ['silent', 'quiet'] or args.silent:
         args.log = 'CRITICAL'
     
+    # Create logger
+    logger = create_logger(parser.prog, args.log)
+
     # Store KNIME vars into a dictionary
     kvars = set_vars(
         kexec=args.kexec,
         kver=args.kver,
         kpkg_install=args.kpkg_install,
-        rp2_version=args.rp2_version
+        rp2_version=args.rp2_version,
+        kinstall=args.kinstall,
+        logger=logger
     )
 
     # Print out configuration
     if not args.silent and args.log.lower() not in ['critical', 'error']:
         print_conf(kvars, prog = parser.prog)
-
-    # Create logger
-    logger = create_logger(parser.prog, args.log)
 
     logger.debug('args: ' + str(args))
     logger.debug('kvars: ' + str(kvars))

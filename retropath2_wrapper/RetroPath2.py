@@ -53,6 +53,7 @@ from colored import fg, bg, attr
 from logging import StreamHandler
 from csv import reader
 from .Args import (
+    DEFAULT_KNIME_FOLDER,
     DEFAULT_TIMEOUT,
     DEFAULT_KNIME_VERSION,
     DEFAULT_RP2_VERSION,
@@ -65,8 +66,10 @@ here = os_path.dirname(os_path.realpath(__file__))
 def set_vars(
     kexec: str,
     kpkg_install: bool,
+    kinstall: str = DEFAULT_KNIME_FOLDER,
     kver: str = DEFAULT_KNIME_VERSION,
-    rp2_version: str = DEFAULT_RP2_VERSION
+    rp2_version: str = DEFAULT_RP2_VERSION,
+    logger: Logger = getLogger(__name__)
 ) -> Dict:
     """
     Set variables and store them into a dictionary.
@@ -84,10 +87,16 @@ def set_vars(
 
     """
 
+    logger.debug(f'kexec: {kexec}')
+    logger.debug(f'kver: {kver}')
+    logger.debug(f'kpkg_install: {kpkg_install}')
+    logger.debug(f'kinstall: {kinstall}')
+    logger.debug(f'rp2_version: {rp2_version}')
+
     # Setting kexec, kpath, kinstall, kver
     kexec_install = False
     if kexec is None:
-        kinstall = os_path.join(here, '.knime', sys_platform)
+        kinstall = os_path.join(kinstall, '.knime', sys_platform)
         if sys_platform == 'darwin':
             kpath = os_path.join(kinstall, f'KNIME_{kver}.app')
             kexec = os_path.join(kpath, 'Contents', 'MacOS', 'knime')
@@ -125,6 +134,7 @@ def set_vars(
 def retropath2(
     sink_file: str, source_file: str, rules_file: str,
     outdir: str,
+    kinstall: str = DEFAULT_KNIME_FOLDER,
     kexec: str = None, kpkg_install: bool = True, kver: str = DEFAULT_KNIME_VERSION,
     rp2_version: str = DEFAULT_RP2_VERSION,
     kvars: Dict = None,
@@ -142,6 +152,7 @@ def retropath2(
     logger.debug(f'outdir: {outdir}')
     logger.debug(f'kexec: {kexec}')
     logger.debug(f'kpkg_install: {kpkg_install}')
+    logger.debug(f'kinstall: {kinstall}')
     logger.debug(f'kver: {kver}')
     logger.debug(f'rp2_version: {rp2_version}')
     logger.debug(f'kvars: {kvars}')
@@ -158,7 +169,9 @@ def retropath2(
             kexec=kexec,
             kver=kver,
             kpkg_install=kpkg_install,
-            rp2_version=rp2_version
+            rp2_version=rp2_version,
+            kinstall=kinstall,
+            logger=logger
         )
         logger.debug('kvars: ' + str(kvars))
     # Store RetroPath2 params into a dictionary

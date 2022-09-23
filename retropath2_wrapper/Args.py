@@ -4,7 +4,7 @@ Created on May 4 2020
 @author: Joan Hérisson
 
 """
-
+from os import path as os_path
 from argparse import ArgumentParser
 from retropath2_wrapper._version import __version__
 
@@ -24,6 +24,10 @@ RETCODES = {
     'OSError': 2,
     'InChI': 3
 }
+__PACKAGE_FOLDER = os_path.dirname(
+    os_path.realpath(__file__)
+)
+DEFAULT_KNIME_FOLDER = __PACKAGE_FOLDER
 
 
 def build_args_parser():
@@ -77,6 +81,14 @@ def _add_arguments(parser):
         '--kexec',
         type=str,
         default=None,
+        help='path to KNIME executable file (KNIME will be \
+              downloaded if not already installed or path is \
+              wrong).'
+    )
+    parser.add_argument(
+        '--kinstall',
+        type=str,
+        default=DEFAULT_KNIME_FOLDER,
         help='path to KNIME executable file (KNIME will be \
               downloaded if not already installed or path is \
               wrong).'
