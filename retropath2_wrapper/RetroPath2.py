@@ -57,7 +57,8 @@ from .Args import (
     DEFAULT_TIMEOUT,
     DEFAULT_KNIME_VERSION,
     DEFAULT_RP2_VERSION,
-    RETCODES
+    KNIME_PACKAGE,
+    RETCODES,
 )
 
 here = os_path.dirname(os_path.realpath(__file__))
@@ -577,21 +578,18 @@ def install_knime_pkgs(
     logger.debug(f'        + kpkg_install: {kpkg_install}')
     logger.debug(f'        + kver: {kver}')
 
-    args = \
-        ' -application org.eclipse.equinox.p2.director' \
-      + ' -nosplash -consolelog' \
-      + ' -r http://update.knime.org/community-contributions/trunk,' \
+    args = [kexec]
+    args += ['-application', 'org.eclipse.equinox.p2.director']
+    args += ['-nosplash']
+    args += ['-consolelog']
+    args += ['-r', 'http://update.knime.org/community-contributions/trunk,' \
           + 'http://update.knime.com/community-contributions/trusted/'+kver[:3]+',' \
-          + 'http://update.knime.com/analytics-platform/'+kver[:3] \
-      + ' -i org.knime.features.chem.types.feature.group,' \
-          + 'org.knime.features.datageneration.feature.group,' \
-          + 'org.knime.features.python.feature.group,' \
-          + 'org.rdkit.knime.feature.feature.group' \
-      + ' -bundlepool ' + kpkg_install + ' -d ' + kpkg_install
+          + 'http://update.knime.com/analytics-platform/'+kver[:3]]
+    args += ['-i', ','.join([x + '/' + y for x, y in KNIME_PACKAGE[kver].items()])]
+    args += ['-bundlepool', kpkg_install]
+    args += ['-d', kpkg_install]
 
-    cmd = f'{kexec} {args}'
-
-    returncode = subprocess_call(cmd, logger=logger)
+    returncode = subprocess_call(" ".join(args), logger=logger)
     StreamHandler.terminator = "\n"
     logger.info(' OK')
     return returncode

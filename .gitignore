@@ -10,3 +10,5 @@ package.json
 package-lock.json
 node_modules
 .coverage
+build
+*.egg-info
