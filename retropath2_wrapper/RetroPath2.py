@@ -275,14 +275,14 @@ def check_input(
 
     # Check if InChI is well-formed
     inchi = check_inchi_from_file(source_file, logger)
-    if inchi == '':
+    if inchi == '' or inchi in RETCODES.values():
         return RETCODES['InChI'], None
 
     # Check if source is in sink
     r_code = check_src_in_sink_1(inchi, sink_file, logger)
-    if r_code == -1:
+    if r_code == RETCODES['SrcInSink']:
         return RETCODES['SrcInSink'], None
-    elif r_code == -2:
+    elif r_code == RETCODES['FileNotFound']:
         return RETCODES['FileNotFound'], None
 
     return RETCODES['OK'], inchi
