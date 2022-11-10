@@ -44,4 +44,3 @@ class Main_test(unittest.TestCase):
     lycopene_r20220104_results_csv = os.path.join(dataset_path, "lycopene", "out", "r20220104", "results.csv")
     lycopene_r20220104_source_csv = os.path.join(dataset_path, "lycopene", "out", "r20220104", "source-in-sink.csv")
     lycopene_r20220104_target_csv = os.path.join(dataset_path, "lycopene", "out", "r20220104", "target_scope.csv")
-

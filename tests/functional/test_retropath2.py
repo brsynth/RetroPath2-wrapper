@@ -5,6 +5,7 @@ Created on Jul 15 2020
 """
 import filecmp
 import os
+import shutil
 import tempfile
 
 from retropath2_wrapper.__main__ import create_logger
@@ -18,27 +19,34 @@ class TestRetropath2(Main_test):
         self.logger = create_logger(__name__, 'DEBUG')
 
     def test_src_in_sink(self):
-         with tempfile.TemporaryDirectory() as tmpdir:
-             r_code, result = retropath2(
-                 sink_file=self.lycopene_sink_csv,
-                 source_file=self.source_mnxm790_csv,
-                 rules_file=self.rules_csv,
-                 outdir=tmpdir,
-                 logger=self.logger,
-             )
-             self.assertEqual(r_code, RETCODES['SrcInSink'])
+        tmpdir = tempfile.mkdtemp()
+        r_code, result = retropath2(
+            sink_file=self.lycopene_sink_csv,
+            source_file=self.source_mnxm790_csv,
+            rules_file=self.rules_csv,
+            outdir=tmpdir,
+            logger=self.logger,
+        )
+        self.assertEqual(r_code, RETCODES['SrcInSink'])
+        shutil.rmtree(tmpdir, ignore_errors=True)
 
     def test_lycopene(self):
-        with tempfile.TemporaryDirectory() as tempd:
-            r_code, result = retropath2(
-                sink_file=self.lycopene_sink_csv,
-                source_file=self.lycopene_source_csv,
-                rules_file=self.rulesd12_csv,
-                outdir=tempd,
-            )
-            self.assertTrue(
-                filecmp.cmp(os.path.join(result['outdir'], result['results']), self.lycopene_r20220104_results_csv)
-            )
+        tmpdir = tempfile.mkdtemp()
+        r_code, result = retropath2(
+            sink_file=self.lycopene_sink_csv,
+            source_file=self.lycopene_source_csv,
+            rules_file=self.rulesd12_csv,
+            outdir=tmpdir,
+            logger=self.logger,
+        )
+        # Compare number of lines to have a robust test accross platforms
+        with open(result['outdir'] + "/" + result['results']) as fid:
+            result_lines = fid.read().splitlines()
+        with open(self.lycopene_r20220104_results_csv) as fid:
+            theorical_lines = fid.read().splitlines()
+
+        self.assertEqual(len(result_lines), len(theorical_lines))
+        shutil.rmtree(tmpdir, ignore_errors=True)
 
     """
     # Set attributes

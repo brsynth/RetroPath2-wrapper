@@ -3,6 +3,7 @@ Created on Jul 15 2020
 
 @author: Joan Hérisson
 """
+import os
 import tempfile
 
 from retropath2_wrapper.Args import RETCODES
@@ -31,8 +32,9 @@ class TestHelpers(Main_test):
         with open(self.inchi_csv) as ifh:
             inchis = ifh.read().splitlines()
         for inchi in inchis:
-            tmpfile = tempfile.NamedTemporaryFile()
-            with open(tmpfile.name, "w") as fod:
-                fod.write('"Name","InChI"\n')
-                fod.write(f'"target","{inchi}"')
-            self.assertNotEqual(check_inchi_from_file(tmpfile.name), "")
+            fod = tempfile.NamedTemporaryFile(delete=False)
+            fod.write(bytes('"Name","InChI"\n', "utf8"))
+            fod.write(bytes('"target","%s"' % (inchi,), "utf8"))
+            fod.close()
+            self.assertNotEqual(check_inchi_from_file(fod.name), "")
+            os.remove(fod.name)

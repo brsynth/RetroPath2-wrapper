@@ -6,6 +6,7 @@ Created on January 16 2020
 @description: Python wrapper to run RetroPath2.0 KNIME workflow
 
 """
+import os
 from os         import (
     mkdir as os_mkdir,
     path  as os_path,
@@ -116,6 +117,13 @@ def set_vars(
             kpath = kexec[:kexec.rfind('/')]
             kinstall = kpath[:kpath.rfind('/')]
 
+    workflow = os_path.join(
+        here, 'workflows', f'RetroPath2.0_{rp2_version}.knwf'
+    )
+
+    if sys_platform == 'win32':
+        workflow = "/".join(workflow.split(os.sep))
+
     # Build a dict to store KNIME vars
     return {
         'kexec'         : kexec,
@@ -124,11 +132,7 @@ def set_vars(
         'kpath'         : kpath,
         'kinstall'      : kinstall,
         'kpkg_install'  : kpkg_install,
-        'workflow'      : os_path.join(
-            here,
-            'workflows',
-            f'RetroPath2.0_{rp2_version}.knwf'
-        )
+        'workflow'      : workflow,
     }
 
 
@@ -466,7 +470,7 @@ def install_knime(
 
     logger.info('   |--url: '+kurl)
     logger.info('   |--install_dir: '+kinstall)
-    
+
 
 def gunzip_to_csv(filename: str, indir: str) -> str:
     """
@@ -547,6 +551,9 @@ def format_files_for_knime(
             copyfile(files[key], new_f)
             files[key] = new_f
 
+    if sys_platform == 'win32':
+        for key, value in files.items():
+            files[key] = "/".join(value.split(os.sep))
     return files
 
 
@@ -581,7 +588,7 @@ def install_knime_pkgs(
     args = [kexec]
     args += ['-application', 'org.eclipse.equinox.p2.director']
     args += ['-nosplash']
-    args += ['-consolelog']
+    args += ['-consoleLog']
     args += ['-r', 'http://update.knime.org/community-contributions/trunk,' \
           + 'http://update.knime.com/community-contributions/trusted/'+kver[:3]+',' \
           + 'http://update.knime.com/analytics-platform/'+kver[:3]]
@@ -626,7 +633,7 @@ def call_knime(
     StreamHandler.terminator = ""
     logger.info('{attr1}Running KNIME...{attr2}'.format(attr1=attr('bold'), attr2=attr('reset')))
 
-    args = ' -nosplash -nosave -reset --launcher.suppressErrors -application org.knime.product.KNIME_BATCH_APPLICATION ' \
+    args = ' -nosplash -nosave -reset -consoleLog --launcher.suppressErrors -application org.knime.product.KNIME_BATCH_APPLICATION ' \
          + ' -workflowFile=' + kvars['workflow'] \
          + ' -workflow.variable=input.dmin,"'              + str(params['dmin'])         + '",int' \
          + ' -workflow.variable=input.dmax,"'              + str(params['dmax'])         + '",int' \

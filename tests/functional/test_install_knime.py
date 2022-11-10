@@ -15,12 +15,9 @@ class TestKnime(unittest.TestCase):
         self.tempdir = tempfile.mkdtemp()
 
     def tearDown(self):
-        try:
-            os.remove(self.tempdir)
-        except:
-            pass
+        shutil.rmtree(self.tempdir, ignore_errors=True)
 
-    def test_install_knime(self):
+    def install_knime(self):
         install_knime(
             kinstall=self.tempdir,
             kver=DEFAULT_KNIME_VERSION,
@@ -34,16 +31,19 @@ class TestKnime(unittest.TestCase):
             "-consolelog",
             "-help",
         ]
-        for x in glob.glob(os.path.join(self.tempdir, "**", "knime"), recursive=True):
-            ret = subprocess.run([x] + args)
-            if ret.returncode == 0:
-                kexec = x
-                break
+        for x in glob.glob(os.path.join(self.tempdir, "**", "knime*"), recursive=True):
+            try:
+                ret = subprocess.run([x] + args)
+                if ret.returncode == 0:
+                    kexec = x
+                    break
+            except:
+                pass
         self.assertIsNot(kexec, None)
         return kexec
 
     def test_install_knime_pkgs(self):
-        kexec = self.test_install_knime()
+        kexec = self.install_knime()
         install_knime(
             kinstall=self.tempdir,
             kver=DEFAULT_KNIME_VERSION,
