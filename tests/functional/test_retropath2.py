@@ -18,6 +18,7 @@ class TestRetropath2(Main_test):
     def setUp(self):
         self.logger = create_logger(__name__, 'DEBUG')
 
+    '''
     def test_src_in_sink(self):
         tmpdir = tempfile.mkdtemp()
         r_code, result = retropath2(
@@ -29,7 +30,7 @@ class TestRetropath2(Main_test):
         )
         self.assertEqual(r_code, RETCODES['SrcInSink'])
         shutil.rmtree(tmpdir, ignore_errors=True)
-
+    '''
     def test_lycopene(self):
         tmpdir = tempfile.mkdtemp()
         r_code, result = retropath2(
@@ -46,7 +47,7 @@ class TestRetropath2(Main_test):
             theorical_lines = fid.read().splitlines()
 
         shutil.copyfile(result['outdir'] + "/" + result['results'], os.path.join(self.dataset_path, "results_windows.csv"))
-      
+        self.assertTrue(False == True)
         # self.assertEqual(len(result_lines), len(theorical_lines))
         shutil.rmtree(tmpdir, ignore_errors=True)
 

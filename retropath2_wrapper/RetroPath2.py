@@ -633,6 +633,9 @@ def call_knime(
     StreamHandler.terminator = ""
     logger.info('{attr1}Running KNIME...{attr2}'.format(attr1=attr('bold'), attr2=attr('reset')))
 
+    preference = os_path.join(
+        here, 'workflows', 'preferences.epf'
+    )
     args = ' -nosplash -nosave -reset -consoleLog --launcher.suppressErrors -application org.knime.product.KNIME_BATCH_APPLICATION ' \
          + ' -workflowFile=' + kvars['workflow'] \
          + ' -workflow.variable=input.dmin,"'              + str(params['dmin'])         + '",int' \
@@ -645,7 +648,8 @@ def call_knime(
          + ' -workflow.variable=input.mwmax-source,"'      + str(params['mwmax_source']) + '",int' \
          + ' -workflow.variable=output.dir,"'              + files['outdir']             + '",String' \
          + ' -workflow.variable=output.solutionfile,"'     + files['results']            + '",String' \
-         + ' -workflow.variable=output.sourceinsinkfile,"' + files['src-in-sk']          + '",String'
+         + ' -workflow.variable=output.sourceinsinkfile,"' + files['src-in-sk']          + '",String' \
+         + ' -preferences=' + preference
 
     logger.debug(kvars['kexec'] + ' ' + args)
 
