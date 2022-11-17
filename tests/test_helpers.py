@@ -7,7 +7,7 @@ import os
 import tempfile
 
 from retropath2_wrapper.Args import RETCODES
-from retropath2_wrapper.RetroPath2 import check_inchi_from_file, check_input
+from retropath2_wrapper.RetroPath2 import check_inchi_from_file, check_input, standardize_path
 from tests.main_test import Main_test
 
 
@@ -38,3 +38,9 @@ class TestHelpers(Main_test):
             fod.close()
             self.assertNotEqual(check_inchi_from_file(fod.name), "")
             os.remove(fod.name)
+
+    def test_standardize_path(self):
+        path = os.getcwd()
+
+        spath = standardize_path(path=path)
+        self.assertTrue("\\" not in spath)

@@ -5,6 +5,9 @@ import unittest
 class Main_test(unittest.TestCase):
     dataset_path = os.path.join(os.path.dirname(__file__), "data")
 
+    # preferences
+    preference = os.path.join(dataset_path, "preference.epf")
+
     # rules
     rules_csv = os.path.join(dataset_path, "rules.csv.gz")
     rulesd12_csv = os.path.join(dataset_path, "rules_d12.csv.gz")

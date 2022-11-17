@@ -61,6 +61,8 @@ from .Args import (
     KNIME_PACKAGE,
     RETCODES,
 )
+from retropath2_wrapper.preference import Preference
+
 
 here = os_path.dirname(os_path.realpath(__file__))
 
@@ -121,8 +123,6 @@ def set_vars(
         here, 'workflows', f'RetroPath2.0_{rp2_version}.knwf'
     )
 
-    if sys_platform == 'win32':
-        workflow = "/".join(workflow.split(os.sep))
 
     # Build a dict to store KNIME vars
     return {
@@ -236,6 +236,9 @@ def retropath2(
 
     logger.info('{attr1}Initializing{attr2}'.format(attr1=attr('bold'), attr2=attr('reset')))
 
+    # Preferences
+    preference = Preference(rdkit_timeout_minutes=timeout)
+
     with TemporaryDirectory() as tempd:
 
         # Format files for KNIME
@@ -252,11 +255,11 @@ def retropath2(
 
         # Call KNIME
         r_code = call_knime(
-            kvars,
-            files,
-            rp2_params,
-            timeout,
-            logger
+            kvars=kvars,
+            files=files,
+            params=rp2_params,
+            preference=preference,
+            logger=logger,
         )
         if r_code == RETCODES['TimeLimit'] or r_code == RETCODES['OSError']:
             return r_code, files
@@ -496,6 +499,11 @@ def gunzip_to_csv(filename: str, indir: str) -> str:
     return filename
 
 
+def standardize_path(path: str) -> str:
+    if sys_platform == 'win32':
+        path = "/".join(path.split(os.sep))
+    return path
+
 def format_files_for_knime(
     sinkfile: str, sourcefile: str, rulesfile: str,
     indir: str, outdir: str,
@@ -551,9 +559,6 @@ def format_files_for_knime(
             copyfile(files[key], new_f)
             files[key] = new_f
 
-    if sys_platform == 'win32':
-        for key, value in files.items():
-            files[key] = "/".join(value.split(os.sep))
     return files
 
 
@@ -605,7 +610,7 @@ def call_knime(
     kvars: Dict,
     files: Dict,
     params: Dict,
-    timeout: int,
+    preference: Preference,
     logger: Logger = getLogger(__name__)
 ) -> int:
     """
@@ -619,8 +624,8 @@ def call_knime(
         Paths of sink, source, rules files.
     params: Dict
         Parameters of the workflow to process.
-    timeout: int
-        Time after which the run returns.
+    preference: Preference
+        A preference object.
     logger : Logger
         The logger object.
 
@@ -633,25 +638,32 @@ def call_knime(
     StreamHandler.terminator = ""
     logger.info('{attr1}Running KNIME...{attr2}'.format(attr1=attr('bold'), attr2=attr('reset')))
 
-    preference = os_path.join(
-        here, 'workflows', 'preferences.epf'
-    )
-    args = ' -nosplash -nosave -reset -consoleLog --launcher.suppressErrors -application org.knime.product.KNIME_BATCH_APPLICATION ' \
-         + ' -workflowFile=' + kvars['workflow'] \
-         + ' -workflow.variable=input.dmin,"'              + str(params['dmin'])         + '",int' \
-         + ' -workflow.variable=input.dmax,"'              + str(params['dmax'])         + '",int' \
-         + ' -workflow.variable=input.max-steps,"'         + str(params['max_steps'])    + '",int' \
-         + ' -workflow.variable=input.sourcefile,"'        + files['source']             + '",String' \
-         + ' -workflow.variable=input.sinkfile,"'          + files['sink']               + '",String' \
-         + ' -workflow.variable=input.rulesfile,"'         + files['rules']              + '",String' \
-         + ' -workflow.variable=input.topx,"'              + str(params['topx'])         + '",int' \
-         + ' -workflow.variable=input.mwmax-source,"'      + str(params['mwmax_source']) + '",int' \
-         + ' -workflow.variable=output.dir,"'              + files['outdir']             + '",String' \
-         + ' -workflow.variable=output.solutionfile,"'     + files['results']            + '",String' \
-         + ' -workflow.variable=output.sourceinsinkfile,"' + files['src-in-sk']          + '",String' \
-         + ' -preferences=' + preference
+    args = [kvars["kexec"]]
+    args += ["-nosplash"]
+    args += ["-nosave"]
+    args += ["-reset"]
+    args += ["-consoleLog"]
+    args += ["--launcher.suppressErrors"]
+    args += ["-application", "org.knime.product.KNIME_BATCH_APPLICATION"]
+    args += ["-workflowFile=%s" % (standardize_path(path=kvars['workflow']),)]
 
-    logger.debug(kvars['kexec'] + ' ' + args)
+    args += ['-workflow.variable=input.dmin,"%s",int' % (params['dmin'],)]
+    args += ['-workflow.variable=input.dmax,"%s",int' % (params['dmax'],)]
+    args += ['-workflow.variable=input.max-steps,"%s",int' % (params['max_steps'],)]
+    args += ['-workflow.variable=input.topx,"%s",int' % (params['topx'],)]
+    args += ['-workflow.variable=input.mwmax-source,"%s",int' % (params['mwmax_source'],)]
+
+    args += ['-workflow.variable=input.sourcefile,"%s",String' % (standardize_path(files['source']),)]
+    args += ['-workflow.variable=input.sinkfile,"%s",String' % (standardize_path(files['sink']),)]
+    args += ['-workflow.variable=input.rulesfile,"%s",String' % (standardize_path(files['rules']),)]
+    args += ['-workflow.variable=output.dir,"%s",String' % (standardize_path(files['outdir']),)]
+    args += ['-workflow.variable=output.solutionfile,"%s",String' % (standardize_path(files['results']),)]
+    args += ['-workflow.variable=output.sourceinsinkfile,"%s",String' % (standardize_path(files['src-in-sk']),)]
+    if preference and preference.is_init():
+        preference.to_file()
+        args += ["-preferences=" + standardize_path(preference.path)]
+
+    logger.debug(" ".join(args))
 
     try:
         printout = open(devnull, 'wb') if logger.level > 10 else None
@@ -663,7 +675,7 @@ def call_knime(
             os_environ['CONDA_PREFIX'],
             "lib"
         )
-        returncode = subprocess_call(cmd=kvars['kexec'] + args, logger=logger)
+        returncode = subprocess_call(cmd=" ".join(args), logger=logger)
         os_environ['LD_LIBRARY_PATH'] = ':'.join(
             os_environ['LD_LIBRARY_PATH'].split(':')[:-1]
         )
@@ -672,7 +684,7 @@ def call_knime(
         return returncode
 
     except TimeoutExpired as e:
-        logger.warning('   |- Time limit ({timeout} min) is reached'.format(timeout=timeout))
+        logger.warning('   |- Time limit ({timeout} min) is reached'.format(timeout=preference.rdkit_timeout_minutes))
         logger.warning('      Results collected until now are available')
         return RETCODES['TimeLimit']
 

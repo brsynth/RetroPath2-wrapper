@@ -6,6 +6,7 @@ Created on Jul 15 2020
 import filecmp
 import os
 import shutil
+import sys
 import tempfile
 
 from retropath2_wrapper.__main__ import create_logger
@@ -18,7 +19,6 @@ class TestRetropath2(Main_test):
     def setUp(self):
         self.logger = create_logger(__name__, 'DEBUG')
 
-    '''
     def test_src_in_sink(self):
         tmpdir = tempfile.mkdtemp()
         r_code, result = retropath2(
@@ -30,7 +30,7 @@ class TestRetropath2(Main_test):
         )
         self.assertEqual(r_code, RETCODES['SrcInSink'])
         shutil.rmtree(tmpdir, ignore_errors=True)
-    '''
+
     def test_lycopene(self):
         tmpdir = tempfile.mkdtemp()
         r_code, result = retropath2(
@@ -38,17 +38,23 @@ class TestRetropath2(Main_test):
             source_file=self.lycopene_source_csv,
             rules_file=self.rulesd12_csv,
             outdir=tmpdir,
+            timeout=10,
             logger=self.logger,
         )
-        # Compare number of lines to have a robust test accross platforms
-        with open(result['outdir'] + "/" + result['results']) as fid:
-            result_lines = fid.read().splitlines()
-        with open(self.lycopene_r20220104_results_csv) as fid:
-            theorical_lines = fid.read().splitlines()
+        if sys.platform == 'win32':
+            with open(result['outdir'] + "/" + result['results']) as fid:
+                result_lines = fid.read().splitlines()
+            with open(self.lycopene_r20220104_results_csv) as fid:
+                theorical_lines = fid.read().splitlines()
 
-        shutil.copyfile(result['outdir'] + "/" + result['results'], os.path.join(self.dataset_path, "results_windows.csv"))
-        self.assertTrue(False == True)
-        # self.assertEqual(len(result_lines), len(theorical_lines))
+            identical_line = 0
+            for i, the in enumerate(theorical_lines):
+                if the != result_lines[i]:
+                    identical_line = i
+                    break
+            self.assertTrue(identical_line > 5)
+        else:
+            filecmp.cmp(result['outdir'] + "/" + result['results'], self.lycopene_r20220104_results_csv)
         shutil.rmtree(tmpdir, ignore_errors=True)
 
     """

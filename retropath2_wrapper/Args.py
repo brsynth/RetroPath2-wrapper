@@ -9,7 +9,7 @@ from argparse import ArgumentParser
 from retropath2_wrapper._version import __version__
 
 
-DEFAULT_TIMEOUT = 60  # minutes
+DEFAULT_TIMEOUT = 5  # minutes
 DEFAULT_KNIME_VERSION = '4.5.0'
 DEFAULT_RP2_VERSION = 'r20220104'
 KNIME_PACKAGE = {
