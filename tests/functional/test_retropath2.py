@@ -45,6 +45,8 @@ class TestRetropath2(Main_test):
         with open(self.lycopene_r20220104_results_csv) as fid:
             theorical_lines = fid.read().splitlines()
 
+        shutil.copyfile(result['outdir'] + "/" + result['results'], os.path.join(self.dataset_path, "results_windows.csv"))
+      
         self.assertEqual(len(result_lines), len(theorical_lines))
         shutil.rmtree(tmpdir, ignore_errors=True)
 
