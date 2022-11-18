@@ -132,7 +132,7 @@ def _add_arguments(parser):
         '--timeout',
         type=int,
         default=DEFAULT_TIMEOUT,
-        help=f'Defines the time after which the program will stop and return calculated results (default: {DEFAULT_TIMEOUT})'
+        help=f'Defines the time after which the program (RDKit MCS Aggregation) will stop and return calculated results (default: {DEFAULT_TIMEOUT}).'
     )
     # parser.add_argument('--forward'      , action='store_true')
 

@@ -36,25 +36,25 @@ class TestRetropath2(Main_test):
         r_code, result = retropath2(
             sink_file=self.lycopene_sink_csv,
             source_file=self.lycopene_source_csv,
-            rules_file=self.rulesd12_csv,
+            rules_file=self.rulesd12_7325_csv,
             outdir=tmpdir,
             timeout=10,
             logger=self.logger,
         )
+        # Specific test for windows due to Github Runner memory consumption.
+        # Only check first lines.
         if sys.platform == 'win32':
             with open(result['outdir'] + "/" + result['results']) as fid:
                 result_lines = fid.read().splitlines()
-            with open(self.lycopene_r20220104_results_csv) as fid:
+            with open(self.lycopene_r20220104_results_7325_csv) as fid:
                 theorical_lines = fid.read().splitlines()
+            nb_lines = len(result_lines)
 
-            identical_line = 0
-            for i, the in enumerate(theorical_lines):
-                if the != result_lines[i]:
-                    identical_line = i
-                    break
-            self.assertTrue(identical_line > 5)
+            self.assertTrue(nb_lines > 5)
+            self.assertTrue(result_lines, theorical_lines[:nb_lines])
         else:
             filecmp.cmp(result['outdir'] + "/" + result['results'], self.lycopene_r20220104_results_csv)
+            shutil.copyfile(result['outdir'] + "/" + result['results'], "mac.result.csv")
         shutil.rmtree(tmpdir, ignore_errors=True)
 
     """

@@ -19,7 +19,7 @@ jobs:
     runs-on: ${{ matrix.os }}-latest
     strategy:
       matrix:
-        os: ["macos-latest", "ubuntu-latest", "windows-latest"]
+        os: ["macos", "ubuntu", "windows"]
     defaults:
       run:
         shell: bash -l {0}
@@ -37,9 +37,3 @@ jobs:
         run: |
           conda install -y python pytest pytest-mock
           python -m pytest
-      - name: "Archive production artifacts"
-        uses: actions/upload-artifact@v3
-        with:
-          name: test_windows
-          path: |
-            tests/data/results_windows.csv
