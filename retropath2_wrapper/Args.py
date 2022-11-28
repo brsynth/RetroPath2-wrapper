@@ -9,16 +9,23 @@ from argparse import ArgumentParser
 from retropath2_wrapper._version import __version__
 
 
-DEFAULT_TIMEOUT = 60  # minutes
+DEFAULT_MSC_TIMEOUT = 10  # minutes
 DEFAULT_KNIME_VERSION = '4.5.0'
 DEFAULT_RP2_VERSION = 'r20220104'
+KNIME_PACKAGE = {
+    '4.5.0': {
+        'org.knime.features.chem.types.feature.group': '4.5.0.v202107011901',
+        'org.knime.features.datageneration.feature.group': '4.5.0.v202107011901',
+        'org.knime.features.python.feature.group': '4.5.2.v202203041212',
+        'org.rdkit.knime.feature.feature.group': '4.5.0.v202207051536',
+    },
+}
 RETCODES = {
     'OK': 0,
     'NoError': 0,
     # Warnings
     'SrcInSink': -1,
     'NoSolution': -2,
-    'TimeLimit': -3,
     # Errors
     'FileNotFound': 1,
     'OSError': 2,
@@ -96,6 +103,7 @@ def _add_arguments(parser):
     parser.add_argument(
         '--kver',
         type=str,
+        choices=list(KNIME_PACKAGE.keys()),
         default=DEFAULT_KNIME_VERSION,
         help='version of KNIME (mandatory if --kexec is passed).',
     )
@@ -120,10 +128,10 @@ def _add_arguments(parser):
     parser.add_argument('--dmax'         , type=int, default=1000)
     parser.add_argument('--mwmax_source' , type=int, default=1000)
     parser.add_argument(
-        '--timeout',
+        '--msc_timeout',
         type=int,
-        default=DEFAULT_TIMEOUT,
-        help=f'Defines the time after which the program will stop and return calculated results (default: {DEFAULT_TIMEOUT})'
+        default=DEFAULT_MSC_TIMEOUT,
+        help=f'Defines the time after which the RDKit MCS Aggregation method will stop searching for best match (default: {DEFAULT_MSC_TIMEOUT}).'
     )
     # parser.add_argument('--forward'      , action='store_true')
 

@@ -104,15 +104,13 @@ def _cli():
         dmax=args.dmax,
         mwmax_source=args.mwmax_source,
         rp2_version=args.rp2_version,
-        timeout=args.timeout,
+        msc_timeout=args.msc_timeout,
         logger=logger
     )
 
     logger.info('')
 
-    if r_code == RETCODES['OK'] or r_code == RETCODES['TimeLimit']:
-        if r_code == RETCODES['TimeLimit']:
-            logger.warning('Time limit is reached.')
+    if r_code == RETCODES['OK']:
         logger.info('{attr1}Results{attr2}'.format(attr1=attr('bold'), attr2=attr('reset')))
         logger.info('   |- Checking... ')
         r_code = check_results(result_files, logger)
