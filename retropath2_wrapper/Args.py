@@ -9,7 +9,7 @@ from argparse import ArgumentParser
 from retropath2_wrapper._version import __version__
 
 
-DEFAULT_TIMEOUT = 5  # minutes
+DEFAULT_MSC_TIMEOUT = 10  # minutes
 DEFAULT_KNIME_VERSION = '4.5.0'
 DEFAULT_RP2_VERSION = 'r20220104'
 KNIME_PACKAGE = {
@@ -26,7 +26,6 @@ RETCODES = {
     # Warnings
     'SrcInSink': -1,
     'NoSolution': -2,
-    'TimeLimit': -3,
     # Errors
     'FileNotFound': 1,
     'OSError': 2,
@@ -129,10 +128,10 @@ def _add_arguments(parser):
     parser.add_argument('--dmax'         , type=int, default=1000)
     parser.add_argument('--mwmax_source' , type=int, default=1000)
     parser.add_argument(
-        '--timeout',
+        '--msc_timeout',
         type=int,
-        default=DEFAULT_TIMEOUT,
-        help=f'Defines the time after which the program (RDKit MCS Aggregation) will stop and return calculated results (default: {DEFAULT_TIMEOUT}).'
+        default=DEFAULT_MSC_TIMEOUT,
+        help=f'Defines the time after which the RDKit MCS Aggregation method will stop searching for best match (default: {DEFAULT_MSC_TIMEOUT}).'
     )
     # parser.add_argument('--forward'      , action='store_true')
 

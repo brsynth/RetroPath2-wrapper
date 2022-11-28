@@ -38,7 +38,7 @@ class TestRetropath2(Main_test):
             source_file=self.lycopene_source_csv,
             rules_file=self.rulesd12_7325_csv,
             outdir=tmpdir,
-            timeout=10,
+            msc_timeout=10,
             logger=self.logger,
         )
         # Specific test for windows due to Github Runner memory consumption.

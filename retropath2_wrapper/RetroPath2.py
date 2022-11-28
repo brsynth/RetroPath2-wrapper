@@ -23,9 +23,6 @@ from shutil import (
     rmtree
 )
 from sys        import platform  as sys_platform
-from subprocess import (
-    TimeoutExpired
-)  # nosec
 from brs_utils  import (
     download_and_extract_tar_gz,
     download,
@@ -55,7 +52,7 @@ from logging import StreamHandler
 from csv import reader
 from .Args import (
     DEFAULT_KNIME_FOLDER,
-    DEFAULT_TIMEOUT,
+    DEFAULT_MSC_TIMEOUT,
     DEFAULT_KNIME_VERSION,
     DEFAULT_RP2_VERSION,
     KNIME_PACKAGE,
@@ -147,7 +144,7 @@ def retropath2(
     topx: int = 100,
     dmin: int = 0, dmax: int = 100,
     mwmax_source: int = 1000,
-    timeout: int = DEFAULT_TIMEOUT,
+    msc_timeout: int = DEFAULT_MSC_TIMEOUT,
     logger: Logger = getLogger(__name__)
 ) -> Tuple[str, Dict]:
 
@@ -166,7 +163,7 @@ def retropath2(
     logger.debug(f'dmin: {dmin}')
     logger.debug(f'dmax: {dmax}')
     logger.debug(f'mwmax_source: {mwmax_source}')
-    logger.debug(f'timeout: {timeout}')
+    logger.debug(f'msc_timeout: {msc_timeout}')
 
     if kvars is None:
         # Store KNIME vars into a dictionary
@@ -237,7 +234,7 @@ def retropath2(
     logger.info('{attr1}Initializing{attr2}'.format(attr1=attr('bold'), attr2=attr('reset')))
 
     # Preferences
-    preference = Preference(rdkit_timeout_minutes=timeout)
+    preference = Preference(rdkit_timeout_minutes=msc_timeout)
 
     with TemporaryDirectory() as tempd:
 
@@ -261,7 +258,7 @@ def retropath2(
             preference=preference,
             logger=logger,
         )
-        if r_code == RETCODES['TimeLimit'] or r_code == RETCODES['OSError']:
+        if r_code == RETCODES['OSError']:
             return r_code, files
 
     r_code = check_src_in_sink_2(
@@ -682,11 +679,6 @@ def call_knime(
         StreamHandler.terminator = "\n"
         logger.info(' {bold}OK{reset}'.format(bold=attr('bold'), reset=attr('reset')))
         return returncode
-
-    except TimeoutExpired as e:
-        logger.warning('   |- Time limit ({timeout} min) is reached'.format(timeout=preference.rdkit_timeout_minutes))
-        logger.warning('      Results collected until now are available')
-        return RETCODES['TimeLimit']
 
     except OSError as e:
         logger.error(e)
