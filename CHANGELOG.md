@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.5.0](https://github.com/brsynth/RetroPath2-wrapper/tree/2.5.0) (2022-11-28)
+
+[Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/2.4.0...2.5.0)
+
+**Fixed bugs:**
+
+- Specify package version per Knime version [\#9](https://github.com/brsynth/RetroPath2-wrapper/pull/9) ([guillaume-gricourt](https://github.com/guillaume-gricourt))
+
 ## [2.4.0](https://github.com/brsynth/RetroPath2-wrapper/tree/2.4.0) (2022-09-23)
 
 [Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/2.3.1...2.4.0)
