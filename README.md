@@ -102,7 +102,17 @@ conda install -c conda-forge pytest
 python -m pytest tests
 ```
 
-# CI/CD
+## Known issues
+
+### Could not load native RDKit library
+Some Knime versions (like: 4.3.0) can't load RDKit library.
+You need to append to the `$CONDA_PREFIX/lib` path to the `LD_LIBRARY_PATH` variable where the `libfreetype` library is available:
+```sh
+conda activate <env_name>
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$CONDA_PREFIX/lib"
+```
+
+## CI/CD
 For further tests and development tools, a CI toolkit is provided in `cicd-toolkit` folder (see [cicd-toolkit/README.md](cicd-toolit/README.md)).
 
 
