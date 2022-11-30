@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.5.1](https://github.com/brsynth/RetroPath2-wrapper/tree/2.5.1) (2022-11-30)
+
+[Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/2.5.0...2.5.1)
+
+**Closed issues:**
+
+- Install Knime package [\#8](https://github.com/brsynth/RetroPath2-wrapper/issues/8)
+
+**Merged pull requests:**
+
+- Remove CONDA\_PREFIX [\#10](https://github.com/brsynth/RetroPath2-wrapper/pull/10) ([guillaume-gricourt](https://github.com/guillaume-gricourt))
+
 ## [2.5.0](https://github.com/brsynth/RetroPath2-wrapper/tree/2.5.0) (2022-11-28)
 
 [Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/2.4.0...2.5.0)
