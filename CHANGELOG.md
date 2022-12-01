@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.5.2](https://github.com/brsynth/RetroPath2-wrapper/tree/2.5.2) (2022-12-01)
+
+[Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/2.5.1...2.5.2)
+
+**Merged pull requests:**
+
+- Use CONDA\_PREFIX env variable [\#11](https://github.com/brsynth/RetroPath2-wrapper/pull/11) ([guillaume-gricourt](https://github.com/guillaume-gricourt))
+
 ## [2.5.1](https://github.com/brsynth/RetroPath2-wrapper/tree/2.5.1) (2022-11-30)
 
 [Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/2.5.0...2.5.1)
