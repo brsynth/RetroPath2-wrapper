@@ -104,9 +104,9 @@ python -m pytest tests
 
 ## Known issues
 
-### Could not load native RDKit library
-Some Knime versions (like: 4.3.0) can't load RDKit library.
-You need to append to the `$CONDA_PREFIX/lib` path to the `LD_LIBRARY_PATH` variable where the `libfreetype` library is available:
+1. Could not load native RDKit library, libfreetype.so.6: cannot open shared object file
+Some Knime versions (like: 4.3.0) or environments can't load RDKit library.
+You need to append the `$CONDA_PREFIX/lib` path to the `LD_LIBRARY_PATH` variable where the `libfreetype` library is available:
 ```sh
 conda activate <env_name>
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$CONDA_PREFIX/lib"
