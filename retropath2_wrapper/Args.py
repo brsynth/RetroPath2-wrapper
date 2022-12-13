@@ -10,14 +10,21 @@ from retropath2_wrapper._version import __version__
 
 
 DEFAULT_MSC_TIMEOUT = 10  # minutes
-DEFAULT_KNIME_VERSION = '4.5.0'
+DEFAULT_KNIME_VERSION = "4.6.4"
 DEFAULT_RP2_VERSION = 'r20220104'
 KNIME_PACKAGE = {
     '4.5.0': {
-        'org.knime.features.chem.types.feature.group': '4.5.0.v202107011901',
-        'org.knime.features.datageneration.feature.group': '4.5.0.v202107011901',
-        'org.knime.features.python.feature.group': '4.5.2.v202203041212',
-        'org.rdkit.knime.feature.feature.group': '4.5.0.v202207051536',
+         'org.knime.features.chem.types.feature.group': '4.5.0.v202107011901',
+         'org.knime.features.datageneration.feature.group': '4.5.0.v202107011901',
+         'org.knime.features.python.feature.group': '4.5.2.v202203041212',
+         'org.rdkit.knime.feature.feature.group': '4.5.0.v202207051536',
+         'org.rdkit.knime.feature.feature.group': '4.6.0.v202212061437',
+    },
+    "4.6.4": {
+         "org.knime.features.chem.types.feature.group": "4.6.0.v202202251610",
+         "org.knime.features.datageneration.feature.group": "4.6.0.v202202251621",
+         "org.knime.features.python.feature.group": "4.6.0.v202206100850",
+         "org.rdkit.knime.feature.feature.group": "4.6.1.v202212070507",
     },
 }
 RETCODES = {
