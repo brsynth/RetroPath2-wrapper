@@ -31,8 +31,8 @@ RETCODES = {
     'OK': 0,
     'NoError': 0,
     # Warnings
-    'SrcInSink': -1,
-    'NoSolution': -2,
+    'SrcInSink': 10,
+    'NoSolution': 11,
     # Errors
     'FileNotFound': 1,
     'OSError': 2,
