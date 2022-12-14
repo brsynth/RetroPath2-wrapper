@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-
+import sys
 from os import (
     path as os_path,
     mkdir as os_mkdir,
@@ -71,7 +71,7 @@ def _cli():
 
     if args.log.lower() in ['silent', 'quiet'] or args.silent:
         args.log = 'CRITICAL'
-    
+
     # Create logger
     logger = create_logger(parser.prog, args.log)
 
@@ -134,7 +134,7 @@ def check_results(
 ) -> int:
 
     # Check if any result has been found
-    r_code = check_scope(result_files['outdir'], logger)    
+    r_code = check_scope(result_files['outdir'], logger)
     return r_code
 
 
@@ -202,4 +202,4 @@ def parse_and_check_args(
 
 
 if __name__ == '__main__':
-    _cli()
+    sys.exit(_cli())
