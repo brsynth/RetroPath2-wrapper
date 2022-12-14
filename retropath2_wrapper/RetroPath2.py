@@ -142,7 +142,7 @@ def retropath2(
     kvars: Dict = None,
     max_steps: int = 3,
     topx: int = 100,
-    dmin: int = 0, dmax: int = 100,
+    dmin: int = 0, dmax: int = 1000,
     mwmax_source: int = 1000,
     msc_timeout: int = DEFAULT_MSC_TIMEOUT,
     logger: Logger = getLogger(__name__)
