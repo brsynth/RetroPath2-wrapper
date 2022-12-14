@@ -53,8 +53,7 @@ class TestRetropath2(Main_test):
             self.assertTrue(nb_lines > 5)
             self.assertTrue(result_lines, theorical_lines[:nb_lines])
         else:
-            filecmp.cmp(result['outdir'] + "/" + result['results'], self.lycopene_r20220104_results_csv)
-            shutil.copyfile(result['outdir'] + "/" + result['results'], "mac.result.csv")
+            self.assertTrue(filecmp.cmp(result['outdir'] + "/" + result['results'], self.lycopene_r20220104_results_7325_csv))
         shutil.rmtree(tmpdir, ignore_errors=True)
 
     """
