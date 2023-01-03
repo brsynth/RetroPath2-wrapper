@@ -24,7 +24,7 @@ KNIME_PACKAGE = {
          "org.knime.features.chem.types.feature.group": "4.6.0.v202202251610",
          "org.knime.features.datageneration.feature.group": "4.6.0.v202202251621",
          "org.knime.features.python.feature.group": "4.6.0.v202206100850",
-         "org.rdkit.knime.feature.feature.group": "4.6.1.v202212070507",
+         "org.rdkit.knime.feature.feature.group": "4.6.1.v202212201943",
     },
 }
 RETCODES = {
