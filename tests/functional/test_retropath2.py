@@ -10,35 +10,39 @@ import sys
 import tempfile
 
 from retropath2_wrapper.__main__ import create_logger
-from retropath2_wrapper.Args import RETCODES
+from retropath2_wrapper.Args import KNIME_ZENODO, RETCODES
 from retropath2_wrapper.RetroPath2 import retropath2
 from tests.main_test import Main_test
 
 
 class TestRetropath2(Main_test):
     def setUp(self):
+        self.tempdir = tempfile.mkdtemp()
         self.logger = create_logger(__name__, 'DEBUG')
 
+    def tearDown(self):
+        shutil.rmtree(self.tempdir, ignore_errors=True)
+
     def test_src_in_sink(self):
-        tmpdir = tempfile.mkdtemp()
         r_code, result = retropath2(
             sink_file=self.lycopene_sink_csv,
             source_file=self.source_mnxm790_csv,
             rules_file=self.rules_csv,
-            outdir=tmpdir,
+            outdir=self.tempdir,
+            kzenodo_ver=list(KNIME_ZENODO.keys())[0],
             logger=self.logger,
         )
         self.assertEqual(r_code, RETCODES['SrcInSink'])
-        shutil.rmtree(tmpdir, ignore_errors=True)
 
     def test_lycopene(self):
-        tmpdir = tempfile.mkdtemp()
         r_code, result = retropath2(
             sink_file=self.lycopene_sink_csv,
             source_file=self.lycopene_source_csv,
             rules_file=self.rulesd12_7325_csv,
-            outdir=tmpdir,
+            kinstall=self.tempdir,
+            outdir=self.tempdir,
             msc_timeout=10,
+            kzenodo_ver=list(KNIME_ZENODO.keys())[0],
             logger=self.logger,
         )
         # Specific test for windows due to Github Runner memory consumption.
@@ -54,7 +58,6 @@ class TestRetropath2(Main_test):
             self.assertTrue(result_lines, theorical_lines[:nb_lines])
         else:
             self.assertTrue(filecmp.cmp(result['outdir'] + "/" + result['results'], self.lycopene_r20220104_results_7325_csv))
-        shutil.rmtree(tmpdir, ignore_errors=True)
 
     """
     # Set attributes

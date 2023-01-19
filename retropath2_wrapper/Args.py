@@ -12,21 +12,8 @@ from retropath2_wrapper._version import __version__
 DEFAULT_MSC_TIMEOUT = 10  # minutes
 DEFAULT_KNIME_VERSION = "4.6.4"
 DEFAULT_RP2_VERSION = 'r20220104'
-KNIME_PACKAGE = {
-    '4.5.0': {
-         'org.knime.features.chem.types.feature.group': '4.5.0.v202107011901',
-         'org.knime.features.datageneration.feature.group': '4.5.0.v202107011901',
-         'org.knime.features.python.feature.group': '4.5.2.v202203041212',
-         'org.rdkit.knime.feature.feature.group': '4.5.0.v202207051536',
-         'org.rdkit.knime.feature.feature.group': '4.6.0.v202212061437',
-    },
-    "4.6.4": {
-         "org.knime.features.chem.types.feature.group": "4.6.0.v202202251610",
-         "org.knime.features.datageneration.feature.group": "4.6.0.v202202251621",
-         "org.knime.features.python.feature.group": "4.6.0.v202206100850",
-         "org.rdkit.knime.feature.feature.group": "4.6.1.v202212070507",
-    },
-}
+KNIME_ZENODO = {"4.6.4": "7515771"} # Map to Zenodo ID
+DEFAULT_ZENODO_VERSION = "NA"
 RETCODES = {
     'OK': 0,
     'NoError': 0,
@@ -120,6 +107,13 @@ def _add_arguments(parser):
         default=False,
         help='Install Knime packages (default: False).'
     )
+    parser.add_argument(
+        '--kzenodo',
+        choices=[DEFAULT_KNIME_ZENODO] + list(KNIME_ZENODO.keys()),
+        default=DEFAULT_KNIME_ZENODO,
+        help='install Knime and its dependencies from Zenodo.'
+    )
+
     parser.add_argument(
         '--rp2_version',
         type=str,

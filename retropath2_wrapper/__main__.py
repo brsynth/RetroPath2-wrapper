@@ -20,7 +20,6 @@ from brs_utils import (
     create_logger
 )
 from .RetroPath2 import (
-    set_vars,
     retropath2
 )
 from .Args import (
@@ -74,16 +73,6 @@ def _cli():
 
     # Create logger
     logger = create_logger(parser.prog, args.log)
-
-    # Store KNIME vars into a dictionary
-    kvars = set_vars(
-        kexec=args.kexec,
-        kver=args.kver,
-        kpkg_install=args.kpkg_install,
-        rp2_version=args.rp2_version,
-        kinstall=args.kinstall,
-        logger=logger
-    )
 
     # Print out configuration
     if not args.silent and args.log.lower() not in ['critical', 'error']:
