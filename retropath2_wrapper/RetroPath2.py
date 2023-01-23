@@ -75,7 +75,7 @@ def retropath2(
 
     # Create Knime object
     if knime is None:
-        knime = Knime(kexec=kexec, kinstall=kinstall, is_kpkg_install=kpkg_install, kver=kver, workflow=workflow, kzenodo_ver=kzenodo_ver)
+        knime = Knime(kexec=kexec, kinstall=kinstall, is_kpkg_install=kpkg_install, kver=kver, kzenodo_ver=kzenodo_ver)
     if rp2_version is not None:
         knime.workflow = os_path.join(
             here, 'workflows', f'RetroPath2.0_{rp2_version}.knwf'
