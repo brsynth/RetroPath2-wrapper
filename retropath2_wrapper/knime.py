@@ -16,11 +16,10 @@ from brs_utils  import (
     download_and_extract_tar_gz,
     download,
     download_and_unzip,
-    extract_gz,
     chown_r,
     subprocess_call
 )
-from colored import fg, bg, attr
+from colored import attr
 from retropath2_wrapper.Args import (
     DEFAULT_KNIME_FOLDER,
     DEFAULT_KNIME_VERSION,
@@ -80,7 +79,7 @@ class Knime(object):
     ZENODO_API = "https://zenodo.org/api/"
     KNIME_URL = "http://download.knime.org/analytics-platform/"
 
-    def __init__(self, workflow: str, kinstall: str=DEFAULT_KNIME_FOLDER, kver: str = DEFAULT_KNIME_VERSION, is_kpkg_install: bool=False, kexec: Optional[str]=None, kzenodo_ver: str=DEFAULT_ZENODO_VERSION, *args, **kwargs) -> None:
+    def __init__(self, workflow: str="", kinstall: str=DEFAULT_KNIME_FOLDER, kver: str = DEFAULT_KNIME_VERSION, is_kpkg_install: bool=False, kexec: Optional[str]=None, kzenodo_ver: str=DEFAULT_ZENODO_VERSION, *args, **kwargs) -> None:
 
         self.workflow = workflow
         self.kver = kver
@@ -198,21 +197,20 @@ class Knime(object):
                 chown_r(self.kinstall, getuser())
                 # chown_r(kinstall, geteuid(), getegid())
             elif sys.platform == 'darwin':
-                dmg = os.path.basename(self.kurl)
-                with NamedTemporaryFile() as tempf:
+                with tempfile.NamedTemporaryFile() as tempf:
                     download(self.kurl, tempf.name)
-                    app_path = f'{kinstall}/KNIME_{self.kver}.app'
+                    app_path = f'{self.kinstall}/KNIME_{self.kver}.app'
                     if os.path.exists(app_path):
-                        rmtree(app_path)
-                    with TemporaryDirectory() as tempd:
+                        shutil.rmtree(app_path)
+                    with tempfile.TemporaryDirectory() as tempd:
                         cmd = f'hdiutil mount -noverify {tempf.name} -mountpoint {tempd}/KNIME'
-                        returncode = subprocess_call(cmd, logger=logger)
-                        copytree(
+                        subprocess_call(cmd, logger=logger)
+                        shutil.copytree(
                             f'{tempd}/KNIME/KNIME {self.kver}.app',
                             app_path
                         )
                         cmd = f'hdiutil unmount {tempd}/KNIME'
-                        returncode = subprocess_call(cmd, logger=logger)
+                        subprocess_call(cmd, logger=logger)
             else:  # Windows
                 download_and_unzip(self.kurl, self.kinstall)
             logger.info('   |--url: ' + self.kurl)

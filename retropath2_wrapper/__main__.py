@@ -4,7 +4,6 @@ import sys
 from os import (
     path as os_path,
     mkdir as os_mkdir,
-    getcwd
 )
 from argparse import ArgumentParser
 from logging import (
@@ -15,7 +14,7 @@ from glob import glob
 from typing import (
     Dict,
 )
-from colored import fg, bg, attr
+from colored import fg, attr
 from brs_utils import (
     create_logger
 )
@@ -27,10 +26,11 @@ from .Args import (
     RETCODES
 )
 from ._version import __version__
+from retropath2_wrapper.knime import Knime
 
 
 def print_conf(
-    kvars: Dict,
+    knime: Knime,
     prog: str,
     logger: Logger = getLogger(__name__)
 ) -> None:
@@ -39,8 +39,8 @@ def print_conf(
 
     Parameters
     ----------
-    kvars : Dict
-        Dictionnary with variables to print.
+    knime: Knime
+        A Knime object
     logger : Logger
         The logger object.
 
@@ -55,10 +55,10 @@ def print_conf(
     print(' + ' + prog)
     print('     |--version: '+__version__)
     print(' + KNIME')
-    print('     |--path: '+kvars['kexec'])
+    print('     |--path: '+knime.kexec)
     # logger.info('    - version: '+kvars['kver'])
     print(' + RetroPath2.0 workflow')
-    print('     |--path: '+kvars['workflow'])
+    print('     |--path: '+knime.workflow)
     # logger.info('    - version: r20210127')
     print('')
     print ('{attr}'.format(attr=attr('reset')), end='')
@@ -74,25 +74,34 @@ def _cli():
     # Create logger
     logger = create_logger(parser.prog, args.log)
 
+    # Create Knime object
+    here = os_path.dirname(os_path.realpath(__file__))
+    knime = Knime(
+        kexec=args.kexec,
+        kinstall=args.kinstall,
+        is_kpkg_install=args.kpkg_install,
+        kver=args.kver,
+        kzenodo_ver=args.kzenodo,
+        workflow=os_path.join(here, 'workflows', 'RetroPath2.0_%s.knwf' % (args.rp2_version,)),
+    )
     # Print out configuration
     if not args.silent and args.log.lower() not in ['critical', 'error']:
-        print_conf(kvars, prog = parser.prog)
+        print_conf(knime, prog = parser.prog)
 
     logger.debug('args: ' + str(args))
-    logger.debug('kvars: ' + str(kvars))
 
     r_code, result_files = retropath2(
         sink_file=args.sink_file,
         source_file=args.source_file,
         rules_file=args.rules_file,
         outdir=args.outdir,
-        kvars=kvars,
         max_steps=args.max_steps,
         topx=args.topx,
         dmin=args.dmin,
         dmax=args.dmax,
         mwmax_source=args.mwmax_source,
-        rp2_version=args.rp2_version,
+        rp2_version=None,
+        knime=knime,
         msc_timeout=args.msc_timeout,
         logger=logger
     )

@@ -97,7 +97,6 @@ def _add_arguments(parser):
     parser.add_argument(
         '--kver',
         type=str,
-        choices=list(KNIME_PACKAGE.keys()),
         default=DEFAULT_KNIME_VERSION,
         help='version of KNIME (mandatory if --kexec is passed).',
     )
@@ -109,8 +108,8 @@ def _add_arguments(parser):
     )
     parser.add_argument(
         '--kzenodo',
-        choices=[DEFAULT_KNIME_ZENODO] + list(KNIME_ZENODO.keys()),
-        default=DEFAULT_KNIME_ZENODO,
+        choices=[DEFAULT_ZENODO_VERSION] + list(KNIME_ZENODO.keys()),
+        default=DEFAULT_ZENODO_VERSION,
         help='install Knime and its dependencies from Zenodo.'
     )
 

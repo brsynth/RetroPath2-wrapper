@@ -10,31 +10,21 @@ from os         import (
     mkdir as os_mkdir,
     path  as os_path,
     rename,
-    environ as os_environ
     # geteuid,
     # getegid
 )
-from shutil import (
-    copyfile,
-    copytree,
-    rmtree
-)
-from sys        import platform  as sys_platform
+from shutil import copyfile
 from brs_utils import extract_gz
 from filetype import guess
 from tempfile import TemporaryDirectory
-from typing import (
-    Dict,
-    List,
-    Tuple
-)
+from typing import Dict, Tuple
 from logging import (
     Logger,
     getLogger
 )
 from re import match
 from csv import reader as csv_reader
-from colored import fg, bg, attr
+from colored import attr
 from csv import reader
 from .Args import (
     DEFAULT_KNIME_FOLDER,
@@ -57,6 +47,7 @@ def retropath2(
     kinstall: str = DEFAULT_KNIME_FOLDER,
     kexec: str = None, kpkg_install: bool = True, kver: str = DEFAULT_KNIME_VERSION,
     kzenodo_ver: str = DEFAULT_ZENODO_VERSION,
+    knime: Knime = None,
     rp2_version: str = DEFAULT_RP2_VERSION,
     max_steps: int = 3,
     topx: int = 100,
@@ -83,10 +74,13 @@ def retropath2(
     logger.debug(f'msc_timeout: {msc_timeout}')
 
     # Create Knime object
-    workflow = os_path.join(
-        here, 'workflows', f'RetroPath2.0_{rp2_version}.knwf'
-    )
-    knime = Knime(kexec=kexec, kinstall=kinstall, is_kpkg_install=kpkg_install, kver=kver, workflow=workflow, kzenodo_ver=kzenodo_ver)
+    if knime is None:
+        knime = Knime(kexec=kexec, kinstall=kinstall, is_kpkg_install=kpkg_install, kver=kver, workflow=workflow, kzenodo_ver=kzenodo_ver)
+    if rp2_version is not None:
+        knime.workflow = os_path.join(
+            here, 'workflows', f'RetroPath2.0_{rp2_version}.knwf'
+        )
+
     logger.debug('knime: ' + str(knime))
 
     # Store RetroPath2 params into a dictionary
