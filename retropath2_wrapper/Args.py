@@ -12,7 +12,7 @@ from retropath2_wrapper._version import __version__
 DEFAULT_MSC_TIMEOUT = 10  # minutes
 DEFAULT_KNIME_VERSION = "4.6.4"
 DEFAULT_RP2_VERSION = 'r20220104'
-KNIME_ZENODO = {"4.6.4": "7515771"} # Map to Zenodo ID
+KNIME_ZENODO = {"4.6.4": "7515771", "4.7.0": "7564938"} # Map to Zenodo ID
 DEFAULT_ZENODO_VERSION = "NA"
 RETCODES = {
     'OK': 0,
