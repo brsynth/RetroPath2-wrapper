@@ -102,6 +102,15 @@ conda install -c conda-forge pytest
 python -m pytest tests
 ```
 
+To run functional tests, the environment variable `RP2_FUNCTIONAL=TRUE` is required.
+
+### Knime dependencies
+
+Knime software and packages are available at:
+* [KNIME](https://www.knime.com/)
+* [KNIME v4.6.4 - Zenodo](https://zenodo.org/record/7515771)
+* [KNIME v4.7.0 - Zenodo](https://zenodo.org/record/7564938)
+
 ## Known issues
 
 1. Could not load native RDKit library, libfreetype.so.6: cannot open shared object file
