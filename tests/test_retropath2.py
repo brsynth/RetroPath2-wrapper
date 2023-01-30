@@ -9,37 +9,48 @@ import shutil
 import sys
 import tempfile
 
+import pytest
 from retropath2_wrapper.__main__ import create_logger
-from retropath2_wrapper.Args import RETCODES
+from retropath2_wrapper.Args import KNIME_ZENODO, RETCODES
 from retropath2_wrapper.RetroPath2 import retropath2
-from tests.main_test import Main_test
 
 
-class TestRetropath2(Main_test):
-    def setUp(self):
-        self.logger = create_logger(__name__, 'DEBUG')
+FUNCTIONAL = "RP2_FUNCTIONAL" not in os.environ
 
-    def test_src_in_sink(self):
-        tmpdir = tempfile.mkdtemp()
+@pytest.fixture(scope="function")
+def logger():
+    return create_logger(__name__, 'DEBUG')
+
+class TestRetropath2:
+    @pytest.mark.skipif(FUNCTIONAL, reason="Functional test")
+    def test_src_in_sink(self, lycopene_sink_csv, source_mnxm790_csv, rules_csv, logger):
+        tempdir = tempfile.mkdtemp()
+
         r_code, result = retropath2(
-            sink_file=self.lycopene_sink_csv,
-            source_file=self.source_mnxm790_csv,
-            rules_file=self.rules_csv,
-            outdir=tmpdir,
-            logger=self.logger,
+            sink_file=lycopene_sink_csv,
+            source_file=source_mnxm790_csv,
+            rules_file=rules_csv,
+            outdir=tempdir,
+            kzenodo_ver=list(KNIME_ZENODO.keys())[0],
+            logger=logger,
         )
-        self.assertEqual(r_code, RETCODES['SrcInSink'])
-        shutil.rmtree(tmpdir, ignore_errors=True)
+        assert r_code == RETCODES['SrcInSink']
 
-    def test_lycopene(self):
-        tmpdir = tempfile.mkdtemp()
+        shutil.rmtree(tempdir, ignore_errors=True)
+
+    @pytest.mark.skipif(FUNCTIONAL, reason="Functional test")
+    def test_lycopene(self, lycopene_sink_csv, lycopene_source_csv, rulesd12_7325_csv, lycopene_r20220104_results_7325_csv, logger):
+        tempdir = tempfile.mkdtemp()
+
         r_code, result = retropath2(
-            sink_file=self.lycopene_sink_csv,
-            source_file=self.lycopene_source_csv,
-            rules_file=self.rulesd12_7325_csv,
-            outdir=tmpdir,
+            sink_file=lycopene_sink_csv,
+            source_file=lycopene_source_csv,
+            rules_file=rulesd12_7325_csv,
+            kinstall=tempdir,
+            outdir=tempdir,
             msc_timeout=10,
-            logger=self.logger,
+            kzenodo_ver=list(KNIME_ZENODO.keys())[0],
+            logger=logger,
         )
         # Specific test for windows due to Github Runner memory consumption.
         # Only check first lines.
@@ -50,12 +61,11 @@ class TestRetropath2(Main_test):
                 theorical_lines = fid.read().splitlines()
             nb_lines = len(result_lines)
 
-            self.assertTrue(nb_lines > 5)
-            self.assertTrue(result_lines, theorical_lines[:nb_lines])
+            assert nb_lines > 5
+            assert result_lines == theorical_lines[:nb_lines]
         else:
-            filecmp.cmp(result['outdir'] + "/" + result['results'], self.lycopene_r20220104_results_csv)
-            shutil.copyfile(result['outdir'] + "/" + result['results'], "mac.result.csv")
-        shutil.rmtree(tmpdir, ignore_errors=True)
+            assert filecmp.cmp(result['outdir'] + "/" + result['results'], lycopene_r20220104_results_7325_csv)
+        shutil.rmtree(tempdir, ignore_errors=True)
 
     """
     # Set attributes
