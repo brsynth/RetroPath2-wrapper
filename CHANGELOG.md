@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.6.0](https://github.com/brsynth/RetroPath2-wrapper/tree/2.6.0) (2023-01-30)
+
+[Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/2.5.2...2.6.0)
+
 ## [2.5.2](https://github.com/brsynth/RetroPath2-wrapper/tree/2.5.2) (2022-12-01)
 
 [Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/2.5.1...2.5.2)
