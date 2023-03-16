@@ -5,7 +5,9 @@ import subprocess
 import tempfile
 
 import pytest
-from retropath2_wrapper.Args import DEFAULT_KNIME_VERSION, DEFAULT_ZENODO_VERSION, KNIME_ZENODO, RETCODES
+from retropath2_wrapper.Args import (
+    DEFAULTS,KNIME_ZENODO, RETCODES
+)
 from retropath2_wrapper.knime import Knime
 
 

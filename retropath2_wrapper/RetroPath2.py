@@ -27,11 +27,7 @@ from csv import reader as csv_reader
 from colored import attr
 from csv import reader
 from .Args import (
-    DEFAULT_KNIME_FOLDER,
-    DEFAULT_MSC_TIMEOUT,
-    DEFAULT_KNIME_VERSION,
-    DEFAULT_RP2_VERSION,
-    DEFAULT_ZENODO_VERSION,
+    DEFAULTS,
     RETCODES,
 )
 from retropath2_wrapper.knime import Knime
@@ -44,16 +40,16 @@ here = os_path.dirname(os_path.realpath(__file__))
 def retropath2(
     sink_file: str, source_file: str, rules_file: str,
     outdir: str,
-    kinstall: str = DEFAULT_KNIME_FOLDER,
-    kexec: str = None, kpkg_install: bool = True, kver: str = DEFAULT_KNIME_VERSION,
-    kzenodo_ver: str = DEFAULT_ZENODO_VERSION,
+    kinstall: str = DEFAULTS['KNIME_FOLDER'],
+    kexec: str = None, kpkg_install: bool = True, kver: str = DEFAULTS['KNIME_VERSION'],
+    kzenodo_ver: str = DEFAULTS['ZENODO_VERSION'],
     knime: Knime = None,
-    rp2_version: str = DEFAULT_RP2_VERSION,
+    rp2_version: str = DEFAULTS['RP2_VERSION'],
     max_steps: int = 3,
     topx: int = 100,
     dmin: int = 0, dmax: int = 1000,
     mwmax_source: int = 1000,
-    msc_timeout: int = DEFAULT_MSC_TIMEOUT,
+    msc_timeout: int = DEFAULTS['MSC_TIMEOUT'],
     logger: Logger = getLogger(__name__)
 ) -> Tuple[str, Dict]:
 

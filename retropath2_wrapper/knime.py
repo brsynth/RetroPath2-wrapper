@@ -21,9 +21,7 @@ from brs_utils  import (
 )
 from colored import attr
 from retropath2_wrapper.Args import (
-    DEFAULT_KNIME_FOLDER,
-    DEFAULT_KNIME_VERSION,
-    DEFAULT_ZENODO_VERSION,
+    DEFAULTS,
     KNIME_ZENODO,
     RETCODES,
 )
@@ -79,7 +77,7 @@ class Knime(object):
     ZENODO_API = "https://zenodo.org/api/"
     KNIME_URL = "http://download.knime.org/analytics-platform/"
 
-    def __init__(self, workflow: str="", kinstall: str=DEFAULT_KNIME_FOLDER, kver: str = DEFAULT_KNIME_VERSION, is_kpkg_install: bool=False, kexec: Optional[str]=None, kzenodo_ver: str=DEFAULT_ZENODO_VERSION, *args, **kwargs) -> None:
+    def __init__(self, workflow: str="", kinstall: str=DEFAULTS['KNIME_FOLDER'], kver: str = DEFAULTS['KNIME_VERSION'], is_kpkg_install: bool=False, kexec: Optional[str]=None, kzenodo_ver: str=DEFAULTS['ZENODO_VERSION'], *args, **kwargs) -> None:
 
         self.workflow = workflow
         self.kver = kver
@@ -94,7 +92,7 @@ class Knime(object):
 
         # Zenodo
         self.is_zenodo = False
-        if self.kzenodo_ver != DEFAULT_ZENODO_VERSION:
+        if self.kzenodo_ver != DEFAULTS['ZENODO_VERSION']:
             self.kzenodo_id = KNIME_ZENODO[self.kzenodo_ver]
             self.is_zenodo = True
             self.kver = self.kzenodo_ver
