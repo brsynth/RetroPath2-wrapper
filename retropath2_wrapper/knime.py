@@ -218,7 +218,12 @@ class Knime(object):
             logger.info('   |--url: ' + self.kurl)
             logger.info('   |--install_dir: ' + self.kinstall)
 
-    def install_pkgs(self, logger: Logger = getLogger(__name__)) -> int:
+    def install_pkgs(
+        self,
+        kpython_ver: str,
+        krdkit_ver: str,
+        logger: Logger = getLogger(__name__)
+    ) -> int:
         """Install KNIME packages needed to execute RetroPath2.0 workflow.
 
         Parameters
@@ -262,8 +267,8 @@ class Knime(object):
                     + 'http://update.knime.com/analytics-platform/'+self.kver[:3]]
             args += ["-i", 'org.knime.features.chem.types.feature.group,' \
                 + 'org.knime.features.datageneration.feature.group,' \
-                + 'org.knime.features.python.feature.group,' \
-                + 'org.rdkit.knime.feature.feature.group']
+                + f'org.knime.features.python.feature.group/{kpython_ver},' \
+                + f'org.rdkit.knime.feature.feature.group/{krdkit_ver}']
             args += ['-bundlepool', self.kpkg_install]
             args += ['-d', self.kpkg_install]
 

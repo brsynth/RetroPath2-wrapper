@@ -17,6 +17,8 @@ DEFAULTS = {
     'KNIME_VERSION': '4.6.4',
     'RP2_VERSION': 'r20220104',
     'ZENODO_VERSION': "NA",
+    'KNIME_PYTHON_VERSION': '4.5.2.v202203041212',
+    'KNIME_RDKIT_VERSION': '4.5.0.v202207051536',
     'KNIME_FOLDER': __PACKAGE_FOLDER
 }
 KNIME_ZENODO = {"4.6.4": "7515771", "4.7.0": "7564938"} # Map to Zenodo ID
@@ -112,7 +114,7 @@ def _add_arguments(parser):
         '--kzenodo',
         choices=[DEFAULTS['ZENODO_VERSION']] + list(KNIME_ZENODO.keys()),
         default=DEFAULTS['ZENODO_VERSION'],
-        help='install Knime and its dependencies from Zenodo.'
+        help='Install Knime and its dependencies from Zenodo.'
     )
 
     parser.add_argument(
@@ -120,7 +122,21 @@ def _add_arguments(parser):
         type=str,
         default=DEFAULTS['RP2_VERSION'],
         choices=['v9', 'r20210127', 'r20220104', "r20220224"],
-        help=f'version of RetroPath2.0 workflow (default: {DEFAULTS["RP2_VERSION"]}).'
+        help=f'Version of RetroPath2.0 workflow (default: {DEFAULTS["RP2_VERSION"]}).'
+    )
+
+    parser.add_argument(
+        '--kpython_version',
+        type=str,
+        default=DEFAULTS['KNIME_PYTHON_VERSION'],
+        help=f'Version of KNIME\'s PYTHON (default: {DEFAULTS["KNIME_PYTHON_VERSION"]}).'
+    )
+
+    parser.add_argument(
+        '--krdkit_version',
+        type=str,
+        default=DEFAULTS['KNIME_RDKIT_VERSION'],
+        help=f'Version of RDKit KNIME\'s plugin (default: {DEFAULTS["KNIME_RDKIT_VERSION"]}).'
     )
 
     # RetroPath2.0 workflow options

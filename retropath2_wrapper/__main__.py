@@ -81,6 +81,8 @@ def _cli():
         kinstall=args.kinstall,
         is_kpkg_install=args.kpkg_install,
         kver=args.kver,
+        kpython_ver=args.kpython_version,
+        krdkit_ver=args.krdkit_version,
         kzenodo_ver=args.kzenodo,
         workflow=os_path.join(here, 'workflows', 'RetroPath2.0_%s.knwf' % (args.rp2_version,)),
     )

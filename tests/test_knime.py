@@ -6,7 +6,7 @@ import tempfile
 
 import pytest
 from retropath2_wrapper.Args import (
-    DEFAULTS,KNIME_ZENODO, RETCODES
+    DEFAULTS, KNIME_ZENODO, RETCODES
 )
 from retropath2_wrapper.knime import Knime
 
