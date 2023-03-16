@@ -41,7 +41,9 @@ def retropath2(
     sink_file: str, source_file: str, rules_file: str,
     outdir: str,
     kinstall: str = DEFAULTS['KNIME_FOLDER'],
-    kexec: str = None, kpkg_install: bool = True, kver: str = DEFAULTS['KNIME_VERSION'],
+    kexec: str = None,
+    kpkg_install: bool = True,
+    kver: str = DEFAULTS['KNIME_VERSION'],
     kpython_ver: str = DEFAULTS['KNIME_PYTHON_VERSION'],
     krdkit_ver: str = DEFAULTS['KNIME_RDKIT_VERSION'],
     kzenodo_ver: str = DEFAULTS['ZENODO_VERSION'],
@@ -78,6 +80,8 @@ def retropath2(
             kinstall=kinstall,
             is_kpkg_install=kpkg_install,
             kver=kver,
+            kpython_ver=kpython_ver,
+            krdkit_ver=krdkit_ver,
             kzenodo_ver=kzenodo_ver
         )
     if rp2_version is not None:
@@ -105,11 +109,7 @@ def retropath2(
     #      if kexec is not specified
     #  and executable not detected in default path
     knime.install_exec(logger=logger)
-    r_code = knime.install_pkgs(
-        kpython_ver=kpython_ver,
-        krdkit_ver=krdkit_ver,
-        logger=logger
-    )
+    r_code = knime.install_pkgs(logger=logger)
     if r_code > 0:
         return r_code, None
     elif r_code == RETCODES['OSError']:

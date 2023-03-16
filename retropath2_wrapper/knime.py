@@ -77,10 +77,23 @@ class Knime(object):
     ZENODO_API = "https://zenodo.org/api/"
     KNIME_URL = "http://download.knime.org/analytics-platform/"
 
-    def __init__(self, workflow: str="", kinstall: str=DEFAULTS['KNIME_FOLDER'], kver: str = DEFAULTS['KNIME_VERSION'], is_kpkg_install: bool=False, kexec: Optional[str]=None, kzenodo_ver: str=DEFAULTS['ZENODO_VERSION'], *args, **kwargs) -> None:
+    def __init__(
+        self,
+        workflow: str="",
+        kinstall: str=DEFAULTS['KNIME_FOLDER'],
+        kver: str = DEFAULTS['KNIME_VERSION'],
+        kpython_ver: str=DEFAULTS['KNIME_PYTHON_VERSION'],
+        krdkit_ver: str=DEFAULTS['KNIME_RDKIT_VERSION'],
+        is_kpkg_install: bool=False,
+        kexec: Optional[str]=None,
+        kzenodo_ver: str=DEFAULTS['ZENODO_VERSION'],
+        # *args, **kwargs
+    ) -> None:
 
         self.workflow = workflow
         self.kver = kver
+        self.kpython_ver = kpython_ver
+        self.krdkit_ver = krdkit_ver
         self.is_kpkg_install = is_kpkg_install
         self.kexec = kexec
         self.kzenodo_ver = kzenodo_ver
@@ -140,6 +153,8 @@ class Knime(object):
         s = ["Knime vars:"]
         s.append("workflow: " + self.workflow)
         s.append("kver: " + self.kver)
+        s.append("kpython_ver: " + self.kpython_ver)
+        s.append("krdkit_ver: " + self.krdkit_ver)
         s.append("is_kpkg_install: " + str(self.kpkg_install))
         s.append("kpkg_install: " + self.kpkg_install)
         s.append("kexec: " + self.kexec)
@@ -220,8 +235,8 @@ class Knime(object):
 
     def install_pkgs(
         self,
-        kpython_ver: str,
-        krdkit_ver: str,
+        kpython_ver: str = None,
+        krdkit_ver: str = None,
         logger: Logger = getLogger(__name__)
     ) -> int:
         """Install KNIME packages needed to execute RetroPath2.0 workflow.
@@ -235,6 +250,10 @@ class Knime(object):
         ------
         int
         """
+        if kpython_ver is None:
+            kpython_ver = self.kpython_ver
+        if krdkit_ver is None:
+            krdkit_ver = self.krdkit_ver
         returncode = 0
         if self.kexec_install or self.is_kpkg_install:
             StreamHandler.terminator = ""
