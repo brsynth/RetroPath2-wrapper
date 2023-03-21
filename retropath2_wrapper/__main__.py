@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 import sys
 from os import (
     path as os_path,
@@ -79,9 +80,7 @@ def _cli():
     knime = Knime(
         kexec=args.kexec,
         kinstall=args.kinstall,
-        is_kpkg_install=args.kpkg_install,
         kver=args.kver,
-        kzenodo_ver=args.kzenodo,
         workflow=os_path.join(here, 'workflows', 'RetroPath2.0_%s.knwf' % (args.rp2_version,)),
     )
     # Print out configuration
@@ -169,12 +168,15 @@ def check_scope(
 
 def parse_and_check_args(
     parser: ArgumentParser
-) -> None:
+):
 
     args = parser.parse_args()
 
-    if args.kver is None and args.kpkg_install and args.kexec is not None:
-        parser.error("--kexec requires --kver.")
+    if args.kexec is not None:
+        if not os.path.isfile(args.kexec):
+            parser.error("--kexec is not a file: %s" %(args.kexec,))
+        if not os.access(args.kexec, os.X_OK):
+            parser.error("--kexec is not executable: %s" %(args.kexec,))
 
     # Create outdir if does not exist
     if not os_path.exists(args.outdir):

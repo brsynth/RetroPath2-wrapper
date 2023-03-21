@@ -13,7 +13,6 @@ DEFAULT_MSC_TIMEOUT = 10  # minutes
 DEFAULT_KNIME_VERSION = "4.6.4"
 DEFAULT_RP2_VERSION = 'r20220104'
 KNIME_ZENODO = {"4.6.4": "7515771", "4.7.0": "7564938"} # Map to Zenodo ID
-DEFAULT_ZENODO_VERSION = "NA"
 RETCODES = {
     'OK': 0,
     'NoError': 0,
@@ -59,26 +58,28 @@ def _add_arguments(parser):
 
 
     ## Optional arguments
-    #
-    # KNIME options
-    parser.add_argument(
+    parser_in = parser.add_argument_group("Input arguments")
+    parser_in.add_argument(
         '--source_file',
         type=str,
         help='Path of file containing the InChI (not compliant with --source_name nor --source_inchi)'
     )
-    parser.add_argument(
+    parser_in.add_argument(
         '--source_name',
         type=str,
         default=None,
         help='Name of compound to produce (needs --inchi, not compliant with --source_file).'
     )
-    parser.add_argument(
+    parser_in.add_argument(
         '--source_inchi',
         type=str,
         default=None,
         help='InChI of compound to produce (not compliant with --source_file).'
     )
-    parser.add_argument(
+
+    # Knime
+    parser_knime = parser.add_argument_group("Knime arguments")
+    parser_knime.add_argument(
         '--kexec',
         type=str,
         default=None,
@@ -86,7 +87,7 @@ def _add_arguments(parser):
               downloaded if not already installed or path is \
               wrong).'
     )
-    parser.add_argument(
+    parser_knime.add_argument(
         '--kinstall',
         type=str,
         default=DEFAULT_KNIME_FOLDER,
@@ -94,26 +95,17 @@ def _add_arguments(parser):
               downloaded if not already installed or path is \
               wrong).'
     )
-    parser.add_argument(
+    parser_knime.add_argument(
         '--kver',
         type=str,
         default=DEFAULT_KNIME_VERSION,
+        choices=list(KNIME_ZENODO.keys()),
         help='version of KNIME (mandatory if --kexec is passed).',
     )
-    parser.add_argument(
-        '--kpkg_install',
-        action='store_true',
-        default=False,
-        help='Install Knime packages (default: False).'
-    )
-    parser.add_argument(
-        '--kzenodo',
-        choices=[DEFAULT_ZENODO_VERSION] + list(KNIME_ZENODO.keys()),
-        default=DEFAULT_ZENODO_VERSION,
-        help='install Knime and its dependencies from Zenodo.'
-    )
 
-    parser.add_argument(
+    # RetroPath2.0 workflow options
+    parser_rp = parser.add_argument_group("Retropath2.0 workflow")
+    parser_rp.add_argument(
         '--rp2_version',
         type=str,
         default=DEFAULT_RP2_VERSION,
@@ -121,13 +113,12 @@ def _add_arguments(parser):
         help=f'version of RetroPath2.0 workflow (default: {DEFAULT_RP2_VERSION}).'
     )
 
-    # RetroPath2.0 workflow options
-    parser.add_argument('--max_steps'    , type=int, default=3)
-    parser.add_argument('--topx'         , type=int, default=100)
-    parser.add_argument('--dmin'         , type=int, default=0)
-    parser.add_argument('--dmax'         , type=int, default=1000)
-    parser.add_argument('--mwmax_source' , type=int, default=1000)
-    parser.add_argument(
+    parser_rp.add_argument('--max_steps'    , type=int, default=3)
+    parser_rp.add_argument('--topx'         , type=int, default=100)
+    parser_rp.add_argument('--dmin'         , type=int, default=0)
+    parser_rp.add_argument('--dmax'         , type=int, default=1000)
+    parser_rp.add_argument('--mwmax_source' , type=int, default=1000)
+    parser_rp.add_argument(
         '--msc_timeout',
         type=int,
         default=DEFAULT_MSC_TIMEOUT,
@@ -136,7 +127,8 @@ def _add_arguments(parser):
     # parser.add_argument('--forward'      , action='store_true')
 
     # Program options
-    parser.add_argument(
+    parser_sp = parser.add_argument_group("Logging")
+    parser_sp.add_argument(
         '--log',
         metavar='ARG',
         type=str,
@@ -147,12 +139,13 @@ def _add_arguments(parser):
         default='def_info',
         help='Adds a console logger for the specified level (default: error)'
     )
-    parser.add_argument(
+    parser_sp.add_argument(
         '--silent',
         action='store_true',
         default=False,
         help='run %(prog)s silently'
     )
+
     parser.add_argument(
         '--version',
         action='version',

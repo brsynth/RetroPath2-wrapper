@@ -31,7 +31,6 @@ class TestRetropath2:
             source_file=source_mnxm790_csv,
             rules_file=rules_csv,
             outdir=tempdir,
-            kzenodo_ver=list(KNIME_ZENODO.keys())[0],
             logger=logger,
         )
         assert r_code == RETCODES['SrcInSink']
@@ -49,7 +48,6 @@ class TestRetropath2:
             kinstall=tempdir,
             outdir=tempdir,
             msc_timeout=10,
-            kzenodo_ver=list(KNIME_ZENODO.keys())[0],
             logger=logger,
         )
         # Specific test for windows due to Github Runner memory consumption.

@@ -31,7 +31,6 @@ from .Args import (
     DEFAULT_MSC_TIMEOUT,
     DEFAULT_KNIME_VERSION,
     DEFAULT_RP2_VERSION,
-    DEFAULT_ZENODO_VERSION,
     RETCODES,
 )
 from retropath2_wrapper.knime import Knime
@@ -45,8 +44,7 @@ def retropath2(
     sink_file: str, source_file: str, rules_file: str,
     outdir: str,
     kinstall: str = DEFAULT_KNIME_FOLDER,
-    kexec: str = None, kpkg_install: bool = True, kver: str = DEFAULT_KNIME_VERSION,
-    kzenodo_ver: str = DEFAULT_ZENODO_VERSION,
+    kexec: str = None, kver: str = DEFAULT_KNIME_VERSION,
     knime: Knime = None,
     rp2_version: str = DEFAULT_RP2_VERSION,
     max_steps: int = 3,
@@ -62,7 +60,6 @@ def retropath2(
     logger.debug(f'rules_file: {rules_file}')
     logger.debug(f'outdir: {outdir}')
     logger.debug(f'kexec: {kexec}')
-    logger.debug(f'kpkg_install: {kpkg_install}')
     logger.debug(f'kinstall: {kinstall}')
     logger.debug(f'kver: {kver}')
     logger.debug(f'rp2_version: {rp2_version}')
@@ -75,7 +72,7 @@ def retropath2(
 
     # Create Knime object
     if knime is None:
-        knime = Knime(kexec=kexec, kinstall=kinstall, is_kpkg_install=kpkg_install, kver=kver, kzenodo_ver=kzenodo_ver)
+        knime = Knime(kexec=kexec, kinstall=kinstall, kver=kver)
     if rp2_version is not None:
         knime.workflow = os_path.join(
             here, 'workflows', f'RetroPath2.0_{rp2_version}.knwf'
@@ -98,14 +95,9 @@ def retropath2(
         return r_code, None
 
     # Install KNIME
-    #      if kexec is not specified
-    #  and executable not detected in default path
-    knime.install_exec(logger=logger)
-    r_code = knime.install_pkgs(logger=logger)
+    r_code = knime.install(logger=logger)
     if r_code > 0:
         return r_code, None
-    elif r_code == RETCODES['OSError']:
-        return RETCODES['OSError'], None
 
     logger.info('{attr1}Initializing{attr2}'.format(attr1=attr('bold'), attr2=attr('reset')))
 
