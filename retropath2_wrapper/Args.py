@@ -9,9 +9,18 @@ from argparse import ArgumentParser
 from retropath2_wrapper._version import __version__
 
 
-DEFAULT_MSC_TIMEOUT = 10  # minutes
-DEFAULT_KNIME_VERSION = "4.6.4"
-DEFAULT_RP2_VERSION = 'r20220104'
+__PACKAGE_FOLDER = os_path.dirname(
+    os_path.realpath(__file__)
+)
+DEFAULTS = {
+    'MSC_TIMEOUT': 10,  # minutes
+    'KNIME_VERSION': '4.6.4',
+    'RP2_VERSION': 'r20220104',
+    'ZENODO_VERSION': "NA",
+    'KNIME_PYTHON_VERSION': '4.6.0.v202206100850',
+    'KNIME_RDKIT_VERSION': '4.6.1.v202212212136',
+    'KNIME_FOLDER': __PACKAGE_FOLDER
+}
 KNIME_ZENODO = {"4.6.4": "7515771", "4.7.0": "7564938"} # Map to Zenodo ID
 RETCODES = {
     'OK': 0,
@@ -24,10 +33,6 @@ RETCODES = {
     'OSError': 2,
     'InChI': 3
 }
-__PACKAGE_FOLDER = os_path.dirname(
-    os_path.realpath(__file__)
-)
-DEFAULT_KNIME_FOLDER = __PACKAGE_FOLDER
 
 
 def build_args_parser():
@@ -90,7 +95,7 @@ def _add_arguments(parser):
     parser_knime.add_argument(
         '--kinstall',
         type=str,
-        default=DEFAULT_KNIME_FOLDER,
+        default=DEFAULTS['KNIME_FOLDER'],
         help='path to KNIME executable file (KNIME will be \
               downloaded if not already installed or path is \
               wrong).'
@@ -108,9 +113,23 @@ def _add_arguments(parser):
     parser_rp.add_argument(
         '--rp2_version',
         type=str,
-        default=DEFAULT_RP2_VERSION,
+        default=DEFAULTS['RP2_VERSION'],
         choices=['v9', 'r20210127', 'r20220104', "r20220224"],
-        help=f'version of RetroPath2.0 workflow (default: {DEFAULT_RP2_VERSION}).'
+        help=f'Version of RetroPath2.0 workflow (default: {DEFAULTS["RP2_VERSION"]}).'
+    )
+
+    parser.add_argument(
+        '--kpython_version',
+        type=str,
+        default=DEFAULTS['KNIME_PYTHON_VERSION'],
+        help=f'Version of KNIME\'s PYTHON (default: {DEFAULTS["KNIME_PYTHON_VERSION"]}).'
+    )
+
+    parser.add_argument(
+        '--krdkit_version',
+        type=str,
+        default=DEFAULTS['KNIME_RDKIT_VERSION'],
+        help=f'Version of RDKit KNIME\'s plugin (default: {DEFAULTS["KNIME_RDKIT_VERSION"]}).'
     )
 
     parser_rp.add_argument('--max_steps'    , type=int, default=3)
@@ -121,8 +140,8 @@ def _add_arguments(parser):
     parser_rp.add_argument(
         '--msc_timeout',
         type=int,
-        default=DEFAULT_MSC_TIMEOUT,
-        help=f'Defines the time after which the RDKit MCS Aggregation method will stop searching for best match (default: {DEFAULT_MSC_TIMEOUT}).'
+        default=DEFAULTS['MSC_TIMEOUT'],
+        help=f'Defines the time after which the RDKit MCS Aggregation method will stop searching for best match (default: {DEFAULTS["MSC_TIMEOUT"]}).'
     )
     # parser.add_argument('--forward'      , action='store_true')
 
