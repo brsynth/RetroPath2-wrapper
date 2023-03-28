@@ -5,9 +5,7 @@ import subprocess
 import tempfile
 
 import pytest
-from retropath2_wrapper.Args import (
-    DEFAULTS, KNIME_ZENODO, RETCODES
-)
+from retropath2_wrapper.Args import DEFAULT_KNIME_VERSION, KNIME_ZENODO, RETCODES
 from retropath2_wrapper.knime import Knime
 
 
@@ -61,7 +59,7 @@ class TestKnime:
     def test_install_knime_from_zenodo(self):
         tempdir = tempfile.mkdtemp()
 
-        knime = Knime(workflow="", kinstall=tempdir, kzenodo_ver=list(KNIME_ZENODO.keys())[0])
+        knime = Knime(workflow="", kinstall=tempdir, kver=list(KNIME_ZENODO.keys())[0])
         knime.install_exec()
         kexec = TestKnime.filter_exec(path=tempdir)
         assert kexec is not None

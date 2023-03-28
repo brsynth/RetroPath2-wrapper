@@ -7,7 +7,7 @@ Implementation of the KNIME retropath2.0 workflow. Takes for input the minimal (
 ## Prerequisites
 
 * Python 3
-* KNIME (code was tested on 4.5.0 version)
+* KNIME (code was tested on `4.6.4`, `4.7.0` versions)
 
 ## Install
 
@@ -21,7 +21,7 @@ The tool tries to install the KNIME Anlytical Platform as well as the RetroPath2
 
 Install in the `<my_env>` conda environment:
 ```shell
-conda install -c conda-forge -n <my_env> retropath2_wrapper 
+conda install -c conda-forge -n <my_env> retropath2_wrapper
 ```
 
 ## Run
@@ -64,8 +64,6 @@ r_code = retropath2(
     )
 ```
 
-For convenience, the retropath2_wrapper make an attempt to install the KNIME application, and the needed KNIME dependancies. KNIME installation can be skipped by setting  `kexec` to the KNIME executable path, and KNIME dependancies can be skipped using `kpkg_install=False`.
-
 Already installed KNIME app can hence be used that way, eg:
 ```python
 from retropath2_wrapper import retropath2
@@ -76,7 +74,6 @@ r_code = retropath2(
     rules_file='/path/to/rules/file',
     outdir='/path/to/outdir'
     kexec='/Applications/KNIME 4.3.0.app/Contents/MacOS/knime',
-    kpkg_install=False
     )
 ```
 
@@ -85,13 +82,12 @@ Executions can be timed out using the `timeout` arguments (in minutes).
 ### Return codes
 
 `retropath2()` function returns one of the following codes:
-* 0: `No error`
-* 1: `Source has been found in the sink`
-* 2: `Cannot find source-in-sink file`
-* 3: `Running the RetroPath2.0 Knime program produced an OSError`
-* 4: `RetroPath2.0 has found no solution`
-* 5: `Time limit reached`
-
+* 0: No error
+* 1: File is not found
+* 2: Running the RetroPath2.0 Knime program produced an OSError
+* 3: InChI is malformated
+* 10: Source has been found in the sink (warning)
+* 11: No solution is found (warning)
 
 ## Tests
 Test can be run with the following commands:
@@ -105,6 +101,10 @@ python -m pytest tests
 To run functional tests, the environment variable `RP2_FUNCTIONAL=TRUE` is required.
 
 ### Knime dependencies
+
+Two options are available:
+1. You provide a path of the Knime executable through the argument `--kexec`. You need to have the following libraries installed: `org.knime.features.chem.types.feature.group`, `org.knime.features.datageneration.feature.group`, `org.knime.features.python.feature.group`, `org.rdkit.knime.feature.feature.group`
+2. `retropath2_wrapper` will install Knime for you by downloading the softwares available on Zenodo. You can choose a version among `4.6.4` or `4.7.0`. Optionally, you can locate a path for the installation. If an executable is found in the path, Knime will not be reinstalled.
 
 Knime software and packages are available at:
 * [KNIME](https://www.knime.com/)

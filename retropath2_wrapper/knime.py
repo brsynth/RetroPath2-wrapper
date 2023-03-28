@@ -21,7 +21,8 @@ from brs_utils  import (
 )
 from colored import attr
 from retropath2_wrapper.Args import (
-    DEFAULTS,
+    DEFAULT_KNIME_FOLDER,
+    DEFAULT_KNIME_VERSION,
     KNIME_ZENODO,
     RETCODES,
 )
@@ -43,16 +44,8 @@ class Knime(object):
         install or not Knime executable
     kinstall: str
         path install knime
-    kpkg_install: str
-        path to install knime packages
-    is_kpkg_install:
-        install or not Knime package
     kurl: str
         an url to download Knime (from Knime or Zenodo)
-    kzenodo_ver: str
-        the Knime version to download from Zenodo
-    is_zenodo: bool
-        use Zenodo to download executable and packages
     kzenodo_id: str
         Zenodo repository ID
 
@@ -77,46 +70,26 @@ class Knime(object):
     ZENODO_API = "https://zenodo.org/api/"
     KNIME_URL = "http://download.knime.org/analytics-platform/"
 
-    def __init__(
-        self,
-        workflow: str="",
-        kinstall: str=DEFAULTS['KNIME_FOLDER'],
-        kver: str = DEFAULTS['KNIME_VERSION'],
-        kpython_ver: str=DEFAULTS['KNIME_PYTHON_VERSION'],
-        krdkit_ver: str=DEFAULTS['KNIME_RDKIT_VERSION'],
-        is_kpkg_install: bool=False,
-        kexec: Optional[str]=None,
-        kzenodo_ver: str=DEFAULTS['ZENODO_VERSION'],
-        # *args, **kwargs
-    ) -> None:
+    def __init__(self, workflow: str="", kinstall: str=DEFAULT_KNIME_FOLDER, kver: str = DEFAULT_KNIME_VERSION, kexec: Optional[str]=None, *args, **kwargs) -> None:
 
         self.workflow = workflow
-        self.kver = kver
-        self.kpython_ver = kpython_ver
-        self.krdkit_ver = krdkit_ver
-        self.is_kpkg_install = is_kpkg_install
-        self.kexec = kexec
-        self.kzenodo_ver = kzenodo_ver
-        self.kexec_install = False
         self.kinstall = kinstall
+        self.kver = kver
+        self.kexec = kexec
+        self.kexec_install = False
         self.kpkg_install = ""
-        self.is_zenodo = False
+        self.kurl = ""
         self.kzenodo_id = ""
 
-        # Zenodo
-        self.is_zenodo = False
-        if self.kzenodo_ver != DEFAULTS['ZENODO_VERSION']:
-            self.kzenodo_id = KNIME_ZENODO[self.kzenodo_ver]
-            self.is_zenodo = True
-            self.kver = self.kzenodo_ver
+        # Setting kexec, kpath, kinstall, kver
+        if self.kexec is None:
+            self.kzenodo_id = KNIME_ZENODO[self.kver]
             zenodo_query = self.zenodo_show_repo()
             for zenodo_file in zenodo_query["files"]:
                 if sys.platform in zenodo_file["links"]["self"]:
                     self.kurl = zenodo_file["links"]["self"]
                     break
 
-        # Setting kexec, kpath, kinstall, kver
-        if self.kexec is None:
             self.kinstall = os.path.join(self.kinstall, '.knime', sys.platform)
             if sys.platform == 'darwin':
                 kpath = os.path.join(self.kinstall, f'KNIME_{self.kver}.app')
@@ -126,44 +99,42 @@ class Knime(object):
                 self.kexec = os.path.join(kpath, 'knime')
                 if sys.platform == 'win32':
                     self.kexec += '.exe'
+
+            # Check if exec already exists
             if not os.path.exists(self.kexec):
                 self.kexec_install = True
+
+            # Create url
+            self.kurl = ""
+            if self.kver != "":
+                if sys.platform == "linux":
+                    self.kurl = urllib.parse.urljoin(self.KNIME_URL, "linux/knime_%s.linux.gtk.x86_64.tar.gz" % (self.kver,))
+                elif sys.platform == "darwin":
+                    self.kurl = urllib.parse.urljoin(self.KNIME_URL, "macosx/knime_%s.app.macosx.cocoa.x86_64.dmg" % (self.kver,))
+                else:
+                    self.kurl = urllib.parse.urljoin(self.KNIME_URL, "win/knime_%s.win32.win32.x86_64.zip" % (self.kver,))
+
+            # Pkg variable
+            self.kpkg_install = kpath
+            if sys.platform == 'darwin':
+                self.kpkg_install = os.path.join(self.kpkg_install, 'Contents', 'Eclipse')
+
         else:
             if sys.platform in ['linux', 'darwin']:
                 self.kinstall = os.path.dirname(os.path.dirname(self.kexec))
             self.kver = ""
 
-        # Create url
-        self.kurl = ""
-        if self.kver != "":
-            if sys.platform == "linux":
-                self.kurl = urllib.parse.urljoin(self.KNIME_URL, "linux/knime_%s.linux.gtk.x86_64.tar.gz" % (self.kver,))
-            elif sys.platform == "darwin":
-                self.kurl = urllib.parse.urljoin(self.KNIME_URL, "macosx/knime_%s.app.macosx.cocoa.x86_64.dmg" % (self.kver,))
-            else:
-                self.kurl = urllib.parse.urljoin(self.KNIME_URL, "win/knime_%s.win32.win32.x86_64.zip" % (self.kver,))
-
-        # Pkg variable
-        if self.kexec_install or self.is_kpkg_install:
-            self.kpkg_install = kpath
-            if sys.platform == 'darwin':
-                self.kpkg_install = os.path.join(self.kpkg_install, 'Contents', 'Eclipse')
-
     def __repr__(self):
         s = ["Knime vars:"]
         s.append("workflow: " + self.workflow)
         s.append("kver: " + self.kver)
-        s.append("kpython_ver: " + self.kpython_ver)
-        s.append("krdkit_ver: " + self.krdkit_ver)
-        s.append("is_kpkg_install: " + str(self.kpkg_install))
         s.append("kpkg_install: " + self.kpkg_install)
         s.append("kexec: " + self.kexec)
         s.append("kexec_install: " + str(self.kexec_install))
         s.append("kinstall: " + self.kinstall)
-        s.append("kurl: " + self.kurl)
-        s.append("is_zenodo: " + str(self.is_zenodo))
-        if self.is_zenodo:
-            s.append("kzenodo_ver: " + self.kzenodo_ver)
+        if self.kurl != "":
+            s.append("kurl: " + self.kurl)
+        if self.kzenodo_id != "":
             s.append("kzenodo_id: " + self.kzenodo_id)
         return "\n".join(s)
 
@@ -207,38 +178,32 @@ class Knime(object):
         ------
         None
         """
-        if self.kexec_install:
-            logger.info('{attr1}Downloading KNIME {kver}...{attr2}'.format(attr1=attr('bold'), kver=self.kver, attr2=attr('reset')))
-            if sys.platform == 'linux':
-                download_and_extract_tar_gz(self.kurl, self.kinstall)
-                chown_r(self.kinstall, getuser())
-                # chown_r(kinstall, geteuid(), getegid())
-            elif sys.platform == 'darwin':
-                with tempfile.NamedTemporaryFile() as tempf:
-                    download(self.kurl, tempf.name)
-                    app_path = f'{self.kinstall}/KNIME_{self.kver}.app'
-                    if os.path.exists(app_path):
-                        shutil.rmtree(app_path)
-                    with tempfile.TemporaryDirectory() as tempd:
-                        cmd = f'hdiutil mount -noverify {tempf.name} -mountpoint {tempd}/KNIME'
-                        subprocess_call(cmd, logger=logger)
-                        shutil.copytree(
-                            f'{tempd}/KNIME/KNIME {self.kver}.app',
-                            app_path
-                        )
-                        cmd = f'hdiutil unmount {tempd}/KNIME'
-                        subprocess_call(cmd, logger=logger)
-            else:  # Windows
-                download_and_unzip(self.kurl, self.kinstall)
-            logger.info('   |--url: ' + self.kurl)
-            logger.info('   |--install_dir: ' + self.kinstall)
+        logger.info('{attr1}Downloading KNIME {kver}...{attr2}'.format(attr1=attr('bold'), kver=self.kver, attr2=attr('reset')))
+        if sys.platform == 'linux':
+            download_and_extract_tar_gz(self.kurl, self.kinstall)
+            chown_r(self.kinstall, getuser())
+            # chown_r(kinstall, geteuid(), getegid())
+        elif sys.platform == 'darwin':
+            with tempfile.NamedTemporaryFile() as tempf:
+                download(self.kurl, tempf.name)
+                app_path = f'{self.kinstall}/KNIME_{self.kver}.app'
+                if os.path.exists(app_path):
+                    shutil.rmtree(app_path)
+                with tempfile.TemporaryDirectory() as tempd:
+                    cmd = f'hdiutil mount -noverify {tempf.name} -mountpoint {tempd}/KNIME'
+                    subprocess_call(cmd, logger=logger)
+                    shutil.copytree(
+                        f'{tempd}/KNIME/KNIME {self.kver}.app',
+                        app_path
+                    )
+                    cmd = f'hdiutil unmount {tempd}/KNIME'
+                    subprocess_call(cmd, logger=logger)
+        else:  # Windows
+            download_and_unzip(self.kurl, self.kinstall)
+        logger.info('   |--url: ' + self.kurl)
+        logger.info('   |--install_dir: ' + self.kinstall)
 
-    def install_pkgs(
-        self,
-        kpython_ver: str = None,
-        krdkit_ver: str = None,
-        logger: Logger = getLogger(__name__)
-    ) -> int:
+    def install_pkgs(self, logger: Logger = getLogger(__name__)) -> int:
         """Install KNIME packages needed to execute RetroPath2.0 workflow.
 
         Parameters
@@ -250,55 +215,51 @@ class Knime(object):
         ------
         int
         """
-        if kpython_ver is None:
-            kpython_ver = self.kpython_ver
-        if krdkit_ver is None:
-            krdkit_ver = self.krdkit_ver
         returncode = 0
-        if self.kexec_install or self.is_kpkg_install:
-            StreamHandler.terminator = ""
-            logger.info( '   |- Checking KNIME packages...')
-            logger.debug(f'        + kpkg_install: {self.kpkg_install}')
-            logger.debug(f'        + kver: {self.kver}')
+        StreamHandler.terminator = ""
+        logger.info( '   |- Checking KNIME packages...')
+        logger.debug(f'        + kpkg_install: {self.kpkg_install}')
+        logger.debug(f'        + kver: {self.kver}')
 
-            tmpdir = tempfile.mkdtemp()
+        tmpdir = tempfile.mkdtemp()
 
-            args = [self.kexec]
-            args += ['-application', 'org.eclipse.equinox.p2.director']
-            args += ['-nosplash']
-            args += ['-consoleLog']
-            if self.is_zenodo:
-                zenodo_query = self.zenodo_show_repo()
-                repositories = []
-                for zenodo_file in zenodo_query["files"]:
-                    url = zenodo_file["links"]["self"]
-                    if "update.analytics-platform" in url or "TrustedCommunityContributions" in url:
-                        repo_path = os.path.join(tmpdir, os.path.basename(url))
-                        download(url, repo_path)
-                        repositories.append(repo_path)
+        args = [self.kexec]
+        args += ['-application', 'org.eclipse.equinox.p2.director']
+        args += ['-nosplash']
+        args += ['-consoleLog']
+        # Download from Zenodo
+        zenodo_query = self.zenodo_show_repo()
+        repositories = []
+        for zenodo_file in zenodo_query["files"]:
+            url = zenodo_file["links"]["self"]
+            if "update.analytics-platform" in url or "TrustedCommunityContributions" in url:
+                repo_path = os.path.join(tmpdir, os.path.basename(url))
+                download(url, repo_path)
+                repositories.append(repo_path)
 
-                args += ["-r"]
-                args.append(",".join(["jar:file:%s!/" % (x,) for x in repositories]))
+        args += ["-r"]
+        args.append(",".join(["jar:file:%s!/" % (x,) for x in repositories]))
 
-            else:
-                args += ['-r', 'http://update.knime.org/community-contributions/trunk,' \
-                    + 'http://update.knime.com/community-contributions/trusted/'+self.kver[:3]+',' \
-                    + 'http://update.knime.com/analytics-platform/'+self.kver[:3]]
-            args += ["-i", 'org.knime.features.chem.types.feature.group,' \
-                + 'org.knime.features.datageneration.feature.group,' \
-                + f'org.knime.features.python.feature.group/{kpython_ver},' \
-                + f'org.rdkit.knime.feature.feature.group/{krdkit_ver}']
-            args += ['-bundlepool', self.kpkg_install]
-            args += ['-d', self.kpkg_install]
+        args += ["-i", 'org.knime.features.chem.types.feature.group,' \
+            + 'org.knime.features.datageneration.feature.group,' \
+            + 'org.knime.features.python.feature.group,' \
+            + 'org.rdkit.knime.feature.feature.group']
+        args += ['-bundlepool', self.kpkg_install]
+        args += ['-d', self.kpkg_install]
 
-            returncode = subprocess_call(" ".join(args), logger=logger)
-            StreamHandler.terminator = "\n"
-            shutil.rmtree(tmpdir, ignore_errors=True)
+        returncode = subprocess_call(" ".join(args), logger=logger)
+        StreamHandler.terminator = "\n"
+        shutil.rmtree(tmpdir, ignore_errors=True)
 
-            logger.info(' OK')
-        else:
-            logger.info("Install packages is not requested")
+        logger.info(' OK')
         return returncode
+
+    def install(self, logger: Logger = getLogger(__name__)) -> int:
+        if self.kexec_install:
+            self.install_exec(logger=logger)
+            r_code = self.install_pkgs(logger=logger)
+            return r_code
+        return 0
 
     def call(
         self,
