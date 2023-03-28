@@ -71,6 +71,7 @@ class Knime(object):
     KNIME_URL = "http://download.knime.org/analytics-platform/"
 
     def __init__(self, workflow: str="", kinstall: str=DEFAULT_KNIME_FOLDER, kver: str = DEFAULT_KNIME_VERSION, kexec: Optional[str]=None, *args, **kwargs) -> None:
+
         self.workflow = workflow
         self.kinstall = kinstall
         self.kver = kver
@@ -202,12 +203,7 @@ class Knime(object):
         logger.info('   |--url: ' + self.kurl)
         logger.info('   |--install_dir: ' + self.kinstall)
 
-    def install_pkgs(
-        self,
-        kpython_ver: str = None,
-        krdkit_ver: str = None,
-        logger: Logger = getLogger(__name__)
-    ) -> int:
+    def install_pkgs(self, logger: Logger = getLogger(__name__)) -> int:
         """Install KNIME packages needed to execute RetroPath2.0 workflow.
 
         Parameters
@@ -219,10 +215,6 @@ class Knime(object):
         ------
         int
         """
-        if kpython_ver is None:
-            kpython_ver = self.kpython_ver
-        if krdkit_ver is None:
-            krdkit_ver = self.krdkit_ver
         returncode = 0
         StreamHandler.terminator = ""
         logger.info( '   |- Checking KNIME packages...')

@@ -46,12 +46,12 @@ def retropath2(
     kinstall: str = DEFAULT_KNIME_FOLDER,
     kexec: str = None, kver: str = DEFAULT_KNIME_VERSION,
     knime: Knime = None,
-    rp2_version: str = DEFAULTS['RP2_VERSION'],
+    rp2_version: str = DEFAULT_RP2_VERSION,
     max_steps: int = 3,
     topx: int = 100,
     dmin: int = 0, dmax: int = 1000,
     mwmax_source: int = 1000,
-    msc_timeout: int = DEFAULTS['MSC_TIMEOUT'],
+    msc_timeout: int = DEFAULT_MSC_TIMEOUT,
     logger: Logger = getLogger(__name__)
 ) -> Tuple[str, Dict]:
 
