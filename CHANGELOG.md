@@ -1,8 +1,18 @@
 # Changelog
 
+## [3.0.0](https://github.com/brsynth/RetroPath2-wrapper/tree/3.0.0) (2023-04-13)
+
+[Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/2.6.0...3.0.0)
+
 ## [2.6.0](https://github.com/brsynth/RetroPath2-wrapper/tree/2.6.0) (2023-01-30)
 
 [Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/2.5.2...2.6.0)
+
+**Merged pull requests:**
+
+- Download Knime from Zenodo [\#16](https://github.com/brsynth/RetroPath2-wrapper/pull/16) ([guillaume-gricourt](https://github.com/guillaume-gricourt))
+- Misc fix [\#13](https://github.com/brsynth/RetroPath2-wrapper/pull/13) ([guillaume-gricourt](https://github.com/guillaume-gricourt))
+- v. 4.5 was removed from knime repo [\#12](https://github.com/brsynth/RetroPath2-wrapper/pull/12) ([guillaume-gricourt](https://github.com/guillaume-gricourt))
 
 ## [2.5.2](https://github.com/brsynth/RetroPath2-wrapper/tree/2.5.2) (2022-12-01)
 
