@@ -11,6 +11,7 @@ from logging import (
     StreamHandler,
 )
 from typing import Any, Dict, Optional
+from colored import attr
 
 from brs_utils  import (
     download_and_extract_tar_gz,
@@ -19,7 +20,6 @@ from brs_utils  import (
     chown_r,
     subprocess_call
 )
-from colored import attr
 from retropath2_wrapper.Args import (
     DEFAULT_KNIME_FOLDER,
     DEFAULT_KNIME_VERSION,
