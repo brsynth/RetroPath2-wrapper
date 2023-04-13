@@ -16,6 +16,7 @@ from typing import (
     Dict,
 )
 from colored import fg, attr
+
 from brs_utils import (
     create_logger
 )

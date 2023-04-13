@@ -7,13 +7,13 @@ dependencies:
   - colored
   - freetype
   - nss-cos7-x86_64
-  - atk-devel-cos7-aarch64
+  - atk-devel-cos7-x86_64
   - cups-devel-cos7-x86_64
   - xorg-libxcomposite
   - xorg-libxdamage
   - xorg-libxrandr
   - libxkbcommon-devel-cos7-x86_64
-  - alsa-lib-devel-cos7-aarch64
+  - alsa-lib-devel-cos7-x86_64
   - libxshmfence-devel-cos7-x86_64
   - mesa-libgbm-cos7-x86_64
   - libdrm-cos7-x86_64
