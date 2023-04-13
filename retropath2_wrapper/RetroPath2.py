@@ -6,12 +6,10 @@ Created on January 16 2020
 @description: Python wrapper to run RetroPath2.0 KNIME workflow
 
 """
-from os         import (
+from os import (
     mkdir as os_mkdir,
     path  as os_path,
-    rename,
-    # geteuid,
-    # getegid
+    rename
 )
 from shutil import copyfile
 from brs_utils import extract_gz
