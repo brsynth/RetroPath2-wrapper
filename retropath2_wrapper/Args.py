@@ -6,6 +6,7 @@ Created on May 4 2020
 """
 from os import path as os_path
 from argparse import ArgumentParser
+
 from retropath2_wrapper._version import __version__
 
 

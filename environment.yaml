@@ -6,9 +6,8 @@ dependencies:
   - filetype
   - colored
   - freetype
-  - nss
-  - atk-1.0
-  - at-spi2-atk
+  - nss-cos7-x86_64
+  - atk-devel-cos7-aarch64
   - cups-devel-cos7-x86_64
   - xorg-libxcomposite
   - xorg-libxdamage
