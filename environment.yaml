@@ -18,4 +18,3 @@ dependencies:
   - libxshmfence-devel-cos6-x86_64
   - mesa-libgbm-cos6-x86_64
   - libdrm
-  
