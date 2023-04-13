@@ -326,6 +326,9 @@ class Knime(object):
                 ) + ':' + os.path.join(
                     os.environ['CONDA_PREFIX'],
                     "lib"
+                ) + ':' + os.path.join(
+                    os.environ['CONDA_PREFIX'],
+                    "x86_64-conda-linux-gnu/sysroot/usr/lib64"
                 )
                 is_ld_path_modified = True
 
