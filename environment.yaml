@@ -9,12 +9,12 @@ dependencies:
   - nss
   - atk-1.0
   - at-spi2-atk
-  - libcups
+  - cups-devel-cos7-x86_64
   - xorg-libxcomposite
   - xorg-libxdamage
   - xorg-libxrandr
-  - libxkbcommon
-  - alsa-lib
-  - libxshmfence-devel-cos6-x86_64
-  - mesa-libgbm-cos6-x86_64
-  - libdrm
+  - libxkbcommon-devel-cos7-x86_64
+  - alsa-lib-devel-cos7-aarch64
+  - libxshmfence-devel-cos7-x86_64
+  - mesa-libgbm-cos7-x86_64
+  - libdrm-cos7-x86_64

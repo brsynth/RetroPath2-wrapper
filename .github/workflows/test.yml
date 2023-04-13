@@ -19,7 +19,7 @@ jobs:
     runs-on: ${{ matrix.os }}-latest
     strategy:
       matrix:
-        os: ["ubuntu", "windows"]
+        os: ["macos", "ubuntu", "windows"]
     defaults:
       run:
         shell: bash -l {0}
