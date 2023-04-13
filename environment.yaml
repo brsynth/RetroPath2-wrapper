@@ -6,3 +6,16 @@ dependencies:
   - filetype
   - colored
   - freetype
+  - nss
+  - atk-1.0
+  - at-spi2-atk
+  - libcups
+  - xorg-libxcomposite
+  - xorg-libxdamage
+  - xorg-libxrandr
+  - libxkbcommon
+  - alsa-lib
+  - libxshmfence-devel-cos6-x86_64
+  - mesa-libgbm-cos6-x86_64
+  - libdrm
+  
