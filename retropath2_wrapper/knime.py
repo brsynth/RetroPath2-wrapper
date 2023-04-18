@@ -234,6 +234,7 @@ class Knime(object):
             url = zenodo_file["links"]["self"]
             if "update.analytics-platform" in url or "TrustedCommunityContributions" in url:
                 repo_path = os.path.join(tmpdir, os.path.basename(url))
+                logger.info(f'        + Downloading {url} to {repo_path}...')
                 download(url, repo_path)
                 repositories.append(repo_path)
 
