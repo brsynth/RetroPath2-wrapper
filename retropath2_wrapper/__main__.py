@@ -118,6 +118,9 @@ def _cli():
     elif r_code == RETCODES['SrcInSink']:
         logger.warning('It seems that the target product is already in the chassis.')
         logger.warning('Exiting...')
+    elif r_code == RETCODES['SinkFileMalformed']:
+        logger.error('The sink file is malformed.')
+        logger.error('Exiting...')
     else:
         logger.error(f'The following error occured: {r_code}')
         logger.error('Exiting...')

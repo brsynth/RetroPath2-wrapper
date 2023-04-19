@@ -23,7 +23,8 @@ RETCODES = {
     # Errors
     'FileNotFound': 1,
     'OSError': 2,
-    'InChI': 3
+    'InChI': 3,
+    'SinkFileMalformed': 4,
 }
 __PACKAGE_FOLDER = os_path.dirname(
     os_path.realpath(__file__)

@@ -153,6 +153,8 @@ def check_input(
         return RETCODES['SrcInSink'], None
     elif r_code == RETCODES['FileNotFound']:
         return RETCODES['FileNotFound'], None
+    elif r_code == RETCODES['SinkFileMalformed']:
+        return RETCODES['SinkFileMalformed'], None
 
     return RETCODES['OK'], inchi
 
@@ -185,9 +187,13 @@ def check_src_in_sink_1(
     try:
         with open(sink_file, 'r') as f:
             for row in csv_reader(f, delimiter=',', quotechar='"'):
-                if source_inchi == row[1]:
-                    logger.error('        source has been found in sink')
-                    return RETCODES['SrcInSink']
+                try:
+                    if source_inchi == row[1]:
+                        logger.error('        source has been found in sink')
+                        return RETCODES['SrcInSink']
+                except IndexError:
+                    # logger.error('        sink file is not well-formed')
+                    return RETCODES['SinkFileMalformed']
 
     except FileNotFoundError as e:
         logger.error(e)
