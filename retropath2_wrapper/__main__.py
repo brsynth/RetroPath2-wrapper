@@ -77,10 +77,15 @@ def _cli():
 
     # Create Knime object
     here = os_path.dirname(os_path.realpath(__file__))
+    if args.kplugins == "":
+        kplugins = []
+    else:
+        kplugins = args.kplugins.split(',')
     knime = Knime(
         kexec=args.kexec,
         kinstall=args.kinstall,
         kver=args.kver,
+        kplugins=kplugins,
         workflow=os_path.join(here, 'workflows', 'RetroPath2.0_%s.knwf' % (args.rp2_version,)),
     )
     # Print out configuration

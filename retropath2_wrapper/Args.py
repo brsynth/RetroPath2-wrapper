@@ -10,9 +10,39 @@ from argparse import ArgumentParser
 from retropath2_wrapper._version import __version__
 
 
-DEFAULT_MSC_TIMEOUT = 10  # minutes
-DEFAULT_KNIME_VERSION = "4.6.4"
-DEFAULT_RP2_VERSION = 'r20220104'
+__PACKAGE_FOLDER = os_path.dirname(
+    os_path.realpath(__file__)
+)
+DEFAULTS = {
+    'MSC_TIMEOUT': 10,  # minutes
+    'KNIME_VERSION': "4.6.4",
+    'RP2_VERSION': 'r20220224',
+    'KNIME_FOLDER': __PACKAGE_FOLDER,
+    'KNIME_REPOS': [
+            # 'http://update.knime.com/partner/',
+            'http://update.knime.com/community-contributions/trunk/',
+            'http://update.knime.com/community-contributions/trusted/4.6',
+            'http://update.knime.com/analytics-platform/4.6'
+        ],
+    'KNIME_PLUGINS': ','.join(
+        [
+            'org.knime.base',
+            'org.knime.python.nodes',
+            'org.knime.datageneration',
+            'org.knime.chem.base',
+            'org.rdkit.knime.feature.feature.group/4.8.1.v202312052327',
+            'org.rdkit.knime.nodes/4.8.1.v202312052327',
+            # 'org.knime.python.nodes/4.6.0.v202203011403',
+            # 'org.knime.datageneration/4.6.0.v202202251621',
+            # 'org.knime.chem.base/4.6.0.v202202251610',
+            # 'org.rdkit.knime.feature.feature.group/4.8.1.v202312052327',
+            # 'org.rdkit.knime.nodes/4.8.1.v202312052327',
+        ]
+    )
+}
+# DEFAULTS['KNIME_PLUGINS'] = ','.join(
+#     [pkg.split('/')[0] for pkg in DEFAULTS['KNIME_PLUGINS'].split(',')]
+# )
 KNIME_ZENODO = {"4.6.4": "7515771", "4.7.0": "7564938"} # Map to Zenodo ID
 RETCODES = {
     'OK': 0,
@@ -26,10 +56,6 @@ RETCODES = {
     'InChI': 3,
     'SinkFileMalformed': 4,
 }
-__PACKAGE_FOLDER = os_path.dirname(
-    os_path.realpath(__file__)
-)
-DEFAULT_KNIME_FOLDER = __PACKAGE_FOLDER
 
 
 def build_args_parser():
@@ -92,7 +118,7 @@ def _add_arguments(parser):
     parser_knime.add_argument(
         '--kinstall',
         type=str,
-        default=DEFAULT_KNIME_FOLDER,
+        default=DEFAULTS['KNIME_FOLDER'],
         help='path to KNIME executable file (KNIME will be \
               downloaded if not already installed or path is \
               wrong).'
@@ -100,9 +126,15 @@ def _add_arguments(parser):
     parser_knime.add_argument(
         '--kver',
         type=str,
-        default=DEFAULT_KNIME_VERSION,
+        default=DEFAULTS['KNIME_VERSION'],
         choices=list(KNIME_ZENODO.keys()),
         help='version of KNIME (mandatory if --kexec is passed).',
+    )
+    parser_knime.add_argument(
+        '--kplugins',
+        type=str,
+        default="",
+        help='KNIME plugins to use (separated by a comma).',
     )
 
     # RetroPath2.0 workflow options
@@ -110,9 +142,9 @@ def _add_arguments(parser):
     parser_rp.add_argument(
         '--rp2_version',
         type=str,
-        default=DEFAULT_RP2_VERSION,
+        default=DEFAULTS['RP2_VERSION'],
         choices=['v9', 'r20210127', 'r20220104', "r20220224"],
-        help=f'version of RetroPath2.0 workflow (default: {DEFAULT_RP2_VERSION}).'
+        help=f'version of RetroPath2.0 workflow (default: {DEFAULTS["RP2_VERSION"]}).'
     )
 
     parser_rp.add_argument('--max_steps'    , type=int, default=3)
@@ -123,8 +155,8 @@ def _add_arguments(parser):
     parser_rp.add_argument(
         '--msc_timeout',
         type=int,
-        default=DEFAULT_MSC_TIMEOUT,
-        help=f'Defines the time after which the RDKit MCS Aggregation method will stop searching for best match (default: {DEFAULT_MSC_TIMEOUT}).'
+        default=DEFAULTS['MSC_TIMEOUT'],
+        help=f'Defines the time after which the RDKit MCS Aggregation method will stop searching for best match (default: {DEFAULTS["MSC_TIMEOUT"]}).'
     )
     # parser.add_argument('--forward'      , action='store_true')
 

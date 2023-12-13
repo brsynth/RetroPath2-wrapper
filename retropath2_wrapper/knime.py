@@ -12,6 +12,8 @@ from logging import (
 )
 from typing import Any, Dict, Optional
 from colored import attr
+from typing import List
+from subprocess import PIPE as sp_PIPE
 
 from brs_utils  import (
     download_and_extract_tar_gz,
@@ -21,12 +23,37 @@ from brs_utils  import (
     subprocess_call
 )
 from retropath2_wrapper.Args import (
-    DEFAULT_KNIME_FOLDER,
-    DEFAULT_KNIME_VERSION,
+    DEFAULTS,
     KNIME_ZENODO,
     RETCODES,
 )
 from retropath2_wrapper.preference import Preference
+
+
+class KPlugin():
+    """ A Knime package/plugin class"""
+
+    def __init__(self, name: str):
+        name_version = name.split("/")
+        self.name = name_version[0]
+        self.version = name_version[1] if len(name_version) > 1 else ""
+
+    def __repr__(self):
+        if self.version != "":
+            return f"{self.name}/{self.version}"
+        return f"{self.name}"
+
+    def __eq__(self, other):
+        return self.name == other.name and self.version == other.version
+
+    def __lt__(self, other):
+        return self.version < other.version
+    
+    def __hash__(self):
+        return hash(self.name)
+    
+    def has_version(self):
+        return self.version != ""
 
 
 class Knime(object):
@@ -55,6 +82,7 @@ class Knime(object):
         Show Zenodo repository informations.
 
     @classmethod
+
     def standardize_path(cls, path: str) -> str
         Path are given with double backslashes on windows.
 
@@ -70,7 +98,17 @@ class Knime(object):
     ZENODO_API = "https://zenodo.org/api/"
     KNIME_URL = "http://download.knime.org/analytics-platform/"
 
-    def __init__(self, workflow: str="", kinstall: str=DEFAULT_KNIME_FOLDER, kver: str = DEFAULT_KNIME_VERSION, kexec: Optional[str]=None, *args, **kwargs) -> None:
+
+    def __init__(
+            self,
+            workflow: str = "",
+            kinstall: str = DEFAULTS['KNIME_FOLDER'],
+            kver: str = DEFAULTS['KNIME_VERSION'],
+            kexec: Optional[str] = None,
+            kplugins: Optional[str] = DEFAULTS['KNIME_PLUGINS'],
+            *args,
+            **kwargs
+        ) -> None:
 
         self.workflow = workflow
         self.kinstall = kinstall
@@ -124,6 +162,12 @@ class Knime(object):
                 self.kinstall = os.path.dirname(os.path.dirname(self.kexec))
             self.kver = ""
 
+        self.kplugins = kplugins
+        self.plugins_default = list(
+            map(KPlugin, DEFAULTS['KNIME_PLUGINS'].split(','))
+        )
+
+
     def __repr__(self):
         s = ["Knime vars:"]
         s.append("workflow: " + self.workflow)
@@ -137,6 +181,7 @@ class Knime(object):
         if self.kzenodo_id != "":
             s.append("kzenodo_id: " + self.kzenodo_id)
         return "\n".join(s)
+
 
     def zenodo_show_repo(self) -> Dict[str, Any]:
         """Show Zenodo repository informations.
@@ -154,6 +199,7 @@ class Knime(object):
         return r.json()
 
     @classmethod
+
     def standardize_path(cls, path: str) -> str:
         """Path are given with double backslashes on windows.
         Knime needs a path with simple slash in commandline.
@@ -170,6 +216,7 @@ class Knime(object):
         if sys.platform == 'win32':
             path = "/".join(path.split(os.sep))
         return path
+
 
     def install_exec(self, logger: Logger = getLogger(__name__)) -> None:
         """Install Knime executable
@@ -203,8 +250,192 @@ class Knime(object):
         logger.info('   |--url: ' + self.kurl)
         logger.info('   |--install_dir: ' + self.kinstall)
 
-    def install_pkgs(self, logger: Logger = getLogger(__name__)) -> int:
+
+    def manage_pkgs(
+        self,
+        plugins_to_install: Optional[str] = DEFAULTS['KNIME_PLUGINS'],
+        plugins_to_remove: Optional[str] = [],
+        logger: Logger = getLogger(__name__)
+    ) -> int:
         """Install KNIME packages needed to execute RetroPath2.0 workflow.
+
+        Parameters
+        ----------
+        plugins_to_install: Optional[str]
+            KNIME plugins to install (separated by a comma).
+        plugins_to_remove: Optional[str]
+            KNIME plugins to remove (separated by a comma).
+        logger : Logger
+            The logger object.
+
+        Return
+        ------
+        int
+        """
+        StreamHandler.terminator = ""
+        logger.info( '   |- Checking KNIME packages...')
+        logger.debug(f'        + kpkg_install: {self.kpkg_install}')
+        logger.debug(f'        + kver: {self.kver}')
+        logger.debug(f'        + plugins to install: {plugins_to_install}')
+        logger.debug(f'        + plugins to remove: {plugins_to_remove}')
+
+        if plugins_to_install == plugins_to_remove == []:
+            StreamHandler.terminator = "\n"
+            logger.info(' OK')
+            return 0
+
+        # tmpdir = tempfile.mkdtemp()
+        # tmpdir = self.kinstall
+
+        args = [self.kexec]
+        args += ['-application', 'org.eclipse.equinox.p2.director']
+        args += ['-nosplash']
+        args += ['-consoleLog']
+        # # Download from Zenodo
+        # zenodo_query = self.zenodo_show_repo()
+        # repositories = []
+        # for zenodo_file in zenodo_query["files"]:
+        #     url = zenodo_file["links"]["self"]
+        #     if "update.analytics-platform" in url or "TrustedCommunityContributions" in url:
+        #         repo_path = os.path.join(tmpdir, os.path.basename(url))
+        #         if not os.path.exists(repo_path):
+        #             logger.info(f'        + Downloading {url} to {repo_path}...')
+        #             download(url, repo_path)
+        #         repositories.append(repo_path)
+        args += ["-repository"] + [','.join(DEFAULTS['KNIME_REPOS'])]
+        # args.append(",".join(["jar:file:%s!/" % (x,) for x in repositories]))
+        args += ['-bundlepool', self.kpkg_install]
+        args += ['-destination', self.kpkg_install]
+
+        _args = []
+        if plugins_to_remove:
+            _args = ['-uninstallIU'] + [','.join(plugins_to_remove)]
+            # CPE = subprocess_call(" ".join(args+_args), logger=logger)
+
+        if plugins_to_install:
+            _args = ["-installIU"] + [','.join(plugins_to_install)]
+
+        CPE = subprocess_call(" ".join(args+_args), logger=logger)
+
+        StreamHandler.terminator = "\n"
+        # shutil.rmtree(tmpdir, ignore_errors=True)
+
+        logger.info(' OK')
+        return CPE.returncode
+
+
+    def install(self, logger: Logger = getLogger(__name__)) -> int:
+        logger.debug(f'kexec_install: {self.kexec_install}')
+
+        r_code = 0
+
+        # If order to install, install exec and pkgs
+        if self.kexec_install:
+            self.install_exec(logger=logger)
+            plugins_to_install = self.plugins_default
+            plugins_to_remove = []
+        else:
+            plugins_installed = self.list_plugins(logger=logger)
+            plugins_to_install = self.detect_plugins_to_install(plugins_installed, logger)
+            # Build list of plugins to remove
+            # build list of plugin names to install
+            plugins_to_install_names = [pkg.name for pkg in plugins_to_install]
+            # build list of plugin names already installed
+            plugins_installed_names = [pkg.name for pkg in plugins_installed]
+            # build list of plugin names to remove
+            plugins_to_remove = list(
+                set(plugins_installed_names).intersection(set(plugins_to_install_names))
+            )
+            # transform lists of KPlungins into list of str
+            plugins_to_install = [str(pkg) for pkg in plugins_to_install]
+
+        r_code = self.manage_pkgs(
+            plugins_to_install,
+            plugins_to_remove,
+            logger=logger
+        )
+
+        return r_code
+
+
+    def detect_plugins_to_install(
+        self,
+        plugins_installed: List[KPlugin],
+        logger: Logger = getLogger(__name__)
+    ) -> List[str]:
+        """Detect KNIME plugins to install.
+
+        Parameters
+        ----------
+        plugins_installed: List[KPlugin]
+            List of installed plugins.
+        logger : Logger
+            The logger object.
+
+        Return
+        ------
+        List[str]
+        """
+
+        # Be sure that plugins
+        #   - specified by the user
+        # will be installed/updated
+        plugins_to_install = list(
+            map(KPlugin, self.kplugins)
+        )
+
+        # Add plugins listed by default iff:
+        #   - not already installed
+        #   - AND not specified by the user
+        plugins_installed_names = [pkg.name for pkg in plugins_installed if pkg.name]
+        plugins_to_install_names = [pkg.name for pkg in plugins_to_install if pkg.name]
+        for pkg in self.plugins_default:
+            if pkg.name not in plugins_installed_names \
+                and pkg.name not in plugins_to_install_names:
+                # add pkg to 'plugins_to_install'
+                plugins_to_install.append(pkg)
+
+        # Remove duplicates
+        plugins_to_install = list(set(plugins_to_install))
+
+        # For plugins appearing several times in 'plugins_to_install',
+        # keep only the one with the most specified version (e.g. w/ '/4.6.0.v202202251621')
+        _plugins_to_install = plugins_to_install.copy()
+        plugins_to_install = []
+        for _pkg in _plugins_to_install:
+            _pkg_name = _pkg.name
+            # if pkg basename not in 'plugins_to_install'
+            if _pkg_name not in [
+                pkg.name for pkg in plugins_to_install
+            ]:
+                # keep pkg in the list of plugins to install
+                plugins_to_install.append(_pkg)
+            else:
+                # check if pkg version is specified
+                if '/' in _pkg:
+                    # if pkg version is specified, keep it
+                    plugins_to_install.append(_pkg)
+
+        # If plugin version is specified,
+        # remove it if:
+        #  - it is already installed,
+        #  - AND installed version > specified version
+        for pkg_to_install in plugins_to_install:
+            # version is specified
+            if pkg_to_install.has_version():
+                # if pkg is already installed
+                for pkg_installed in plugins_installed:
+                    if pkg_to_install.name == pkg_installed.name:
+                        if pkg_to_install.version <= pkg_installed.version:
+                            # remove pkg from 'plugins_to_install'
+                            plugins_to_install.remove(pkg_to_install)
+                            break
+
+        return plugins_to_install
+
+
+    def list_plugins(self, logger: Logger = getLogger(__name__)) -> list:
+        """List KNIME plugins.
 
         Parameters
         ----------
@@ -213,54 +444,26 @@ class Knime(object):
 
         Return
         ------
-        int
+        list
         """
-        returncode = 0
-        StreamHandler.terminator = ""
-        logger.info( '   |- Checking KNIME packages...')
-        logger.debug(f'        + kpkg_install: {self.kpkg_install}')
-        logger.debug(f'        + kver: {self.kver}')
-
-        tmpdir = tempfile.mkdtemp()
-
         args = [self.kexec]
         args += ['-application', 'org.eclipse.equinox.p2.director']
         args += ['-nosplash']
         args += ['-consoleLog']
-        # Download from Zenodo
-        zenodo_query = self.zenodo_show_repo()
-        repositories = []
-        for zenodo_file in zenodo_query["files"]:
-            url = zenodo_file["links"]["self"]
-            if "update.analytics-platform" in url or "TrustedCommunityContributions" in url:
-                repo_path = os.path.join(tmpdir, os.path.basename(url))
-                logger.info(f'        + Downloading {url} to {repo_path}...')
-                download(url, repo_path)
-                repositories.append(repo_path)
-
-        args += ["-r"]
-        args.append(",".join(["jar:file:%s!/" % (x,) for x in repositories]))
-
-        args += ["-i", 'org.knime.features.chem.types.feature.group,' \
-            + 'org.knime.features.datageneration.feature.group,' \
-            + 'org.knime.features.python.feature.group,' \
-            + 'org.rdkit.knime.feature.feature.group']
-        args += ['-bundlepool', self.kpkg_install]
+        args += ['-lir']
         args += ['-d', self.kpkg_install]
+        CPE = subprocess_call(
+            " ".join(args),
+            stdout=sp_PIPE,
+            logger=logger
+        )
 
-        returncode = subprocess_call(" ".join(args), logger=logger)
-        StreamHandler.terminator = "\n"
-        shutil.rmtree(tmpdir, ignore_errors=True)
+        return [
+            KPlugin(elt)
+            for elt in CPE.stdout.decode('utf-8').split("\n")
+            if (elt.startswith('org.') or elt.startswith('com.'))
+        ]
 
-        logger.info(' OK')
-        return returncode
-
-    def install(self, logger: Logger = getLogger(__name__)) -> int:
-        if self.kexec_install:
-            self.install_exec(logger=logger)
-            r_code = self.install_pkgs(logger=logger)
-            return r_code
-        return 0
 
     def call(
         self,
@@ -333,7 +536,7 @@ class Knime(object):
                 )
                 is_ld_path_modified = True
 
-            returncode = subprocess_call(cmd=" ".join(args), logger=logger)
+            CPE = subprocess_call(cmd=" ".join(args), logger=logger)
             if is_ld_path_modified:
                 os.environ['LD_LIBRARY_PATH'] = ':'.join(
                     os.environ['LD_LIBRARY_PATH'].split(':')[:-1]
@@ -341,8 +544,10 @@ class Knime(object):
 
             StreamHandler.terminator = "\n"
             logger.info(' {bold}OK{reset}'.format(bold=attr('bold'), reset=attr('reset')))
-            return returncode
+            return CPE.returncode
 
         except OSError as e:
             logger.error(e)
             return RETCODES['OSError']
+
+
