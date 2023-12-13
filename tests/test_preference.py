@@ -4,7 +4,6 @@ Created on Jul 15 2020
 @author: Joan Hérisson
 """
 import os
-import tempfile
 
 import pytest
 from retropath2_wrapper.preference import Preference

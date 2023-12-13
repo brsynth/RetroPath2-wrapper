@@ -11,7 +11,7 @@ import tempfile
 
 import pytest
 from retropath2_wrapper.__main__ import create_logger
-from retropath2_wrapper.Args import KNIME_ZENODO, RETCODES
+from retropath2_wrapper.Args import RETCODES
 from retropath2_wrapper.RetroPath2 import retropath2
 
 
