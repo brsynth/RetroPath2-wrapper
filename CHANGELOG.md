@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.1.0](https://github.com/brsynth/RetroPath2-wrapper/tree/3.1.0) (2023-12-13)
+
+[Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/3.0.1...3.1.0)
+
+**Closed issues:**
+
+- Version printed [\#7](https://github.com/brsynth/RetroPath2-wrapper/issues/7)
+
 ## [3.0.1](https://github.com/brsynth/RetroPath2-wrapper/tree/3.0.1) (2023-04-19)
 
 [Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/3.0.0...3.0.1)
