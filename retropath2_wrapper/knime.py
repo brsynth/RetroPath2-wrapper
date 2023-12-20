@@ -346,8 +346,9 @@ class Knime(object):
             plugins_to_remove = list(
                 set(plugins_installed_names).intersection(set(plugins_to_install_names))
             )
-            # transform lists of KPlungins into list of str
-            plugins_to_install = [str(pkg) for pkg in plugins_to_install]
+
+        # transform lists of KPlugins into list of str
+        plugins_to_install = [str(pkg) for pkg in plugins_to_install]
 
         r_code = self.manage_pkgs(
             plugins_to_install,
