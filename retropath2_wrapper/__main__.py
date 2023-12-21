@@ -19,6 +19,7 @@ from colored import fg, attr
 from brs_utils import (
     create_logger
 )
+
 from .RetroPath2 import (
     retropath2
 )
@@ -27,7 +28,7 @@ from .Args import (
     RETCODES
 )
 from ._version import __version__
-from retropath2_wrapper.knime import Knime
+from .knime import Knime
 
 
 def print_conf(
