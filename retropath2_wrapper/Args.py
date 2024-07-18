@@ -38,7 +38,8 @@ DEFAULTS = {
             # 'org.rdkit.knime.feature.feature.group/4.8.1.v202312052327',
             # 'org.rdkit.knime.nodes/4.8.1.v202312052327',
         ]
-    )
+    ),
+    'NO_NETWORK': False,
 }
 # DEFAULTS['KNIME_PLUGINS'] = ','.join(
 #     [pkg.split('/')[0] for pkg in DEFAULTS['KNIME_PLUGINS'].split(',')]
@@ -145,6 +146,14 @@ def _add_arguments(parser):
         default=DEFAULTS['RP2_VERSION'],
         choices=['v9', 'r20210127', 'r20220104', "r20220224"],
         help=f'version of RetroPath2.0 workflow (default: {DEFAULTS["RP2_VERSION"]}).'
+    )
+
+    # No network option
+    parser_rp.add_argument(
+        '--no-network',
+        action='store_true',
+        default=DEFAULTS['NO_NETWORK'],
+        help='Do not use network.'
     )
 
     parser_rp.add_argument('--max_steps'    , type=int, default=3)

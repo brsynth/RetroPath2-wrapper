@@ -88,6 +88,7 @@ def _cli():
         kver=args.kver,
         kplugins=kplugins,
         workflow=os_path.join(here, 'workflows', 'RetroPath2.0_%s.knwf' % (args.rp2_version,)),
+        network=not args.no_network,
     )
     # Print out configuration
     if not args.silent and args.log.lower() not in ['critical', 'error']:

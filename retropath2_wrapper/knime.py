@@ -106,6 +106,7 @@ class Knime(object):
             kver: str = DEFAULTS['KNIME_VERSION'],
             kexec: Optional[str] = None,
             kplugins: Optional[str] = DEFAULTS['KNIME_PLUGINS'],
+            network: bool = not DEFAULTS['NO_NETWORK'],
             *args,
             **kwargs
         ) -> None:
@@ -118,11 +119,16 @@ class Knime(object):
         self.kpkg_install = ""
         self.kurl = ""
         self.kzenodo_id = ""
+        self.network = network
 
         # Setting kexec, kpath, kinstall, kver
         if self.kexec is None:
+
+            if not self.network:
+                raise ValueError('Network is disabled (--no-network) and no KNIME executable is provided (--kexec).')
+
             self.kzenodo_id = KNIME_ZENODO[self.kver]
-            zenodo_query = self.zenodo_show_repo()
+            zenodo_query = self.__zenodo_show_repo()
             for zenodo_file in zenodo_query["files"]:
                 if sys.platform in zenodo_file["links"]["self"]:
                     self.kurl = zenodo_file["links"]["self"]
@@ -183,13 +189,15 @@ class Knime(object):
         return "\n".join(s)
 
 
-    def zenodo_show_repo(self) -> Dict[str, Any]:
+    def __zenodo_show_repo(self) -> Dict[str, Any]:
         """Show Zenodo repository informations.
 
         Return
         ------
         Dict[str, Any]
         """
+        if not self.network:
+            raise ValueError('Unable to show the zeonodo repo beacause network is disabled (--no-network).')
         url = urllib.parse.urljoin(
             self.ZENODO_API, "records/%s" % (self.kzenodo_id,)
         )
@@ -218,7 +226,7 @@ class Knime(object):
         return path
 
 
-    def install_exec(self, logger: Logger = getLogger(__name__)) -> None:
+    def __install_exec(self, logger: Logger = getLogger(__name__)) -> None:
         """Install Knime executable
 
         Return
@@ -251,7 +259,7 @@ class Knime(object):
         logger.info('   |--install_dir: ' + self.kinstall)
 
 
-    def manage_pkgs(
+    def __manage_pkgs(
         self,
         plugins_to_install: Optional[str] = DEFAULTS['KNIME_PLUGINS'],
         plugins_to_remove: Optional[str] = [],
@@ -329,6 +337,10 @@ class Knime(object):
 
         r_code = 0
 
+        if not self.network:
+            logger.warning('Unable to install KNIME nor plugins because network is disabled (--no-network).')
+            return r_code
+
         # If order to install, install exec and pkgs
         if self.kexec_install:
             self.install_exec(logger=logger)
@@ -350,7 +362,7 @@ class Knime(object):
         # transform lists of KPlugins into list of str
         plugins_to_install = [str(pkg) for pkg in plugins_to_install]
 
-        r_code = self.manage_pkgs(
+        r_code = self.__manage_pkgs(
             plugins_to_install,
             plugins_to_remove,
             logger=logger
