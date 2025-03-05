@@ -132,6 +132,9 @@ def _cli():
         logger.error(f'The following error occured: {r_code}')
         logger.error('Exiting...')
 
+    if args.quiet:
+        r_code = RETCODES['OK']
+
     return r_code
 
 

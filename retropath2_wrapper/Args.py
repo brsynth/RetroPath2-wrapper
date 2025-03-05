@@ -188,6 +188,12 @@ def _add_arguments(parser):
         default=False,
         help='run %(prog)s silently'
     )
+    parser_sp.add_argument(
+        '--quiet',
+        action='store_true',
+        default=False,
+        help='run %(prog)s without returning any error'
+    )
 
     parser.add_argument(
         '--version',
