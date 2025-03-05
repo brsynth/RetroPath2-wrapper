@@ -142,7 +142,6 @@ def check_results(
     result_files: Dict,
     logger: Logger = getLogger(__name__)
 ) -> int:
-
     # Check if any result has been found
     r_code = check_scope(result_files['outdir'], logger)
     return r_code
