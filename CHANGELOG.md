@@ -1,8 +1,16 @@
 # Changelog
 
+## [3.3.1](https://github.com/brsynth/RetroPath2-wrapper/tree/3.3.1) (2025-03-06)
+
+[Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/3.3.0...3.3.1)
+
 ## [3.3.0](https://github.com/brsynth/RetroPath2-wrapper/tree/3.3.0) (2025-03-05)
 
 [Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/3.2.0...3.3.0)
+
+**Merged pull requests:**
+
+- build\(deps\): bump actions/download-artifact from 2 to 4.1.7 in /.github/workflows [\#19](https://github.com/brsynth/RetroPath2-wrapper/pull/19) ([dependabot[bot]](https://github.com/apps/dependabot))
 
 ## [3.2.0](https://github.com/brsynth/RetroPath2-wrapper/tree/3.2.0) (2024-07-18)
 
