@@ -343,7 +343,7 @@ class Knime(object):
 
         # If order to install, install exec and pkgs
         if self.kexec_install:
-            self.install_exec(logger=logger)
+            self.__install_exec(logger=logger)
             plugins_to_install = self.plugins_default
             plugins_to_remove = []
         else:
