@@ -6,6 +6,9 @@ Created on January 16 2020
 @description: Python wrapper to run RetroPath2.0 KNIME workflow
 
 """
+import gzip
+import tarfile
+import zipfile
 from os import (
     mkdir as os_mkdir,
     path  as os_path,
@@ -41,6 +44,7 @@ def retropath2(
     source_file: str,
     rules_file: str,
     outdir: str,
+    std_hydrogen: str,
     kinstall: str = DEFAULTS['KNIME_FOLDER'],
     kexec: str = None,
     kver: str = DEFAULTS['KNIME_VERSION'],
@@ -60,6 +64,7 @@ def retropath2(
     logger.debug(f'source_file: {source_file}')
     logger.debug(f'rules_file: {rules_file}')
     logger.debug(f'outdir: {outdir}')
+    logger.debug(f'std_hydrogen: {std_hydrogen}')
     logger.debug(f'kexec: {kexec}')
     logger.debug(f'kinstall: {kinstall}')
     logger.debug(f'kver: {kver}')
@@ -87,7 +92,8 @@ def retropath2(
         'topx'         : topx,
         'dmin'         : dmin,
         'dmax'         : dmax,
-        'mwmax_source' : mwmax_source
+        'mwmax_source' : mwmax_source,
+        'std_hydrogen' : std_hydrogen,
     }
     logger.debug('rp2_params: ' + str(rp2_params))
 
@@ -373,3 +379,57 @@ def format_files_for_knime(
             files[key] = new_f
 
     return files
+
+def sniff_rules(path: str, logger: Logger = getLogger(__name__)) -> str:
+    hydrogen_implicit_patterns = ["[H", "!H", ",H", ";H", "&H"]
+    n = 10
+    lines = []
+    # --- Gzip compressed single file ---
+    if path.endswith(".gz") and not path.endswith(".tar.gz"):
+        with gzip.open(path, "rt", encoding="utf-8", errors="ignore") as f:
+            for i, line in enumerate(f):
+                if i >= n:
+                    break
+                lines.append(line.rstrip())
+    # --- Tar or Tar.gz archive ---
+    elif path.endswith(".tar") or path.endswith(".tar.gz"):
+        mode = "r:gz" if path.endswith(".gz") else "r:"
+        with tarfile.open(path, mode) as tar:
+            # Pick the first regular file inside
+            for member in tar:
+                if member.isfile():
+                    f = tar.extractfile(member)
+                    if f is None:
+                        continue
+                    for i, line in enumerate(f):
+                        if i >= n:
+                            break
+                        lines.append(line.decode("utf-8", errors="ignore").rstrip())
+                    break  # only first file
+    # --- Zip archive ---
+    elif path.endswith(".zip"):
+        with zipfile.ZipFile(path, "r") as zf:
+            for name in zf.namelist():
+                if name.startswith("_"):
+                    continue
+                with zf.open(name) as f:
+                    for i, line in enumerate(f):
+                        if i >= n:
+                            break
+                        lines.append(line.decode("utf-8", errors="ignore").rstrip())
+                break
+    # --- Plain text ---
+    else:
+        with open(path, "rt", encoding="utf-8", errors="ignore") as f:
+            for i, line in enumerate(f):
+                if i >= n:
+                    break
+                lines.append(line.rstrip())
+
+    for line in lines:
+        for pattern in hydrogen_implicit_patterns:
+            if pattern in line:
+                logger.info("Detect implicit hydrogens in reaction rules")
+                return "implicit"
+    logger.info("Detect explicit hydrogen in reaction rules")
+    return "explicit"

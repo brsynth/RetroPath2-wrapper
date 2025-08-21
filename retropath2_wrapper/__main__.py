@@ -21,7 +21,8 @@ from brs_utils import (
 )
 
 from .RetroPath2 import (
-    retropath2
+    retropath2,
+    sniff_rules,
 )
 from .Args import (
     build_args_parser,
@@ -95,12 +96,21 @@ def _cli():
         print_conf(knime, prog = parser.prog)
 
     logger.debug('args: ' + str(args))
+    
+    # Sniff implicit/explicit hydrogens
+    if args.std_hydrogen == "auto":
+        std_hydrogen = sniff_rules(path=args.rules_file, logger=logger)
+    if std_hydrogen == "implicit":
+        std_hydrogen = "Aromatized (no Hs added)"
+    else:
+        std_hydrogen = "H added + Aromatized"
 
     r_code, result_files = retropath2(
         sink_file=args.sink_file,
         source_file=args.source_file,
         rules_file=args.rules_file,
         outdir=args.outdir,
+        std_hydrogen=std_hydrogen,
         max_steps=args.max_steps,
         topx=args.topx,
         dmin=args.dmin,

@@ -16,7 +16,7 @@ __PACKAGE_FOLDER = os_path.dirname(
 DEFAULTS = {
     'MSC_TIMEOUT': 10,  # minutes
     'KNIME_VERSION': "4.6.4",
-    'RP2_VERSION': 'r20220224',
+    'RP2_VERSION': 'r20250728',
     'KNIME_FOLDER': __PACKAGE_FOLDER,
     'KNIME_REPOS': [
             # 'http://update.knime.com/partner/',
@@ -40,6 +40,7 @@ DEFAULTS = {
         ]
     ),
     'NO_NETWORK': False,
+    "STD_HYDROGEN": "auto",  # How hydrogens are represented in chemical rules
 }
 # DEFAULTS['KNIME_PLUGINS'] = ','.join(
 #     [pkg.split('/')[0] for pkg in DEFAULTS['KNIME_PLUGINS'].split(',')]
@@ -144,7 +145,7 @@ def _add_arguments(parser):
         '--rp2_version',
         type=str,
         default=DEFAULTS['RP2_VERSION'],
-        choices=['v9', 'r20210127', 'r20220104', "r20220224"],
+        choices=['v9', 'r20210127', 'r20220104', "r20220224", "r20250728"],
         help=f'version of RetroPath2.0 workflow (default: {DEFAULTS["RP2_VERSION"]}).'
     )
 
@@ -167,7 +168,12 @@ def _add_arguments(parser):
         default=DEFAULTS['MSC_TIMEOUT'],
         help=f'Defines the time after which the RDKit MCS Aggregation method will stop searching for best match (default: {DEFAULTS["MSC_TIMEOUT"]}).'
     )
-    # parser.add_argument('--forward'      , action='store_true')
+    parser_rp.add_argument(
+        "--std_hydrogen",
+        default=DEFAULTS["STD_HYDROGEN"],
+        choices=["auto", "implicit", "explicit"],
+        help="How hydrogens are represented in chemical rules, auto mode will try to guess from the chemical rules",
+    )
 
     # Program options
     parser_sp = parser.add_argument_group("Logging")
