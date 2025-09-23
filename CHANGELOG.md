@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.4.1](https://github.com/brsynth/RetroPath2-wrapper/tree/3.4.1) (2025-09-23)
+
+[Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/3.4.0...3.4.1)
+
+**Merged pull requests:**
+
+- Check for explicit hydrogens [\#21](https://github.com/brsynth/RetroPath2-wrapper/pull/21) ([guillaume-gricourt](https://github.com/guillaume-gricourt))
+
 ## [3.4.0](https://github.com/brsynth/RetroPath2-wrapper/tree/3.4.0) (2025-08-21)
 
 [Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/3.3.1...3.4.0)
