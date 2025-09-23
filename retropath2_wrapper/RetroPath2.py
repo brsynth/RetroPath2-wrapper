@@ -381,7 +381,7 @@ def format_files_for_knime(
     return files
 
 def sniff_rules(path: str, logger: Logger = getLogger(__name__)) -> str:
-    hydrogen_implicit_patterns = ["[H", "!H", ",H", ";H", "&H"]
+    hydrogen_explicit_patterns = ["[#1"]
     n = 10
     lines = []
     # --- Gzip compressed single file ---
@@ -427,9 +427,9 @@ def sniff_rules(path: str, logger: Logger = getLogger(__name__)) -> str:
                 lines.append(line.rstrip())
 
     for line in lines:
-        for pattern in hydrogen_implicit_patterns:
+        for pattern in hydrogen_explicit_patterns:
             if pattern in line:
-                logger.info("Detect implicit hydrogens in reaction rules")
-                return "implicit"
-    logger.info("Detect explicit hydrogen in reaction rules")
-    return "explicit"
+                logger.info("Detect explicit hydrogens in reaction rules")
+                return "explicit"
+    logger.info("Detect implicit hydrogen in reaction rules")
+    return "implicit"
