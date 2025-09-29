@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.4.2](https://github.com/brsynth/RetroPath2-wrapper/tree/3.4.2) (2025-09-29)
+
+[Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/3.4.1...3.4.2)
+
+**Merged pull requests:**
+
+- Fix Knime Subprocess [\#22](https://github.com/brsynth/RetroPath2-wrapper/pull/22) ([guillaume-gricourt](https://github.com/guillaume-gricourt))
+
 ## [3.4.1](https://github.com/brsynth/RetroPath2-wrapper/tree/3.4.1) (2025-09-23)
 
 [Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/3.4.0...3.4.1)
