@@ -1,6 +1,7 @@
 import os
 import requests
 import shutil
+import subprocess
 import sys
 import tempfile
 import urllib.parse
@@ -20,7 +21,7 @@ from brs_utils  import (
     download,
     download_and_unzip,
     chown_r,
-    subprocess_call
+    subprocess_call,
 )
 from retropath2_wrapper.Args import (
     DEFAULTS,
@@ -526,6 +527,7 @@ class Knime(object):
         args += ['-workflow.variable=output.dir,"%s",String' % (self.standardize_path(files['outdir']),)]
         args += ['-workflow.variable=output.solutionfile,"%s",String' % (self.standardize_path(files['results']),)]
         args += ['-workflow.variable=output.sourceinsinkfile,"%s",String' % (self.standardize_path(files['src-in-sk']),)]
+        print("Hydrogen:", params["std_hydrogen"])
         args += ['-workflow.variable=input.std_mode,"%s",String' % (params["std_hydrogen"],)]
         if preference and preference.is_init():
             preference.to_file()
@@ -550,7 +552,8 @@ class Knime(object):
                 )
                 is_ld_path_modified = True
 
-            CPE = subprocess_call(cmd=" ".join(args), logger=logger)
+            CPE = subprocess.run(args)
+            logger.debug(CPE)
             if is_ld_path_modified:
                 os.environ['LD_LIBRARY_PATH'] = ':'.join(
                     os.environ['LD_LIBRARY_PATH'].split(':')[:-1]
