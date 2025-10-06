@@ -15,37 +15,10 @@ __PACKAGE_FOLDER = os_path.dirname(
 )
 DEFAULTS = {
     'MSC_TIMEOUT': 10,  # minutes
-    'KNIME_VERSION': "4.6.4",
     'RP2_VERSION': 'r20250728',
     'KNIME_FOLDER': __PACKAGE_FOLDER,
-    'KNIME_REPOS': [
-            # 'http://update.knime.com/partner/',
-            'http://update.knime.com/community-contributions/trunk/',
-            'http://update.knime.com/community-contributions/trusted/4.6',
-            'http://update.knime.com/analytics-platform/4.6'
-        ],
-    'KNIME_PLUGINS': ','.join(
-        [
-            'org.knime.base',
-            'org.knime.python.nodes',
-            'org.knime.datageneration',
-            'org.knime.chem.base',
-            'org.rdkit.knime.feature.feature.group/4.8.1.v202312052327',
-            'org.rdkit.knime.nodes/4.8.1.v202312052327',
-            # 'org.knime.python.nodes/4.6.0.v202203011403',
-            # 'org.knime.datageneration/4.6.0.v202202251621',
-            # 'org.knime.chem.base/4.6.0.v202202251610',
-            # 'org.rdkit.knime.feature.feature.group/4.8.1.v202312052327',
-            # 'org.rdkit.knime.nodes/4.8.1.v202312052327',
-        ]
-    ),
-    'NO_NETWORK': False,
     "STD_HYDROGEN": "auto",  # How hydrogens are represented in chemical rules
 }
-# DEFAULTS['KNIME_PLUGINS'] = ','.join(
-#     [pkg.split('/')[0] for pkg in DEFAULTS['KNIME_PLUGINS'].split(',')]
-# )
-KNIME_ZENODO = {"4.6.4": "7515771", "4.7.0": "7564938"} # Map to Zenodo ID
 RETCODES = {
     'OK': 0,
     'NoError': 0,
@@ -57,6 +30,7 @@ RETCODES = {
     'OSError': 2,
     'InChI': 3,
     'SinkFileMalformed': 4,
+    'KnimeInstallationError': 5,
 }
 
 
@@ -110,33 +84,10 @@ def _add_arguments(parser):
     # Knime
     parser_knime = parser.add_argument_group("Knime arguments")
     parser_knime.add_argument(
-        '--kexec',
-        type=str,
-        default=None,
-        help='path to KNIME executable file (KNIME will be \
-              downloaded if not already installed or path is \
-              wrong).'
-    )
-    parser_knime.add_argument(
         '--kinstall',
         type=str,
         default=DEFAULTS['KNIME_FOLDER'],
-        help='path to KNIME executable file (KNIME will be \
-              downloaded if not already installed or path is \
-              wrong).'
-    )
-    parser_knime.add_argument(
-        '--kver',
-        type=str,
-        default=DEFAULTS['KNIME_VERSION'],
-        choices=list(KNIME_ZENODO.keys()),
-        help='version of KNIME (mandatory if --kexec is passed).',
-    )
-    parser_knime.add_argument(
-        '--kplugins',
-        type=str,
-        default="",
-        help='KNIME plugins to use (separated by a comma).',
+        help='Directory where to find a KNIME executable file',
     )
 
     # RetroPath2.0 workflow options
@@ -147,14 +98,6 @@ def _add_arguments(parser):
         default=DEFAULTS['RP2_VERSION'],
         choices=['v9', 'r20210127', 'r20220104', "r20220224", "r20250728"],
         help=f'version of RetroPath2.0 workflow (default: {DEFAULTS["RP2_VERSION"]}).'
-    )
-
-    # No network option
-    parser_rp.add_argument(
-        '--no-network',
-        action='store_true',
-        default=DEFAULTS['NO_NETWORK'],
-        help='Do not use network.'
     )
 
     parser_rp.add_argument('--max_steps'    , type=int, default=3)

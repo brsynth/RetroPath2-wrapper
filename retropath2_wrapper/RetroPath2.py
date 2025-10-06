@@ -45,11 +45,7 @@ def retropath2(
     rules_file: str,
     outdir: str,
     std_hydrogen: str,
-    kinstall: str = DEFAULTS['KNIME_FOLDER'],
-    kexec: str = None,
-    kver: str = DEFAULTS['KNIME_VERSION'],
-    knime: Knime = None,
-    kplugins: list = DEFAULTS['KNIME_PLUGINS'],
+    knime: Knime,
     rp2_version: str = DEFAULTS['RP2_VERSION'],
     max_steps: int = 3,
     topx: int = 100,
@@ -65,9 +61,6 @@ def retropath2(
     logger.debug(f'rules_file: {rules_file}')
     logger.debug(f'outdir: {outdir}')
     logger.debug(f'std_hydrogen: {std_hydrogen}')
-    logger.debug(f'kexec: {kexec}')
-    logger.debug(f'kinstall: {kinstall}')
-    logger.debug(f'kver: {kver}')
     logger.debug(f'rp2_version: {rp2_version}')
     logger.debug(f'max_steps: {max_steps}')
     logger.debug(f'topx: {topx}')
@@ -78,12 +71,15 @@ def retropath2(
 
     # Create Knime object
     if knime is None:
-        knime = Knime(kexec=kexec, kinstall=kinstall, kver=kver)
+        knime = Knime()
     if rp2_version is not None:
         knime.workflow = os_path.join(
             here, 'workflows', f'RetroPath2.0_{rp2_version}.knwf'
         )
-
+    if knime.kexec == "":
+        # Install KNIME
+        if not knime.install(kver=Knime.DEFAULT_VERSION, logger=logger):
+            return RETCODES["KnimeInstallationError"]
     logger.debug('knime: ' + str(knime))
 
     # Store RetroPath2 params into a dictionary
@@ -99,11 +95,6 @@ def retropath2(
 
     r_code, inchi = check_input(source_file, sink_file)
     if r_code != RETCODES['OK']:
-        return r_code, None
-
-    # Install KNIME
-    r_code = knime.install(logger=logger)
-    if r_code > 0:
         return r_code, None
 
     logger.info('{attr1}Initializing{attr2}'.format(attr1=attr('bold'), attr2=attr('reset')))
