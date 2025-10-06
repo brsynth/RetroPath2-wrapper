@@ -149,7 +149,7 @@ class Knime(object):
                         subprocess_call(cmd, logger=logger)
                 break
             elif "win32" in basename and sys.platform == "win32":
-                download_and_unzip(kurl, self.kinstall)
+                download_and_unzip(url, self.kinstall)
                 break
 
         # Download Plugins
