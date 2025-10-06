@@ -79,18 +79,11 @@ def _cli():
 
     # Create Knime object
     here = os_path.dirname(os_path.realpath(__file__))
-    if args.kplugins == "":
-        kplugins = []
-    else:
-        kplugins = args.kplugins.split(',')
     knime = Knime(
-        kexec=args.kexec,
         kinstall=args.kinstall,
-        kver=args.kver,
-        kplugins=kplugins,
         workflow=os_path.join(here, 'workflows', 'RetroPath2.0_%s.knwf' % (args.rp2_version,)),
-        network=not args.no_network,
     )
+
     # Print out configuration
     if not args.silent and args.log.lower() not in ['critical', 'error']:
         print_conf(knime, prog = parser.prog)
@@ -193,12 +186,6 @@ def parse_and_check_args(
 ):
 
     args = parser.parse_args()
-
-    if args.kexec is not None:
-        if not os.path.isfile(args.kexec):
-            parser.error("--kexec is not a file: %s" %(args.kexec,))
-        if not os.access(args.kexec, os.X_OK):
-            parser.error("--kexec is not executable: %s" %(args.kexec,))
 
     # Create outdir if does not exist
     if not os_path.exists(args.outdir):
