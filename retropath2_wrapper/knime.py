@@ -7,6 +7,7 @@ import subprocess
 import sys
 import tempfile
 import urllib.parse
+from pathlib import Path
 from getpass import getuser
 from logging import (
     getLogger,
@@ -15,7 +16,7 @@ from logging import (
 )
 from typing import Any, Dict, Optional
 from colored import attr
-from typing import List
+from typing import Set
 from subprocess import PIPE as sp_PIPE
 
 from brs_utils  import (
@@ -53,10 +54,10 @@ class Knime(object):
         "org.eclipse.equinox.preferences",
         "org.knime.chem.base",
         "org.knime.datageneration",
-        "org.knime.python.nodes",
         "org.knime.features.chem.types.feature.group",
         "org.knime.features.datageneration.feature.group",
         "org.knime.features.python.feature.group",
+        "org.knime.python.nodes",
         "org.rdkit.knime.feature.feature.group",
         "org.rdkit.knime.nodes",
     ]
@@ -125,16 +126,24 @@ class Knime(object):
 
     @classmethod
     def find_p2_dir(cls, path: str) -> str:
-        for root, _, files in os.walk(path):
-            for file in files:
-                path_file = os.path.join(root, file)
-                if file == "p2" and os.path.isdir(path_file):
-                    return os.path.abspath(path_file)
+        for dirpath, dirnames, _ in os.walk(path):
+            if "p2" in dirnames:
+                return os.path.abspath(os.path.join(dirpath, "p2"))
         return ""
+
+    @classmethod
+    def collect_top_level_dirs(cls, path) -> Set:
+        root = Path(path)
+        names = set()
+        for p in root.iterdir():
+            if p.is_dir():
+                names.add(p.name)
+        return names
 
     def install(self, kver: str, logger: Logger = getLogger(__name__)) -> bool:
         data = Knime.zenodo_show_repo(kver=kver)
         # Install Knime
+        dirs_before = Knime.collect_top_level_dirs(path=self.kinstall)
         for file in data["files"]:
             basename = file["key"]
             url = file["links"]["self"]
@@ -162,6 +171,9 @@ class Knime(object):
             elif "win32" in basename and sys.platform == "win32":
                 download_and_unzip(url, self.kinstall)
                 break
+        dirs_after = Knime.collect_top_level_dirs(path=self.kinstall)
+        dirs_only_after = dirs_after - dirs_before
+        assert len(dirs_only_after) == 1, dirs_only_after
 
         # Download Plugins
         tempdir = tempfile.mkdtemp()
@@ -178,13 +190,12 @@ class Knime(object):
             # Install Plugins
             self.kexec = Knime.find_executable(path=self.kinstall)
             p2_dir = Knime.find_p2_dir(path=self.kinstall)
-            knime_dir = [x for x in glob.glob(os.path.join(self.kinstall, "*")) if "knime" in x.lower()]
             args = [f"{self.kexec}"]
             args += ["-nosplash", "-consoleLog"]
             args += ["-application", "org.eclipse.equinox.p2.director"]
             args += ["-repository", ",".join([f"jar:file:{path_plugin}!/" for path_plugin in path_plugins])]
             args += ["-bundlepool", p2_dir]
-            args += ["-destination", os.path.abspath(knime_dir[0])]
+            args += ["-destination", os.path.abspath(os.path.join(self.kinstall, dirs_only_after.pop()))]
             args += ["-i", ",".join(Knime.PLUGINGS)]
 
             CPE = subprocess.run(args)
