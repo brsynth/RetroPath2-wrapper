@@ -49,6 +49,17 @@ class Knime(object):
         "4.7.0": "7564938",
     }
     DEFAULT_VERSION = "4.6.4"
+    PLUGINGS = [
+        "org.eclipse.equinox.preferences",
+        "org.knime.chem.base",
+        "org.knime.datageneration",
+        "org.knime.python.nodes",
+        "org.knime.features.chem.types.feature.group",
+        "org.knime.features.datageneration.feature.group",
+        "org.knime.features.python.feature.group",
+        "org.rdkit.knime.feature.feature.group",
+        "org.rdkit.knime.nodes",
+    ]
 
     def __init__(
             self,
@@ -174,7 +185,7 @@ class Knime(object):
             args += ["-repository", ",".join([f"jar:file:{path_plugin}!/" for path_plugin in path_plugins])]
             args += ["-bundlepool", p2_dir]
             args += ["-destination", os.path.abspath(knime_dir[0])]
-            args += ["-i", "org.knime.features.chem.types.feature.group,org.knime.features.datageneration.feature.group,org.knime.features.python.feature.group,org.rdkit.knime.feature.feature.group,org.eclipse.equinox.preferences"]
+            args += ["-i", ",".join(Knime.PLUGINGS)]
 
             CPE = subprocess.run(args)
             logger.debug(CPE)
