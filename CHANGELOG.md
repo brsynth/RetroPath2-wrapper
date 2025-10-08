@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.5.0](https://github.com/brsynth/RetroPath2-wrapper/tree/3.5.0) (2025-10-08)
+
+[Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/3.4.2...3.5.0)
+
+**Closed issues:**
+
+- Unrequired metabolites and reactions in the network? [\#6](https://github.com/brsynth/RetroPath2-wrapper/issues/6)
+
+**Merged pull requests:**
+
+- Install and use Knime smoothly [\#23](https://github.com/brsynth/RetroPath2-wrapper/pull/23) ([guillaume-gricourt](https://github.com/guillaume-gricourt))
+
 ## [3.4.2](https://github.com/brsynth/RetroPath2-wrapper/tree/3.4.2) (2025-09-29)
 
 [Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/3.4.1...3.4.2)
