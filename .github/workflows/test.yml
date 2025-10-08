@@ -35,5 +35,5 @@ jobs:
           activate-environment: test
       - name: Building & Testing conda package
         run: |
-          conda install -y python pytest pytest-mock
+          conda env update --file environment-dev.yaml -n test
           python -m pytest
