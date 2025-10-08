@@ -93,7 +93,7 @@ def _cli():
     # Sniff implicit/explicit hydrogens
     if args.std_hydrogen == "auto":
         std_hydrogen = sniff_rules(path=args.rules_file, logger=logger)
-    elif: args.std_hydrogen in ["implicit", "explicit"]:
+    elif args.std_hydrogen in ["implicit", "explicit"]:
         std_hydrogen = args.std_hydrogen
     else:
         parser.error("--std_hydrogen should be one of 'auto', 'implicit' or 'explicit'.")
