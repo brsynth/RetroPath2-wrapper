@@ -1,0 +1,7 @@
+name: retropath2_wrapper
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - pytest
+  - pytest-mock
