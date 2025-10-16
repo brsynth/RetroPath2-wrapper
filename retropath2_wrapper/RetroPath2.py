@@ -19,6 +19,7 @@ from brs_utils import extract_gz
 from filetype import guess
 from tempfile import TemporaryDirectory
 from typing import Dict, Tuple
+from types import SimpleNamespace
 from logging import (
     Logger,
     getLogger
@@ -32,6 +33,7 @@ from .Args import (
     DEFAULTS,
     RETCODES,
 )
+from retropath2_wrapper import knime as knime_module
 from retropath2_wrapper.knime import Knime
 from retropath2_wrapper.preference import Preference
 
@@ -78,8 +80,11 @@ def retropath2(
         )
     if knime.kexec == "":
         # Install KNIME
-        if not knime.install(kver=Knime.DEFAULT_VERSION, logger=logger):
-            return RETCODES["KnimeInstallationError"]
+        args_knime = SimpleNamespace(
+            kinstall=knime.kinstall,
+            kver=Knime.DEFAULT_VERSION,
+        )
+        knime_module.install_online(args_knime, logger=logger)
     logger.debug('knime: ' + str(knime))
 
     # Store RetroPath2 params into a dictionary
