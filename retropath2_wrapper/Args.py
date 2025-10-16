@@ -30,7 +30,6 @@ RETCODES = {
     'OSError': 2,
     'InChI': 3,
     'SinkFileMalformed': 4,
-    'KnimeInstallationError': 5,
 }
 
 

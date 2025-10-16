@@ -351,9 +351,9 @@ def install_online(args, logger: Logger = getLogger(__name__)):
     try:
         Knime.download_from_zenodo(path=tempdir, kver=kver, logger=logger)
         knime = Knime(kinstall=path_knime)
-        knime.install(path=tempdir)
+        knime.install(path=tempdir, logger=logger)
     except Exception as e:
-        logger.error(e)
+        raise RuntimeError(e)
     finally:
         shutil.rmtree(tempdir)
 
@@ -368,10 +368,10 @@ def install_local(args, logger: Logger = getLogger(__name__)):
             file=path_zenodo,
             dir=tempdir,
         )
-        knime = Knime(kinstall=path_knime)
+        knime = Knime(kinstall=path_knime, logger=logger)
         knime.install(path=tempdir)
     except Exception as e:
-        logger.error(e)
+        raise RuntimeError(e)
     finally:
         shutil.rmtree(tempdir)
 

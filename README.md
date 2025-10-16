@@ -98,7 +98,6 @@ Executions can be timed out using the `timeout` arguments (in minutes).
 - 2: Running the RetroPath2.0 Knime program produced an OSError
 - 3: InChI is malformated
 - 4: Sink file is malformed
-- 5: Knime installation returns an error
 - 10: Source has been found in the sink (warning)
 - 11: No solution is found (warning)
 
