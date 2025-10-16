@@ -117,13 +117,13 @@ To run functional tests, the environment variable `RP2_FUNCTIONAL=TRUE` is requi
 
 ### Knime dependencies
 
-Availbale options:
+Available options:
 
 1. You provide a path of the Knime root directory through the argument `--kinstall`. You need to have the following libraries installed: `org.knime.features.chem.types.feature.group`, `org.knime.features.datageneration.feature.group`, `org.knime.features.python.feature.group`, `org.rdkit.knime.feature.feature.group`
 2. `retropath2_wrapper` will install Knime for you, at the root of the python package, by downloading the softwares available on Zenodo. You can choose a version among `4.6.4` or `4.7.0`. Optionally, you can locate a path for the installation. If an executable is found in the path, Knime will not be reinstalled.
 
 ```bash
-python -m retropath2_wrapper.knime \
+python -m retropath2_wrapper.knime online \
     --kinstall "/path/to/knime/root/dir" \
     --kver {4.6.4,4.7.0}
 ```
@@ -133,6 +133,14 @@ Knime software and packages are available at:
 - [KNIME](https://www.knime.com/)
 - [KNIME v4.6.4 - Zenodo](https://zenodo.org/record/7515771)
 - [KNIME v4.7.0 - Zenodo](https://zenodo.org/record/7564938)
+
+All files from these repositories can be downloaded through the `Download all` button:
+
+```bash
+python -m retropath2_wrapper.knime local \
+    --kinstall "/path/to/knime/root/dir" \
+    --zenodo-zip "/path/to/7515771.zip"
+```
 
 ## Known issues
 
