@@ -251,6 +251,8 @@ class Knime(object):
         args += ["-bundlepool", p2_dir]
         args += ["-destination", os.path.abspath(os.path.join(self.kinstall, dirs_only_after.pop()))]
         args += ["-i", ",".join(Knime.PLUGINS)]
+        logger.info("Command line to install Knime plugins")
+        logger.info(" ".join(args))
         CPE = subprocess.run(args)
         logger.debug(CPE)
         
@@ -364,12 +366,14 @@ def install_local(args, logger: Logger = getLogger(__name__)):
     tempdir = tempfile.mkdtemp()
     os.makedirs(path_knime, exist_ok=True)
     try:
+        logger.info(f"Unzip: {path_zenodo}")
         unzip(
             file=path_zenodo,
             dir=tempdir,
         )
-        knime = Knime(kinstall=path_knime, logger=logger)
-        knime.install(path=tempdir)
+        knime = Knime(kinstall=path_knime)
+        logger.info(f"Install to: {path_knime}")
+        knime.install(path=tempdir, logger=logger)
     except Exception as e:
         raise RuntimeError(e)
     finally:
