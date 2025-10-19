@@ -85,6 +85,11 @@ def retropath2(
             kver=Knime.DEFAULT_VERSION,
         )
         knime_module.install_online(args_knime, logger=logger)
+        # Init Knime again to set Knime.kexec
+        knime = Knime(
+            kinstall=knime.kinstall,
+            workflow=knime.workflow,
+        )
     logger.debug('knime: ' + str(knime))
 
     # Store RetroPath2 params into a dictionary
