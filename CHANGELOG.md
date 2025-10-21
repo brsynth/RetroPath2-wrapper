@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.6.0](https://github.com/brsynth/RetroPath2-wrapper/tree/3.6.0) (2025-10-21)
+
+[Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/3.5.0...3.6.0)
+
+**Merged pull requests:**
+
+- Allow online and local installation from Zenodo [\#25](https://github.com/brsynth/RetroPath2-wrapper/pull/25) ([guillaume-gricourt](https://github.com/guillaume-gricourt))
+
 ## [3.5.0](https://github.com/brsynth/RetroPath2-wrapper/tree/3.5.0) (2025-10-08)
 
 [Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/3.4.2...3.5.0)
