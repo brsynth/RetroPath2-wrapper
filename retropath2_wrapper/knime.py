@@ -171,12 +171,20 @@ class Knime(object):
             4.6.4 or 4.7.0
         """
         data = Knime.zenodo_show_repo(kver=kver)
+        if sys.platform == "win32" or sys.platform == "linux":
+            platform_tag = sys.platform
+        elif sys.platform == "darwin":
+            platform_tag = "macosx"
+        else:
+            raise RuntimeError(f"Platform {sys.platform} not supported for KNIME installation")
         for file in data["files"]:
             basename = file["key"]
-            url = file["links"]["self"]
-            foutput = os.path.join(path, basename)
-            logger.info(f"Download: {url} to {foutput}")
-            download(url, foutput)
+            if platform_tag in basename:
+                url = file["links"]["self"]
+                foutput = os.path.join(path, basename)
+                logger.info(f"Download: {url} to {foutput}")
+                download(url, foutput)
+                break
 
     def install(self, path: str, logger: Logger = getLogger(__name__)) -> bool:
         """
