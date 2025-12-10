@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.6.1](https://github.com/brsynth/RetroPath2-wrapper/tree/3.6.1) (2025-12-10)
+
+[Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/3.6.0...3.6.1)
+
+**Merged pull requests:**
+
+- Update Knime installation [\#26](https://github.com/brsynth/RetroPath2-wrapper/pull/26) ([breakthewall](https://github.com/breakthewall))
+
 ## [3.6.0](https://github.com/brsynth/RetroPath2-wrapper/tree/3.6.0) (2025-10-21)
 
 [Full Changelog](https://github.com/brsynth/RetroPath2-wrapper/compare/3.5.0...3.6.0)
