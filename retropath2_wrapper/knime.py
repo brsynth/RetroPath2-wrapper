@@ -34,23 +34,6 @@ from retropath2_wrapper.Args import (
 from retropath2_wrapper.preference import Preference
 
 
-# Patch for brs-utils: https://github.com/brsynth/brs-utils/issues/6
-def unzip(
-    file: str,
-    dir: str
-) -> None:
-    '''Unzip the given file.
-
-    Parameters
-    ----------
-    file: str
-        Filename to unzip
-    dir: str
-        Directory to unzip into
-    '''
-    with ZipFile(file, 'r') as zip_ref:
-        zip_ref.extractall(dir)
-
 class Knime(object):
     """Knime is useful to install executable, install packages or commandline.
     http://download.knime.org/analytics-platform/
@@ -218,18 +201,14 @@ class Knime(object):
                     shutil.rmtree(app_path)
 
                 with tempfile.TemporaryDirectory() as tempd:
-                    subprocess_call(
-                        f'hdiutil mount -noverify {file} -mountpoint {tempd}/KNIME',
-                        logger=logger
-                    )
+                    cmd = f'hdiutil mount -noverify {file} -mountpoint {tempd}/KNIME'
+                    subprocess_call(cmd, logger=logger)
                     shutil.copytree(
-                        f"{tempd}/KNIME/KNIME {kver}.app",
+                        f'{tempd}/KNIME/KNIME {kver}.app',
                         app_path
                     )
-                    subprocess_call(
-                        f'hdiutil unmount {tempd}/KNIME',
-                        logger=logger
-                    )
+                    cmd = f'hdiutil unmount {tempd}/KNIME'
+                    subprocess_call(cmd, logger=logger)
                 break
 
             # Windows
