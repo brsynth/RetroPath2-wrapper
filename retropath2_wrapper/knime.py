@@ -26,6 +26,7 @@ from brs_utils  import (
     download,
     chown_r,
     subprocess_call,
+    unzip
 )
 from retropath2_wrapper.Args import (
     DEFAULTS,
