@@ -188,82 +188,112 @@ class Knime(object):
 
     def install(self, path: str, logger: Logger = getLogger(__name__)) -> bool:
         """
-        Install Knime
-
-        Parameters
-        ----------
-        path: str
-            Directory with all files from Zenodo, such as:
-                - knime_4.6.4.app.macosx.cocoa.x86_64.dmg
-                - knime_4.6.4.linux.gtk.x86_64.tar.gz
-                - knime_4.6.4.win32.win32.x86_64.zip
-                - org.knime.update.analytics-platform_4.6.4.zip
-                - TrustedCommunityContributions_4.6_202212212136.zip
+        Install KNIME and required plugins (headless mode).
         """
+
         knime_files = glob.glob(os.path.join(path, "*"))
-        # Install Knime
+
+        # ---------------------------------------------------------
+        # 1) Extract KNIME base installation
+        # ---------------------------------------------------------
         dirs_before = Knime.collect_top_level_dirs(path=self.kinstall)
         for file in knime_files:
             basename = os.path.basename(file)
+
+            # Linux
             if "linux" in basename and sys.platform == "linux":
                 extract_tar_gz(file, self.kinstall)
                 chown_r(self.kinstall, getuser())
-                # chown_r(kinstall, geteuid(), getegid())
                 break
+
+            # macOS
             elif "macosx" in basename and sys.platform == "darwin":
                 match = re.search(r"\d+\.\d+\.\d+", basename)
-                if match:
-                    kver = match.group()
-                else:
-                    raise ValueError(f"Version can not be guessed from filename: {file}")
-                app_path = f'{self.kinstall}/KNIME_{kver}.app'
+                if not match:
+                    raise ValueError(f"Could not determine version from filename: {file}")
+                kver = match.group()
+
+                app_path = f"{self.kinstall}/KNIME_{kver}.app"
                 if os.path.exists(app_path):
                     shutil.rmtree(app_path)
+
                 with tempfile.TemporaryDirectory() as tempd:
-                    cmd = f'hdiutil mount -noverify {file} -mountpoint {tempd}/KNIME'
-                    subprocess_call(cmd, logger=logger)
+                    subprocess_call(
+                        f'hdiutil mount -noverify {file} -mountpoint {tempd}/KNIME',
+                        logger=logger
+                    )
                     shutil.copytree(
-                        f'{tempd}/KNIME/KNIME {kver}.app',
+                        f"{tempd}/KNIME/KNIME {kver}.app",
                         app_path
                     )
-                    cmd = f'hdiutil unmount {tempd}/KNIME'
-                    subprocess_call(cmd, logger=logger)
+                    subprocess_call(
+                        f'hdiutil unmount {tempd}/KNIME',
+                        logger=logger
+                    )
                 break
+
+            # Windows
             elif "win32" in basename and sys.platform == "win32":
                 unzip(file, self.kinstall)
                 break
+
         dirs_after = Knime.collect_top_level_dirs(path=self.kinstall)
         dirs_only_after = dirs_after - dirs_before
-        assert len(dirs_only_after) == 1, dirs_only_after
+        assert len(dirs_only_after) == 1, f"New directory not unique: {dirs_only_after}"
 
-        # Download Plugins
-        path_plugins = []
+        knime_root = os.path.abspath(os.path.join(self.kinstall, dirs_only_after.pop()))
+
+        # ---------------------------------------------------------
+        # 2) Collect local plugin repositories (ZIPs from Zenodo)
+        # ---------------------------------------------------------
+        local_repos = []
         for file in knime_files:
             basename = os.path.basename(file)
-            if "org.knime.update" in basename or "TrustedCommunity" in basename:
-                path_plugins.append(os.path.abspath(file))
+            if ("org.knime.update" in basename or 
+                "TrustedCommunity" in basename or
+                "chemistry" in basename.lower()):  # allow offline chemistry repo ZIP too
+                local_repos.append(f"jar:file:{os.path.abspath(file)}!/")
 
-        # Install Plugins
+        # ---------------------------------------------------------
+        # 3) Add online repositories (required for chemistry & RDKit)
+        # ---------------------------------------------------------
+        online_repos = [
+            "https://update.knime.com/analytics-platform/4.6/",
+            "https://update.knime.com/analytics-platform/4.6/chemistry/",
+            # optional but useful:
+            "https://update.knime.com/community-contributions/trusted/4.6/"
+        ]
+
+        all_repos = local_repos + online_repos
+
+        # ---------------------------------------------------------
+        # 4) Run p2 director to install plugins
+        # ---------------------------------------------------------
         self.kexec = Knime.find_executable(path=self.kinstall)
         p2_dir = Knime.find_p2_dir(path=self.kinstall)
-        
-        if not self.kexec or not os.path.exists(self.kexec):
+
+        if not self.kexec:
             raise FileNotFoundError(f"KNIME executable not found under {self.kinstall}")
         if not p2_dir:
             raise RuntimeError("p2 directory not found after installation.")
-        
-        args = [f"{self.kexec}"]
-        args += ["-nosplash", "-consoleLog"]
-        args += ["-application", "org.eclipse.equinox.p2.director"]
-        args += ["-repository", ",".join([f"jar:file:{path_plugin}!/" for path_plugin in path_plugins])]
-        args += ["-bundlepool", p2_dir]
-        args += ["-destination", os.path.abspath(os.path.join(self.kinstall, dirs_only_after.pop()))]
-        args += ["-i", ",".join(Knime.PLUGINS)]
-        logger.info("Command line to install Knime plugins")
+
+        args = [
+            self.kexec,
+            "-nosplash",
+            "-consoleLog",
+            "-application", "org.eclipse.equinox.p2.director",
+            "-repository", ",".join(all_repos),
+            "-bundlepool", p2_dir,
+            "-destination", knime_root,
+            "-i", ",".join(Knime.PLUGINS)
+        ]
+
+        logger.info("Command line to install KNIME plugins:")
         logger.info(" ".join(args))
+
         CPE = subprocess.run(args)
         logger.debug(CPE)
-        
+
         return True
 
     def call(
