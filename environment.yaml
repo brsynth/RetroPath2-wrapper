@@ -2,7 +2,7 @@ name: retropath2_wrapper
 channels:
   - conda-forge
 dependencies:
-  - brs_utils >=1.23.1
+  - brs_utils >=1.24.2
   - filetype
   - colored
   - freetype
