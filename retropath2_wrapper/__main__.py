@@ -20,16 +20,16 @@ from brs_utils import (
     create_logger
 )
 
-from .RetroPath2 import (
+from retropath2_wrapper.RetroPath2 import (
     retropath2,
     sniff_rules,
 )
-from .Args import (
+from retropath2_wrapper.Args import (
     build_args_parser,
     RETCODES
 )
-from ._version import __version__
-from .knime import Knime
+from retropath2_wrapper._version import __version__
+from retropath2_wrapper.knime import Knime
 
 
 def print_conf(
