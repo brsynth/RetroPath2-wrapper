@@ -29,12 +29,14 @@ from csv import reader as csv_reader
 from colored import attr
 from csv import reader
 
-from .Args import (
+from retropath2_wrapper.Args import (
     DEFAULTS,
     RETCODES,
 )
-from retropath2_wrapper import knime as knime_module
-from retropath2_wrapper.knime import Knime
+from retropath2_wrapper.knime import (
+    Knime,
+    install_online as knime_install_online
+)
 from retropath2_wrapper.preference import Preference
 
 
@@ -84,7 +86,7 @@ def retropath2(
             kinstall=knime.kinstall,
             kver=Knime.DEFAULT_VERSION,
         )
-        knime_module.install_online(args_knime, logger=logger)
+        knime_install_online(args_knime, logger=logger)
         # Init Knime again to set Knime.kexec
         knime = Knime(
             kinstall=knime.kinstall,
